@@ -5,6 +5,7 @@ export interface User_info {
   address2?: string;
   profile_image?: string;
   user_email: string;
+  nickname?: string;
 }
 
 export interface Auction_answer {

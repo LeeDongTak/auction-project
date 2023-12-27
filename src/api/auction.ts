@@ -1,7 +1,6 @@
 // auction 전체 호출 (조건에 따라 필터링 호출)
-import connectSupabase from "./connectSupabase";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";
-import { PostgrestSingleResponse } from "@supabase/supabase-js";
+import connectSupabase from "./connectSupabase";
 
 /**
  * auction 전체 데이터 호출
@@ -13,7 +12,8 @@ export async function fetchGetAuctions(
   limit: number = 20,
   offset: number = 0,
   orderBy: string = "created_at",
-  order: boolean = false
+  order: boolean = false,
+  user_id: string = ""
 ) {
   const query = connectSupabase
     .from("auction_post")
@@ -30,29 +30,38 @@ export async function fetchGetAuctions(
     query.in("category_id", categories);
   }
 
-  const { data } = await query.returns<Auction_post[]>();
+  const { data, error } = await query.returns<Auction_post[]>();
+
+  if (error) throw new Error(error.message);
 
   return data;
 }
 
 export const fetchGetCategories = async () => {
-  const { data } = await connectSupabase.from("category").select("*");
+  const { data, error } = await connectSupabase.from("category").select("*");
+
+  if (error) throw new Error(error.message);
   return data;
 };
 
+/**
+ * auction_id로 auction 데이터 호출
+ * @param auction_id
+ */
 export const fetchGetAuctionById = async (auction_id: string) => {
   const { data, error } = await connectSupabase
     .from("auction_post")
     .select(
       `
-      *,
-           auction_images!auction_images_auction_id_fkey(image_id, image_path)
-    `
+      *, auction_images(image_id, image_path),
+      category(category_name)`
     )
     .eq("auction_id", auction_id)
+    .returns<Auction_post>()
     .single();
-
   if (error) throw new Error(error.message);
+
+  console.log(data);
 
   return data;
 };
