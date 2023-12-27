@@ -1,9 +1,12 @@
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { Button } from "antd";
 import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { setUserInfo } from "../../api/auth";
 import { supabase } from "../../supabase";
+import { User_info } from "../../types/databaseRetrunTypes";
 
 interface SignFormProps {
   mode: string;
@@ -13,10 +16,21 @@ interface SignFormProps {
 type Inputs = {
   email: string;
   password: string;
-  address?: string;
+  address1?: string;
+  address2?: string;
+  nickname?: string;
 };
 
 const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
+  const queryClient = new QueryClient();
+
+  const insertMutation = useMutation({
+    mutationFn: setUserInfo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
   const navigate = useNavigate();
   const {
     register,
@@ -71,18 +85,6 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     },
   };
 
-  const nickname = {
-    required: "필수 입력란입니다.",
-    minLength: {
-      value: 1,
-      message: "최소 1자를 입력해주세요.",
-    },
-    maxLength: {
-      value: 10,
-      message: "최대 10자까지 입력하실 수 있습니다.",
-    },
-  };
-
   const userAddress = {
     required: "필수 입력란입니다.",
     minLength: {
@@ -95,13 +97,23 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     },
   };
 
-  // TODO: 회원가입 주소 추가하기 (userInfo 저장)
+  const nickname = {
+    required: "필수 입력란입니다.",
+    minLength: {
+      value: 1,
+      message: "최소 1자를 입력해주세요.",
+    },
+    maxLength: {
+      value: 10,
+      message: "최대 10자까지 입력하실 수 있습니다.",
+    },
+  };
 
   const signInHandler = async ({ email, password }: Inputs) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: "10141014@gmail.com",
-        password: "10141014",
+        email,
+        password,
       });
 
       console.log(email, password);
@@ -110,7 +122,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
         alert("아이디 또는 비밀번호를 확인해주세요");
       } else {
         alert("성공적으로 로그인 되었습니다!");
-        // navigate("/");
+        navigate("/");
       }
 
       console.log(data);
@@ -119,21 +131,41 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     }
   };
 
-  const signUpHandler = async ({ email, password }: Inputs) => {
+  const signUpHandler = async ({
+    email,
+    password,
+    address1,
+    address2,
+    nickname,
+  }: Inputs) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signUp({
         email,
         password,
       });
 
-      console.log(email, password);
-
-      console.log(data);
       if (error) {
         console.log(error);
-        alert("아이디와 비밀번호를 확인해주세여");
+        alert("아이디와 비밀번호를 확인해주세요");
       } else {
+        const newUserInfo: User_info = {
+          user_id: user?.id as string,
+          created_at: user?.created_at as string,
+          user_email: user?.email as string,
+          address1,
+          address2,
+          nickname,
+          profile_image: undefined,
+        };
+        console.log(newUserInfo);
+
+        insertMutation.mutate(newUserInfo);
+
         alert("회원가입 되었습니다. 로그인 페이지로 이동합니다.");
+
         setMode("로그인");
         reset();
       }
@@ -177,12 +209,28 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
         {mode === "회원가입" && (
           <div>
             <input
-              type="address"
-              placeholder="주소"
-              {...register("address", userAddress)}
+              type="nickname"
+              placeholder="nickname"
+              {...register("nickname", userAddress)}
             />
-            {errors?.address && ( // 에러 메시지
-              <div>{errors?.address?.message as string}</div>
+            {errors?.nickname && ( // 에러 메시지
+              <div>{errors?.nickname?.message as string}</div>
+            )}
+            <input
+              type="address1"
+              placeholder="주소1"
+              {...register("address1", userAddress)}
+            />
+            {errors?.address1 && ( // 에러 메시지
+              <div>{errors?.address1?.message as string}</div>
+            )}
+            <input
+              type="address2"
+              placeholder="주소2"
+              {...register("address2", userAddress)}
+            />
+            {errors?.address2 && ( // 에러 메시지
+              <div>{errors?.address2?.message as string}</div>
             )}
           </div>
         )}
