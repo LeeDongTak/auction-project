@@ -11,5 +11,11 @@ export async function fetchGetAuctions() {
     .from("auction_post")
     .select("*, category(category_name), user_info(")
     .returns<Auction_post[]>();
+
   return data;
 }
+
+export const fetchGetCategories = async () => {
+  const { data } = await connectSupabase.from("category").select("*");
+  return data;
+};
