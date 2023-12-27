@@ -9,12 +9,14 @@ export function useCustomQuery<T, TError extends Error = Error>(
   useEffect(() => {
     // loading 처리
     if (isLoading) {
+      console.log("isLoading ", isLoading);
     }
   }, [isLoading]);
 
   useEffect(() => {
     // error 처리
     if (isError) {
+      console.log("isError ", error);
     }
   }, [isError, error]);
 
