@@ -1,6 +1,6 @@
 // auction 전체 호출 (조건에 따라 필터링 호출)
-import connectSupabase from "./connectSupabase";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";
+import connectSupabase from "./connectSupabase";
 
 /**
  * auction 전체 데이터 호출
@@ -12,7 +12,8 @@ export async function fetchGetAuctions(
   limit: number = 20,
   offset: number = 0,
   orderBy: string = "created_at",
-  order: boolean = false
+  order: boolean = false,
+  user_id: string = ""
 ) {
   const query = connectSupabase
     .from("auction_post")
@@ -59,6 +60,8 @@ export const fetchGetAuctionById = async (auction_id: string) => {
     .returns<Auction_post>()
     .single();
   if (error) throw new Error(error.message);
+
+  console.log(data);
 
   return data;
 };
