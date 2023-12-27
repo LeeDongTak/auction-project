@@ -1,17 +1,62 @@
-export type Auction_post = {
-  auction_end_date: string;
-  auction_id: string;
-  auction_start_date: string;
-  auction_status: string;
-  category_id: string | null;
-  content: string;
+export interface User_info {
+  user_id: string /* primary key */;
   created_at: string;
-  lower_limit: number;
-  product_img: string | null;
+  address1?: string;
+  address2?: string;
+  profile_image?: string;
+  user_email: string;
+}
+
+export interface Auction_answer {
+  auction_answer_id: string /* primary key */;
+  created_at: string;
+  answer: string;
+  user_id: string /* foreign key to user_info.user_id */;
+  auction_question_id: string /* foreign key to user_info.user_id */;
+  user_info?: User_info;
+}
+
+export interface Category {
+  category_id: string /* primary key */;
+  created_at: string;
+  category_name: string;
+}
+
+export interface Auction_post {
+  auction_id: string /* primary key */;
+  created_at: string;
+  title: string;
+  auction_start_date: string;
+  auction_end_date: string;
   product_status: string;
   shipping_type: string;
-  title: string;
   upper_limit: number;
-  user_id: string;
-  category: { category_name: string };
-};
+  lower_limit: number;
+  content: string;
+  product_img?: string;
+  auction_status: string;
+  user_id: string /* foreign key to user_info.user_id */;
+  category_id: string /* foreign key to category.category_id */;
+  user_info?: User_info;
+  category?: Category;
+}
+
+export interface Auction_like {
+  like_id: string /* primary key */;
+  created_at: string;
+  user_id: string /* foreign key to user_info.user_id */;
+  auction_id: string /* foreign key to auction_post.auction_id */;
+  user_info?: User_info;
+  auction_post?: Auction_post;
+}
+
+export interface Auction_question {
+  auction_question_id: string /* primary key */;
+  created_at: string;
+  title: string;
+  question: string;
+  user_id: string /* foreign key to user_info.user_id */;
+  auction_id: string /* foreign key to auction_post.auction_id */;
+  user_info?: User_info;
+  auction_post?: Auction_post;
+}
