@@ -48,6 +48,35 @@ export interface Database {
           }
         ]
       }
+      auction_images: {
+        Row: {
+          auction_id: string
+          created_at: string
+          image_id: string
+          image_path: string | null
+        }
+        Insert: {
+          auction_id: string
+          created_at?: string
+          image_id?: string
+          image_path?: string | null
+        }
+        Update: {
+          auction_id?: string
+          created_at?: string
+          image_id?: string
+          image_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_images_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auction_post"
+            referencedColumns: ["auction_id"]
+          }
+        ]
+      }
       auction_like: {
         Row: {
           auction_id: string
@@ -94,7 +123,6 @@ export interface Database {
           content: string
           created_at: string
           lower_limit: number
-          product_img: string | null
           product_status: string
           shipping_type: string
           title: string
@@ -110,7 +138,6 @@ export interface Database {
           content?: string
           created_at?: string
           lower_limit: number
-          product_img?: string | null
           product_status?: string
           shipping_type?: string
           title?: string
@@ -126,7 +153,6 @@ export interface Database {
           content?: string
           created_at?: string
           lower_limit?: number
-          product_img?: string | null
           product_status?: string
           shipping_type?: string
           title?: string

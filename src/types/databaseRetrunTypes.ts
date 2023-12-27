@@ -34,7 +34,6 @@ export interface Auction_post {
   upper_limit: number;
   lower_limit: number;
   content: string;
-  product_img?: string;
   auction_status: string;
   user_id: string /* foreign key to user_info.user_id */;
   category_id: string /* foreign key to category.category_id */;
@@ -42,12 +41,11 @@ export interface Auction_post {
   category?: Category;
 }
 
-export interface Auction_like {
-  like_id: string /* primary key */;
+export interface Auction_images {
+  image_id: string /* primary key */;
   created_at: string;
-  user_id: string /* foreign key to user_info.user_id */;
+  image_path?: string;
   auction_id: string /* foreign key to auction_post.auction_id */;
-  user_info?: User_info;
   auction_post?: Auction_post;
 }
 
@@ -56,6 +54,15 @@ export interface Auction_question {
   created_at: string;
   title: string;
   question: string;
+  user_id: string /* foreign key to user_info.user_id */;
+  auction_id: string /* foreign key to auction_post.auction_id */;
+  user_info?: User_info;
+  auction_post?: Auction_post;
+}
+
+export interface Auction_like {
+  like_id: string /* primary key */;
+  created_at: string;
   user_id: string /* foreign key to user_info.user_id */;
   auction_id: string /* foreign key to auction_post.auction_id */;
   user_info?: User_info;

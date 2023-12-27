@@ -25,16 +25,15 @@ export async function fetchGetAuctions(
       .like("title", `%${searchKeyword}%`)
       .like("content", `%${searchKeyword}%`);
   }
-  if (user_id) {
-    query.eq("user_id", user_id);
-  }
 
   if (categories.length > 0) {
     query.in("category_id", categories);
   }
 
   const { data, error } = await query.returns<Auction_post[]>();
+
   if (error) throw new Error(error.message);
+
   return data;
 }
 
