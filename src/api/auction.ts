@@ -1,6 +1,6 @@
 // auction 전체 호출 (조건에 따라 필터링 호출)
-import connectSupabase from "./connectSupabase";
 import { Auction_post } from "../types/databaseRetrunTypes";
+import connectSupabase from "./connectSupabase";
 
 /**
  * auction 전체 데이터 호출
@@ -11,6 +11,8 @@ export async function fetchGetAuctions() {
     .from("auction_post")
     .select("*, category(category_name), user_info(")
     .returns<Auction_post[]>();
+
+  console.log(data);
 
   return data;
 }
