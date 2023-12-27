@@ -38,6 +38,7 @@ export interface Auction_post {
   category_id: string /* foreign key to category.category_id */;
   user_info?: User_info;
   category?: Category;
+  auction_images?: Auction_images[];
 }
 
 export interface Auction_images {
