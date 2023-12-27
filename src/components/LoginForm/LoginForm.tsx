@@ -13,7 +13,7 @@ interface SignFormProps {
   setMode: React.Dispatch<React.SetStateAction<string>>;
 }
 
-type Inputs = {
+type FormValues = {
   email: string;
   password: string;
   address1?: string;
@@ -37,7 +37,9 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<Inputs>({ mode: "onChange" });
+  } = useForm<FormValues>({ mode: "onChange" });
+
+  console.log("errors", errors);
 
   const onSubmit: SubmitHandler<FieldValues> = ({ email, password }) => {
     if (mode === "로그인") {
@@ -109,7 +111,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     },
   };
 
-  const signInHandler = async ({ email, password }: Inputs) => {
+  const signInHandler = async ({ email, password }: FormValues) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -137,7 +139,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     address1,
     address2,
     nickname,
-  }: Inputs) => {
+  }: FormValues) => {
     try {
       const {
         data: { user },
@@ -186,91 +188,159 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   };
 
   return (
-    <FormContainer>
-      <h2>{mode === "로그인" ? "로그인" : "회원가입"}</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <input type="email" {...register("email", userEmail)} />
-          {errors?.email && ( // 에러 메시지
-            <div>{errors?.email?.message as string}</div>
-          )}
-        </div>
-
-        <div>
-          <input
-            type="password"
-            placeholder="비밀번호"
-            {...register("password", userPassword)}
-          />
-          {errors?.password && ( // 에러 메시지
-            <div>{errors?.password?.message as string}</div>
-          )}
-        </div>
-        {mode === "회원가입" && (
+    <StFormContainer>
+      <FormWrapper onSubmit={handleSubmit(onSubmit)}>
+        <h2>{mode === "로그인" ? "로그인" : "회원가입"}</h2>
+        <StInputSection>
           <div>
             <input
-              type="nickname"
-              placeholder="nickname"
-              {...register("nickname", userAddress)}
+              type="email"
+              placeholder="이메일"
+              {...register("email", userEmail)}
             />
-            {errors?.nickname && ( // 에러 메시지
-              <div>{errors?.nickname?.message as string}</div>
-            )}
-            <input
-              type="address1"
-              placeholder="주소1"
-              {...register("address1", userAddress)}
-            />
-            {errors?.address1 && ( // 에러 메시지
-              <div>{errors?.address1?.message as string}</div>
-            )}
-            <input
-              type="address2"
-              placeholder="주소2"
-              {...register("address2", userAddress)}
-            />
-            {errors?.address2 && ( // 에러 메시지
-              <div>{errors?.address2?.message as string}</div>
+            {errors?.email && ( // 에러 메시지
+              <div>{errors?.email?.message as string}</div>
             )}
           </div>
-        )}
+          <div>
+            <input
+              type="password"
+              placeholder="비밀번호"
+              {...register("password", userPassword)}
+            />
+            {errors?.password && ( // 에러 메시지
+              <div>{errors?.password?.message as string}</div>
+            )}
+          </div>
+          {mode === "회원가입" && (
+            <>
+              <div>
+                <input
+                  type="nickname"
+                  placeholder="닉네임"
+                  {...register("nickname", nickname)}
+                />
+                {errors?.nickname && ( // 에러 메시지
+                  <div>{errors?.nickname?.message as string}</div>
+                )}
+              </div>
+              <div>
+                <input
+                  type="address1"
+                  placeholder="주소"
+                  {...register("address1", userAddress)}
+                />
+                {errors?.address1 && ( // 에러 메시지
+                  <div>{errors?.address1?.message as string}</div>
+                )}
+              </div>
 
-        {mode === "로그인" ? (
-          <>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={handleSubmit(signInHandler)}
-            >
-              로그인하기
-            </Button>
-            <button onClick={onClickHandler}>
-              아직 계정이 없으신가요? 회원가입
-            </button>
-          </>
-        ) : (
-          <>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={handleSubmit(signUpHandler)}
-            >
-              회원가입하기
-            </Button>
-            <button onClick={onClickHandler}>
-              이미 계정이 있으신가요? 로그인
-            </button>
-          </>
-        )}
-      </form>
-    </FormContainer>
+              <div>
+                <input
+                  type="address2"
+                  placeholder="상세주소"
+                  {...register("address2", userAddress)}
+                />
+                {errors?.address2 && ( // 에러 메시지
+                  <div>{errors?.address2?.message as string}</div>
+                )}
+              </div>
+            </>
+          )}
+        </StInputSection>
+
+        <StButtonSection>
+          {mode === "로그인" ? (
+            <>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={handleSubmit(signInHandler)}
+              >
+                로그인하기
+              </Button>
+              <p>
+                아직 계정이 없으신가요?{" "}
+                <span onClick={onClickHandler}>회원가입</span>
+              </p>
+            </>
+          ) : (
+            <>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={handleSubmit(signUpHandler)}
+              >
+                회원가입하기
+              </Button>
+              <p>
+                이미 계정이 있으신가요?{" "}
+                <span onClick={onClickHandler}>로그인</span>{" "}
+              </p>
+            </>
+          )}
+        </StButtonSection>
+      </FormWrapper>
+    </StFormContainer>
   );
 };
 
-const FormContainer = styled.div`
+const StFormContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  margin: auto;
+  width: 650px;
+  max-width: 650px;
+  margin-top: 50px;
+
+  h2 {
+    font-size: large;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+`;
+
+const FormWrapper = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  gap: 1rem;
+  background-color: #eee;
   padding: 2rem;
+  min-height: 400px;
+`;
+
+const StInputSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background-color: aliceblue; */
+  width: 100%;
+
+  input {
+    width: 300px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+  }
+`;
+
+const StButtonSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  span {
+    cursor: pointer;
+    font-size: small;
+    font-weight: 500;
+  }
 `;
 
 export default LoginForm;

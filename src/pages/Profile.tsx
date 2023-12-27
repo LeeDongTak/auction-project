@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { fetchGetAuctions } from "../api/auction";
+import MyPagePosts from "../components/MyPagePosts/MyPagePosts";
+import UserProfile from "../components/UserProfile/UserProfile";
 import { supabase } from "../supabase";
-import { Auction_post, Category } from "../types/databaseRetrunTypes";
 
 interface UserInfo {
   id: string;
@@ -13,32 +12,6 @@ interface UserInfo {
 const Profile = () => {
   const [userId, setUserId] = useState<string>("");
   const [user, setUser] = useState<UserInfo>();
-
-  const queryOption = {
-    searchKeyword: "",
-    categories: [] as Pick<Category, "category_id">[],
-    limit: 20,
-    offset: 0,
-    orderBy: "created_at",
-    order: false,
-    user_id: userId,
-  };
-
-  const { data: posts } = useQuery<Auction_post[]>({
-    queryKey: ["posts"],
-    queryFn: () =>
-      fetchGetAuctions(
-        queryOption.searchKeyword,
-        queryOption.categories,
-        queryOption.limit,
-        queryOption.offset,
-        queryOption.orderBy,
-        queryOption.order,
-        queryOption.user_id
-      ),
-  });
-
-  console.log(posts);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -57,10 +30,10 @@ const Profile = () => {
 
   return (
     <div>
-      <p>hihi</p>
-      <p>{user?.nickname}</p>
-      <p>{user?.id}</p>
-      <p>{user?.email}</p>
+      {/* 프로필 */}
+      <UserProfile />
+      {/* 리스트 컨테이너 - 메뉴, 리스트 */}
+      <MyPagePosts userId={userId} />
     </div>
   );
 };
