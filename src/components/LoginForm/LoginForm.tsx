@@ -2,6 +2,7 @@ import { Button } from "antd";
 import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
 import { supabase } from "../../supabase";
 
 interface SignFormProps {
@@ -94,11 +95,13 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     },
   };
 
+  // TODO: 회원가입 주소 추가하기 (userInfo 저장)
+
   const signInHandler = async ({ email, password }: Inputs) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: "10141014@gmail.com",
+        password: "10141014",
       });
 
       console.log(email, password);
@@ -107,7 +110,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
         alert("아이디 또는 비밀번호를 확인해주세요");
       } else {
         alert("성공적으로 로그인 되었습니다!");
-        navigate("/");
+        // navigate("/");
       }
 
       console.log(data);
@@ -151,7 +154,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   };
 
   return (
-    <div>
+    <FormContainer>
       <h2>{mode === "로그인" ? "로그인" : "회원가입"}</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
@@ -212,8 +215,14 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
           </>
         )}
       </form>
-    </div>
+    </FormContainer>
   );
 };
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+`;
 
 export default LoginForm;
