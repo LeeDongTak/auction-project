@@ -14,8 +14,6 @@ export async function fetchGetAuctions(
   orderBy: string = "created_at",
   order: boolean = false
 ) {
-  let query = "";
-
   const { data } = await connectSupabase
     .from("auction_post")
     .select("*, category(category_name), user_info(user_email)")
