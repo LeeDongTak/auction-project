@@ -6,6 +6,9 @@ import { Auction_post } from "../types/databaseRetrunTypes";
 import placeholder from "../images/placeholder.svg";
 import DetailInfo from "../components/detail/DetailInfo";
 import DetailContent from "../components/detail/DetailContent";
+import DetailTimeStamp from "../components/detail/DetailTimeStamp";
+import { Spacer } from "../components/ui/Spacer";
+import useAuctionStatus from "../hooks/useAuctionStatus";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -15,8 +18,9 @@ const Detail = () => {
     queryOptions: { staleTime: Infinity },
   };
   const data = useCustomQuery<Auction_post, Error>(queryOptions);
-
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
+
+  const { auctionTimeStamp, auctionOver } = useAuctionStatus(data);
 
   return (
     <StDetailWrapper>
@@ -26,6 +30,12 @@ const Detail = () => {
         </StDetailImgWrapper>
         <DetailInfo auctionData={data} />
       </StDetailInfo>
+      <Spacer y={40} />
+      <DetailTimeStamp
+        auctionOver={auctionOver}
+        auctionTimeStamp={auctionTimeStamp}
+      />
+      <Spacer y={20} />
       <DetailContent auctionContent={data?.content} />
     </StDetailWrapper>
   );
