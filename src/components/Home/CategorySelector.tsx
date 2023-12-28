@@ -55,8 +55,9 @@ const StCategoryContainer = styled.div`
     width: 130px;
     height: 50px;
     font-weight: bold;
+    border-radius: 5px;
     font-size: 1.5rem;
-    border: 1px solid #afcaff;
+    border: 2px solid #afcaff;
     margin: 10px;
     &:hover {
       background-color: #fffacd !important;
