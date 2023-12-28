@@ -143,7 +143,7 @@ const GlobalStyle = styled.createGlobalStyle`
     width: 100vw;
     min-height: 100vh;
     height: 100%;
-    display: flex;
+
     position: relative;
   }
 `;
