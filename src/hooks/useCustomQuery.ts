@@ -4,7 +4,9 @@ import { useEffect } from "react";
 export function useCustomQuery<T, TError extends Error = Error>(
   queryOptions: UseQueryOptions<T, TError>
 ): T | undefined {
-  const { isLoading, isError, error, data } = useQuery<T, TError>(queryOptions);
+  const { isLoading, isError, error, data, refetch } = useQuery<T, TError>(
+    queryOptions
+  );
 
   useEffect(() => {
     // loading 처리

@@ -131,6 +131,21 @@ const GlobalStyle = styled.createGlobalStyle`
     border-collapse: collapse;
     border-spacing: 0;
   }
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 100vw;
+    min-height: 100vh;
+  }
+  #root {
+    width: 100vw;
+    min-height: 100vh;
+    height: 100%;
+    display: flex;
+    position: relative;
+  }
 `;
 
 export default GlobalStyle;

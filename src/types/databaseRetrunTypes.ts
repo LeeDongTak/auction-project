@@ -69,3 +69,13 @@ export interface Auction_like {
   user_info?: User_info;
   auction_post?: Auction_post;
 }
+
+export interface Bids {
+  bid_id: string /* primary key */;
+  created_at: string;
+  auction_id: string /* foreign key to auction_post.auction_id */;
+  user_id: string /* foreign key to user_info.user_id */;
+  bid_price: number;
+  auction_post?: Auction_post;
+  user_info?: User_info;
+}
