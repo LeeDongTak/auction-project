@@ -1,14 +1,21 @@
 import { useState } from "react";
+import { styled } from "styled-components";
 import LoginForm from "../components/LoginForm/LoginForm";
 
 const Auth = () => {
   const [mode, setMode] = useState("로그인");
 
   return (
-    <div>
+    <StAuthContainer>
       <LoginForm mode={mode} setMode={setMode} />
-    </div>
+    </StAuthContainer>
   );
 };
+
+const StAuthContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+`;
 
 export default Auth;
