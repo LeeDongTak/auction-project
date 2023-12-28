@@ -1,5 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import { Auction_post } from "../../types/databaseRetrunTypes";
 interface AuctionListProps {
@@ -7,15 +9,19 @@ interface AuctionListProps {
 }
 
 const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
+  const navigate = useNavigate();
   return (
     <StListwrapper>
       {auctions ? (
         <ul>
           {auctions.map((auction) => (
-            <li key={auction.auction_id}>
+            <li
+              key={auction.auction_id}
+              onClick={() => navigate(`/detail/${auction.auction_id}`)}
+            >
               <h6>
                 <img src={clock} />
-                {auction.auction_start_date}
+                {transDate(auction.created_at)}
               </h6>
               <h2> {auction.title}</h2>
               <p> {auction.content}</p>
@@ -42,6 +48,7 @@ const StListwrapper = styled.div`
       border: 2px solid #afcaff;
       padding: 15px 20px 15px 30px;
       line-height: 2rem;
+      cursor: pointer;
       border-radius: 10px;
       margin: 10px 0;
       position: relative;
