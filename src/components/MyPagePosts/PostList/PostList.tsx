@@ -21,7 +21,7 @@ const PostList = () => {
 
   const queryOption = {
     searchKeyword: "",
-    categories: [] as Pick<Category, "category_id">[],
+    categories: [] as Category[],
     limit: 20,
     offset: 0,
     orderBy: "created_at",
