@@ -15,7 +15,9 @@ const UserProfile = () => {
   );
   const userId = userData.user.id;
 
-  console.log(userId);
+  const socialLoginUser = userData.user.user_metadata;
+
+  console.log(socialLoginUser);
 
   const {
     data: user,
@@ -40,18 +42,33 @@ const UserProfile = () => {
 
   return (
     <StProfileContainer>
-      {user?.map((item) => (
+      {socialLoginUser ? (
         <>
-          {item.profile_image ? (
+          {socialLoginUser.avatar_url ? (
             <StImgBox>
-              <img src="" alt="user-image" />
+              <img src={socialLoginUser.avatar_url} alt="user-image" />
             </StImgBox>
           ) : (
             <Avatar shape="circle" size={64} icon={<UserOutlined />} />
           )}
-          <p>{item.nickname}</p>
+          <p>{socialLoginUser.user_name}</p>
         </>
-      ))}
+      ) : (
+        <>
+          {user?.map((item) => (
+            <>
+              {item.profile_image ? (
+                <StImgBox>
+                  <img src="" alt="user-image" />
+                </StImgBox>
+              ) : (
+                <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+              )}
+              <p>{item.nickname}</p>
+            </>
+          ))}
+        </>
+      )}
     </StProfileContainer>
   );
 };

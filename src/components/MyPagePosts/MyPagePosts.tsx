@@ -60,7 +60,6 @@ const StPostContainer = styled.div`
 const StCategoryWrapper = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   min-width: 10rem;
   padding: 1rem;
   font-size: small;
@@ -72,7 +71,9 @@ const StCategoryWrapper = styled.ul`
 
 const StCategory = styled.span<{ isActive: boolean }>`
   display: flex;
+  padding: 0.5rem;
   background-color: ${({ isActive }) => (isActive ? "#999" : "transparent")};
+  transition: all 0.3s ease-in-out;
 
   &:hover {
     background-color: ${({ isActive }) => (isActive ? "#999" : "#d9d9d9")};
