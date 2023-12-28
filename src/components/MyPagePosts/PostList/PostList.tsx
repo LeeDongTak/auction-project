@@ -4,9 +4,10 @@ import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
 import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
 import ListSkeleton from "../../ListSkeletom/ListSkeleton";
+import { StListWrapper } from "../MyPagePosts.styles";
 import PostItem from "./PostItem/PostItem";
 
-const PostList = () => {
+const PostList = ({ title }: { title: string }) => {
   // localstorage로 user-id 가져오기
   const userData = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
@@ -43,30 +44,24 @@ const PostList = () => {
     enabled: !!userId,
   });
 
+  console.log(posts);
+
   if (isLoading) {
     return <ListSkeleton />;
   }
 
   return (
-    <StPostListWrapper>
-      <h2>카테고리 이름</h2>
-      {posts?.map((post, index) => <PostItem post={post} key={index} />)}
+    <StListWrapper>
+      <h2>{title}</h2>
+      {posts?.length === 0 ? (
+        <div>포스트가 없습니다.</div>
+      ) : (
+        <>{posts?.map((post, index) => <PostItem post={post} key={index} />)}</>
+      )}
       <Pagination defaultCurrent={1} total={50} />
-    </StPostListWrapper>
+    </StListWrapper>
   );
 };
-
-const StPostListWrapper = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  h2 {
-    padding: 1rem 0;
-    font-size: medium;
-    font-weight: 500;
-  }
-`;
 
 const StSkeleton = styled.div`
   display: flex;
