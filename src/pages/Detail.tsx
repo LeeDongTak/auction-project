@@ -5,6 +5,7 @@ import { fetchGetAuctionById } from "../api/auction";
 import { Auction_post } from "../types/databaseRetrunTypes";
 import placeholder from "../images/placeholder.svg";
 import DetailInfo from "../components/detail/DetailInfo";
+import DetailContent from "../components/detail/DetailContent";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -25,6 +26,7 @@ const Detail = () => {
         </StDetailImgWrapper>
         <DetailInfo auctionData={data} />
       </StDetailInfo>
+      <DetailContent auctionContent={data?.content} />
     </StDetailWrapper>
   );
 };
@@ -37,7 +39,7 @@ const StDetailWrapper = styled.main`
 
 const StDetailInfo = styled.section`
   display: flex;
-  column-gap: 20px;
+  column-gap: 45px;
   margin: 0 auto;
   justify-content: center;
 `;

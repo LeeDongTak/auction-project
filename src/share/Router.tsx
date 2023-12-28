@@ -12,8 +12,8 @@ const Router = () => {
       <Routes>
         <Route path="/login" element={<Auth />} />
         <Route path="/" element={<Home />} />
+        <Route path="detail/:auctionId" element={<Detail />} />
         <Route path="/auth" element={<AuthLayout />}>
-          <Route path="detail/:auctionId" element={<Detail />} />
           <Route path="profile" element={<Profile />} />
           <Route path="addAuction" element={<AddAuction />} />
         </Route>
