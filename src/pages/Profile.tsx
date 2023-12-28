@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { styled } from "styled-components";
 import MyPagePosts from "../components/MyPagePosts/MyPagePosts";
 import UserProfile from "../components/UserProfile/UserProfile";
 import { supabase } from "../supabase";
@@ -29,13 +30,16 @@ const Profile = () => {
   console.log(userId);
 
   return (
-    <div>
-      {/* 프로필 */}
+    <StProfileContainer>
       <UserProfile />
-      {/* 리스트 컨테이너 - 메뉴, 리스트 */}
       <MyPagePosts userId={userId} />
-    </div>
+    </StProfileContainer>
   );
 };
+
+const StProfileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default Profile;

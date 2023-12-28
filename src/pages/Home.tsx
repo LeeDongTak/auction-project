@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Auction_post, Category } from "../types/databaseRetrunTypes";
 import { fetchGetAuctions } from "../api/auction";
+import { supabase } from "../supabase";
+import { Auction_post, Category } from "../types/databaseRetrunTypes";
 
 const Home = () => {
   const [auctionData, setAuctionData] = useState<Auction_post[] | null>();
@@ -25,6 +26,14 @@ const Home = () => {
       );
       setAuctionData(fetchData);
     })();
+  }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      console.log("현재 유저 정보", data);
+    };
+    fetchUser();
   }, []);
 
   console.log(auctionData);
