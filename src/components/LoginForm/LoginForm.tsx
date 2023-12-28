@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { addUser } from "../../api/auth";
 import { useAppDispatch } from "../../redux/config/configStore";
-import { toggleIsLogin } from "../../redux/modules/AuthSlice";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
 import SocialLogin from "./SocialLogin/SocialLogin";
@@ -71,7 +70,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   const userPassword = {
     required: "필수 입력란입니다.",
     minLength: {
-      value: 4,
+      value: 8,
       message: "최소 8자를 입력해주세요.",
     },
     maxLength: {
@@ -129,7 +128,6 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
         alert("아이디 또는 비밀번호를 확인해주세요");
       } else {
         alert("성공적으로 로그인 되었습니다!");
-        dispatch(toggleIsLogin(true));
         navigate("/");
       }
 
@@ -167,7 +165,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
           address1,
           address2,
           nickname,
-          profile_image: undefined,
+          profile_image: "/user_img.jpeg",
         };
 
         insertMutation.mutate(newUserInfo);

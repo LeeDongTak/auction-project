@@ -18,6 +18,8 @@ const UserProfile = () => {
 
   const socialLoginUser = userData.user_metadata;
 
+  console.log();
+
   const {
     data: user,
     isLoading,
@@ -29,7 +31,7 @@ const UserProfile = () => {
     enabled: !!userId,
   });
 
-  console.log(user);
+  console.log("user info", user);
 
   if (isLoading)
     return (
@@ -41,7 +43,7 @@ const UserProfile = () => {
 
   return (
     <StProfileContainer>
-      {socialLoginUser ? (
+      {!user?.[0] ? (
         <>
           {socialLoginUser.avatar_url ? (
             <StImgBox>
@@ -58,7 +60,7 @@ const UserProfile = () => {
             <>
               {item.profile_image ? (
                 <StImgBox>
-                  <img src="" alt="user-image" />
+                  <img src={item.profile_image} alt="user-image" />
                 </StImgBox>
               ) : (
                 <Avatar shape="circle" size={64} icon={<UserOutlined />} />

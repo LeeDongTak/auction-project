@@ -3,15 +3,15 @@ import { supabase } from "../../../supabase";
 
 const SocialLogin = () => {
   const onGoogleLoginHandler = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
-        },
-      },
     });
+
+    if (error) {
+      console.error("로그인 중 오류 발생!", error.message);
+    } else {
+      console.log(data);
+    }
   };
 
   const onGitHubLoginHandler = async () => {

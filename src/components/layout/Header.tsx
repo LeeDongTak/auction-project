@@ -1,15 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import search from "../../images/search.svg";
 import { supabase } from "../../supabase";
 
 function Header() {
-  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(false);
 
-  const accessToken = localStorage.getItem("accessToken");
-  console.log(accessToken);
+  const userData = JSON.parse(
+    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
+  );
+
+  useEffect(() => {
+    if (userData?.access_token) {
+      setIsLogin(true);
+    } else {
+      console.log("로그인 실패");
+      setIsLogin(false);
+    }
+  }, []);
 
   const signIn = () => {
     navigate("/login");
@@ -18,17 +28,17 @@ function Header() {
   const signOut = async () => {
     console.log("실행");
     const { error } = await supabase.auth.signOut();
+    setIsLogin(false);
+    alert("로그아웃 되었습니다.");
     console.log(error);
   };
-
-  console.log(isLogin);
 
   return (
     <StHeader>
       <p onClick={() => navigate("/")}>엘리트옥션</p>
       <div>
         <img src={search} />
-        {!!accessToken ? (
+        {isLogin ? (
           <button onClick={signOut}>로그아웃</button>
         ) : (
           <button onClick={signIn}>로그인</button>
