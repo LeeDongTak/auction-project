@@ -4,9 +4,9 @@ import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import transDate from "../../common/dayjs";
 import { Spacer } from "../ui/Spacer";
 import { ProductStatus, ShippingType } from "../../types/detailTyps";
+import { transDate } from "../../common/dayjs";
 
 type Props = {
   auctionData: Auction_post | undefined;
