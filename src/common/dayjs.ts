@@ -1,10 +1,5 @@
 import dayjs from "dayjs";
-import { AuctionStatus } from "../types/detailTyps";
-
-type TimeUntilReturn = {
-  message: string;
-  isOver: AuctionStatus.START | AuctionStatus.END;
-};
+import { AuctionStatus, TimeUntil } from "../types/detailTyps";
 
 export function transDate(date: Date | string) {
   return dayjs(date).format("YYYY. MM. DD");
@@ -13,10 +8,10 @@ export function transDate(date: Date | string) {
 export function calculateAuctionStatusAndTime(
   auctionStartDate: Date | string | undefined,
   auctionEndDate: Date | string | undefined
-): TimeUntilReturn {
+): TimeUntil {
   const result = {
-    message: "",
-    isOver: AuctionStatus.START | AuctionStatus.END | AuctionStatus.READY,
+    auctionTimeStamp: "",
+    auctionOver: AuctionStatus.START | AuctionStatus.END | AuctionStatus.READY,
   };
 
   const now = dayjs();
@@ -25,14 +20,14 @@ export function calculateAuctionStatusAndTime(
 
   // 경매가 아직 시작되지 않았을 경우
   if (now.isBefore(startDate)) {
-    result.isOver = AuctionStatus.READY;
+    result.auctionOver = AuctionStatus.READY;
     return result;
   }
 
   // 경매가 종료된 경우
   if (now.isAfter(endDate)) {
-    result.message = "경매가 종료되었습니다.";
-    result.isOver = AuctionStatus.END;
+    result.auctionTimeStamp = "경매가 종료되었습니다.";
+    result.auctionOver = AuctionStatus.END;
     return result;
   }
 
@@ -43,8 +38,8 @@ export function calculateAuctionStatusAndTime(
   const minutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
   const seconds = Math.floor((diff % (60 * 1000)) / 1000);
 
-  result.message = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음`;
-  result.isOver = AuctionStatus.START;
+  result.auctionTimeStamp = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음`;
+  result.auctionOver = AuctionStatus.START;
 
   return result;
 }

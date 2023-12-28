@@ -2,6 +2,12 @@ import { Auction_post } from "../types/databaseRetrunTypes";
 import { calculateAuctionStatusAndTime } from "../common/dayjs";
 import { useEffect, useRef, useState } from "react";
 import { AuctionStatus } from "../types/detailTyps";
+import { useAppDispatch, useAppSelector } from "../redux/config/configStore";
+import {
+  selectorAuctionTimeStamp,
+  setAuctionTimeStamp,
+} from "../redux/modules/auctionTimestampSlice";
+import { useSelector } from "react-redux";
 
 type Parameter =
   | Pick<
@@ -11,8 +17,10 @@ type Parameter =
   | undefined;
 
 const useAuctionStatus = (data: Parameter) => {
-  const [auctionTimeStamp, setAuctionTimeStamp] = useState<string>();
-  const [auctionOver, setAuctionOver] = useState<number>(0);
+  const dispatch = useAppDispatch();
+  const { auctionTimeStamp, auctionOver } = useSelector(
+    selectorAuctionTimeStamp
+  );
   const intervalRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -23,15 +31,15 @@ const useAuctionStatus = (data: Parameter) => {
       );
 
       // 조건부 업데이트
-      if (result.isOver !== auctionOver) {
-        setAuctionOver(result.isOver);
+      if (result.auctionOver !== auctionOver) {
+        dispatch(setAuctionTimeStamp(result));
       }
 
       if (
-        result.isOver === AuctionStatus.START &&
-        auctionTimeStamp !== result.message
+        result.auctionOver === AuctionStatus.START &&
+        auctionTimeStamp !== result.auctionTimeStamp
       ) {
-        setAuctionTimeStamp(result.message);
+        dispatch(setAuctionTimeStamp(result));
       }
     };
 
