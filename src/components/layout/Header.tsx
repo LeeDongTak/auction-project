@@ -1,9 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import search from "../../images/search.svg";
 function Header() {
+  const navigate = useNavigate();
+  const LogoClickHandler = () => {
+    navigate("/");
+  };
   return (
     <StHeader>
-      <p>엘리트옥션</p>
+      <p onClick={LogoClickHandler}>엘리트옥션</p>
       <div>
         <img src={search} />
         <button>로그인</button>
@@ -40,5 +45,9 @@ const StHeader = styled.header`
   img {
     width: 30px;
     cursor: pointer;
+  }
+  p {
+    cursor: pointer;
+    user-select: none;
   }
 `;
