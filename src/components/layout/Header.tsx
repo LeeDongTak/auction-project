@@ -57,7 +57,7 @@ const StHeader = styled.header`
   justify-content: space-between;
   padding: 15px 20px;
   align-items: center;
-  margin-bottom: 20px;
+
   button {
     border: none;
     font-size: 1.5rem;

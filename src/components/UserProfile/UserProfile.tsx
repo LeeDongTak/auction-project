@@ -81,7 +81,6 @@ const StProfileContainer = styled.div`
   gap: 1rem;
   padding: 2rem;
   font-size: 2rem;
-  border: 1px solid #222;
   background-color: #eee;
 `;
 
