@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchGetAuctions } from "../api/auction";
+import { supabase } from "../supabase";
 import AuctionList from "../components/Home/AuctionList";
 import CategorySelector from "../components/Home/CategorySelector";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";

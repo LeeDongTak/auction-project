@@ -21,10 +21,12 @@ export async function fetchGetAuctions(
   order: boolean = false,
   user_id: string = ""
 ) {
+
   console.log(categories);
   const categoryIds = categories.map((category) => {
     return category.category_id;
   });
+
   const query = connectSupabase
     .from("auction_post")
     .select("*, category(category_name), user_info(user_email)")

@@ -2,9 +2,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import template from "../modules/templateSlice";
 import auctionTimestamp from "../modules/auctionTimestampSlice";
+import profile from "../modules/profileSlice";
 
 const store = configureStore({
-  reducer: { template, auctionTimestamp },
+  reducer: { template, auctionTimestamp, profile },
 });
 
 type RootState = ReturnType<typeof store.getState>;

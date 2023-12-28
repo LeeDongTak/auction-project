@@ -1,11 +1,5 @@
-import type Icon from "@ant-design/icons";
 import { Avatar, List, Skeleton } from "antd";
 import React, { useEffect, useState } from "react";
-
-interface IconTextProps {
-  icon: typeof Icon;
-  text: React.ReactNode;
-}
 
 interface listDataValues {
   title: string;
@@ -46,8 +40,8 @@ const ListSkeleton: React.FC = () => {
               loading={isLoading}
               active
               avatar
-              title={{ width: "100px" }}
-              paragraph={{ width: "400px", rows: 2 }}
+              title={{ width: "150px" }}
+              paragraph={{ width: "400px", rows: 3 }}
             >
               <List.Item.Meta
                 avatar={<Avatar src={item.avatar} />}

@@ -1,24 +1,25 @@
+import React from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useCustomQuery } from "../hooks/useCustomQuery";
 import { fetchGetAuctionById } from "../api/auction";
-import { Auction_post } from "../types/databaseRetrunTypes";
-import placeholder from "../images/placeholder.svg";
-import DetailInfo from "../components/detail/DetailInfo";
 import DetailContent from "../components/detail/DetailContent";
+import DetailInfo from "../components/detail/DetailInfo";
 import DetailTimeStamp from "../components/detail/DetailTimeStamp";
 import { Spacer } from "../components/ui/Spacer";
 import useAuctionStatus from "../hooks/useAuctionStatus";
-import React from "react";
+import { useCustomQuery } from "../hooks/useCustomQuery";
+import placeholder from "../images/placeholder.svg";
+import { Auction_post } from "../types/databaseRetrunTypes";
 
 const Detail = () => {
   const { auctionId } = useParams();
-  const queryOptions = {
+  const queryAuctionOptions = {
     queryKey: ["getAuction"],
     queryFn: () => fetchGetAuctionById(auctionId!),
     queryOptions: { staleTime: Infinity },
   };
-  const data = useCustomQuery<Auction_post, Error>(queryOptions);
+
+  const data = useCustomQuery<Auction_post, Error>(queryAuctionOptions);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
 
   useAuctionStatus(data);
