@@ -1,13 +1,14 @@
 import { styled } from "styled-components";
 import { Spacer } from "../ui/Spacer";
 import { AuctionStatus } from "../../types/detailTyps";
+import { useSelector } from "react-redux";
+import { selectorAuctionTimeStamp } from "../../redux/modules/auctionTimestampSlice";
 
-type Props = {
-  auctionOver: AuctionStatus;
-  auctionTimeStamp: string | undefined;
-};
+const DetailTimeStamp = () => {
+  const { auctionOver, auctionTimeStamp } = useSelector(
+    selectorAuctionTimeStamp
+  );
 
-const DetailTimeStamp = ({ auctionOver, auctionTimeStamp }: Props) => {
   return (
     <StTimeStampWrapper>
       {auctionOver === AuctionStatus.READY && (

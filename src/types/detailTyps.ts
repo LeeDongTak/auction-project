@@ -15,3 +15,8 @@ export enum AuctionStatus {
   START,
   END,
 }
+
+export type TimeUntil = {
+  auctionTimeStamp: string;
+  auctionOver: AuctionStatus;
+};

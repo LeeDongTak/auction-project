@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import React from "react";
 
 type Props = {
   auctionContent: string | undefined;
@@ -18,4 +19,4 @@ const StDetailContentWrapper = styled.section`
   line-height: 1.5;
   padding: 20px;
 `;
-export default DetailContent;
+export default React.memo(DetailContent);

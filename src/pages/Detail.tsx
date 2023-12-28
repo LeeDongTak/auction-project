@@ -9,6 +9,7 @@ import DetailContent from "../components/detail/DetailContent";
 import DetailTimeStamp from "../components/detail/DetailTimeStamp";
 import { Spacer } from "../components/ui/Spacer";
 import useAuctionStatus from "../hooks/useAuctionStatus";
+import React from "react";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -20,7 +21,7 @@ const Detail = () => {
   const data = useCustomQuery<Auction_post, Error>(queryOptions);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
 
-  const { auctionTimeStamp, auctionOver } = useAuctionStatus(data);
+  useAuctionStatus(data);
 
   return (
     <StDetailWrapper>
@@ -31,10 +32,7 @@ const Detail = () => {
         <DetailInfo auctionData={data} />
       </StDetailInfo>
       <Spacer y={40} />
-      <DetailTimeStamp
-        auctionOver={auctionOver}
-        auctionTimeStamp={auctionTimeStamp}
-      />
+      <DetailTimeStamp />
       <Spacer y={20} />
       <DetailContent auctionContent={data?.content} />
     </StDetailWrapper>
@@ -61,4 +59,4 @@ const StDetailImgWrapper = styled.div`
   }
 `;
 
-export default Detail;
+export default React.memo(Detail);
