@@ -9,3 +9,14 @@ export enum ProductStatus {
   B, // 중
   C, // 하
 }
+
+export enum AuctionStatus {
+  READY,
+  START,
+  END,
+}
+
+export type TimeUntil = {
+  auctionTimeStamp: string;
+  auctionOver: AuctionStatus;
+};

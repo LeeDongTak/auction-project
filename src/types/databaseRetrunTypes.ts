@@ -18,8 +18,8 @@ export interface Auction_answer {
 }
 
 export interface Category {
-  category_id: string /* primary key */;
-  created_at: string;
+  category_id?: string /* primary key */;
+  created_at?: string;
   category_name: string;
 }
 
