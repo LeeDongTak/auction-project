@@ -1,27 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "antd";
-import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
-import { supabase } from "../../../supabase";
 import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
 import ListSkeleton from "../../ListSkeletom/ListSkeleton";
 import PostItem from "./PostItem/PostItem";
 
 const PostList = () => {
-  const [userId, setUserId] = useState<string>("");
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUserId(data.user?.id as string);
-    };
-    fetchUser();
-  }, []);
+  // localstorage로 user-id 가져오기
+  const userData = JSON.parse(
+    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
+  );
+  const userId = userData.user.id;
 
   const queryOption = {
     searchKeyword: "",
-    categories: [] as Pick<Category, "category_id">[],
+    categories: [] as Category[],
     limit: 20,
     offset: 0,
     orderBy: "created_at",
@@ -46,6 +40,7 @@ const PostList = () => {
         queryOption.order,
         queryOption.user_id
       ),
+    enabled: !!userId,
   });
 
   if (isLoading) {
@@ -54,6 +49,7 @@ const PostList = () => {
 
   return (
     <StPostListWrapper>
+      <h2>카테고리 이름</h2>
       {posts?.map((post, index) => <PostItem post={post} key={index} />)}
       <Pagination defaultCurrent={1} total={50} />
     </StPostListWrapper>
@@ -63,8 +59,13 @@ const PostList = () => {
 const StPostListWrapper = styled.ul`
   display: flex;
   flex-direction: column;
-  padding: 1rem;
   gap: 1rem;
+
+  h2 {
+    padding: 1rem 0;
+    font-size: medium;
+    font-weight: 500;
+  }
 `;
 
 const StSkeleton = styled.div`

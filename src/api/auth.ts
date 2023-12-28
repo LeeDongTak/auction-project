@@ -15,8 +15,8 @@ const signUp = async ({ email, password }: Inputs) => {
   return response;
 };
 
-// 유저 데이터 불러오기
-const getUserInfo = async () => {
+// 모든 유저 데이터 불러오기
+const getUsersInfo = async () => {
   const { data, error } = await supabase
     .from("user_info")
     .select("*")
@@ -25,8 +25,22 @@ const getUserInfo = async () => {
   return data;
 };
 
+// 특정 유저 데이터 불러오기
+const getUserInfo = async (id: string) => {
+  console.log(id);
+  const { data: user_info, error } = await supabase
+    .from("user_info")
+    .select("*")
+    .eq("user_id", id);
+
+  console.log(user_info);
+  console.log(error);
+
+  return user_info as User_info[];
+};
+
 // 유저 데이터 추가하기
-const setUserInfo = async (payload: User_info) => {
+const addUser = async (payload: User_info) => {
   console.log(payload);
 
   const { data, error } = await supabase
@@ -34,8 +48,8 @@ const setUserInfo = async (payload: User_info) => {
     .insert(payload)
     .select();
 
-  console.log("setUserInfo ", error);
-  console.log("setUserInfo ", data);
+  console.log("addUser ", error);
+  console.log("addUser ", data);
 };
 
-export { signUp, getUserInfo, setUserInfo };
+export { signUp, getUserInfo, getUsersInfo, addUser };

@@ -14,13 +14,19 @@ import connectSupabase from "./connectSupabase";
  */
 export async function fetchGetAuctions(
   searchKeyword: string = "",
-  categories: Pick<Category, "category_id">[],
+  categories: Category[],
   limit: number = 20,
   offset: number = 0,
   orderBy: string = "created_at",
   order: boolean = false,
   user_id: string = ""
 ) {
+
+  console.log(categories);
+  const categoryIds = categories.map((category) => {
+    return category.category_id;
+  });
+
   const query = connectSupabase
     .from("auction_post")
     .select("*, category(category_name), user_info(user_email)")
@@ -34,11 +40,11 @@ export async function fetchGetAuctions(
   user_id.trim() !== "" && query.eq("user_id", user_id);
 
   if (categories.length > 0) {
-    query.in("category_id", categories);
+    query.in("category_id", categoryIds);
   }
 
   const { data, error } = await query.returns<Auction_post[]>();
-
+  console.log(data);
   if (error) throw new Error(error.message);
 
   return data;

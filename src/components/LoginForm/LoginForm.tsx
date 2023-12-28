@@ -4,9 +4,10 @@ import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { setUserInfo } from "../../api/auth";
+import { addUser } from "../../api/auth";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
+import SocialLogin from "./SocialLogin/SocialLogin";
 
 interface SignFormProps {
   mode: string;
@@ -25,7 +26,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   const queryClient = new QueryClient();
 
   const insertMutation = useMutation({
-    mutationFn: setUserInfo,
+    mutationFn: addUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
@@ -90,12 +91,12 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   const userAddress = {
     required: "필수 입력란입니다.",
     minLength: {
-      value: 1,
-      message: "최소 1자를 입력해주세요.",
+      value: 3,
+      message: "주소의 길이가 너무 짧습니다.",
     },
     maxLength: {
-      value: 10,
-      message: "최대 10자까지 입력하실 수 있습니다.",
+      value: 20,
+      message: "최대 20자까지 입력하실 수 있습니다.",
     },
   };
 
@@ -151,6 +152,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
 
       if (error) {
         console.log(error);
+
         alert("아이디와 비밀번호를 확인해주세요");
       } else {
         const newUserInfo: User_info = {
@@ -162,7 +164,6 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
           nickname,
           profile_image: undefined,
         };
-        console.log(newUserInfo);
 
         insertMutation.mutate(newUserInfo);
 
@@ -252,6 +253,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
         <StButtonSection>
           {mode === "로그인" ? (
             <>
+              <SocialLogin />
               <Button
                 type="primary"
                 htmlType="submit"
