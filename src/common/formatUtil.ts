@@ -27,3 +27,15 @@ export function formatAuctionStatusByButton(status: AuctionStatus) {
       return "입찰하기";
   }
 }
+
+export function formatBidPriceByComma(price: number | string = 0) {
+  // 숫자와 쉼표를 제외한 모든 문자를 제거
+  const onlyNumbersAndCommas = String(price).replace(/[^\d,]/g, "");
+
+  // 제일 앞이 0이면 0 삭제
+  const withoutLeadingZeros = onlyNumbersAndCommas.replace(/^0+/, "");
+
+  return withoutLeadingZeros
+    .replace(/,/g, "") // 먼저 기존의 쉼표를 모두 제거
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 새로운 포맷 적용
+}
