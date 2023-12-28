@@ -1,8 +1,8 @@
 import { Auction_post } from "../types/databaseRetrunTypes";
 import { calculateAuctionStatusAndTime } from "../common/dayjs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AuctionStatus } from "../types/detailTyps";
-import { useAppDispatch, useAppSelector } from "../redux/config/configStore";
+import { useAppDispatch } from "../redux/config/configStore";
 import {
   selectorAuctionTimeStamp,
   setAuctionTimeStamp,

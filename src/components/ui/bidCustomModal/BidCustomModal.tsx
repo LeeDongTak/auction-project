@@ -11,11 +11,14 @@ import {
   selectorBidCustomModal,
 } from "../../../redux/modules/bidCustomModalSlice";
 import { useSelector } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BidCustomModal = () => {
+  const queryClient = useQueryClient();
   const [bidPriceState, setBidPriceState] = useState<string>("0");
   const dispatch = useAppDispatch();
-  const { isOpen } = useSelector(selectorBidCustomModal);
+  const { isOpen, maxBidPrice } = useSelector(selectorBidCustomModal);
+
   const onChangePriceHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setBidPriceState(formatBidPriceByComma(e.target.value));
   };
@@ -26,15 +29,21 @@ const BidCustomModal = () => {
     }
   };
 
+  const onSubmitBidHandler = (e: React.FormEvent<unknown>) => {
+    e.preventDefault();
+    queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
+    console.log("maxBidPrice in submit ", maxBidPrice);
+  };
+
   return (
     <StCustomModalWrapper onClick={onClickCloseModalHandler} $isOpen={isOpen}>
       <StCustomModalContentWrapper>
         <div>
           <h1>현재 최고 입찰가</h1>
-          <span> ₩ {formatNumberWithCommas(1000000)}</span>
+          <span> ₩ {formatNumberWithCommas(maxBidPrice)}</span>
         </div>
         <Spacer y={70} />
-        <StBidForm>
+        <StBidForm onSubmit={onSubmitBidHandler}>
           <label htmlFor="bid_price">
             <input
               type="text"
@@ -147,6 +156,7 @@ const StCloseButton = styled.div`
       background-color: unset;
       border: unset;
       width: 40px;
+      height: 40px;
     }
     > button::after,
     > button::before {

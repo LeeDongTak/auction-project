@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
 import { transDate } from "../../common/dayjs";
@@ -12,6 +12,12 @@ import { Auction_post, Bids } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
+import { BID_REFETCH_COUNTER } from "../../query/keys.constant";
+import connectSupabase from "../../api/connectSupabase";
+import {
+  RealtimePostgresChangesPayload,
+  RealtimePostgresInsertPayload,
+} from "@supabase/supabase-js";
 
 type Props = {
   auctionData: Auction_post | undefined;
@@ -32,11 +38,45 @@ const DetailInfo = ({ auctionData }: Props) => {
   const queryBidOptions = {
     queryKey: ["getBidMaxPrice"],
     queryFn: () => fetchAuctionMaxBid(auctionData?.auction_id!),
-    refetchInterval: 10000,
+    refetchInterval: BID_REFETCH_COUNTER,
     // ^^7 (갓진호 킹진호 신진호 미친진호 킹갓제너럴진호)
     enabled: !!auctionData?.auction_id,
+    staleTime: Infinity,
   };
   const bidData = useCustomQuery<Bids, Error>(queryBidOptions);
+
+  useEffect(() => {
+    const changeObserverHandler = async (
+      payload:
+        | RealtimePostgresChangesPayload<Bids>
+        | RealtimePostgresInsertPayload<Bids>
+    ) => {
+      if ("auction_id" in payload.new) {
+        if (payload.new.auction_id === auctionData?.auction_id) {
+          queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
+        }
+      }
+    };
+
+    const subscription = connectSupabase
+      .channel("bids")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "bids" },
+        changeObserverHandler
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "bids" },
+        changeObserverHandler
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [auctionData?.auction_id]);
+
   return (
     <StDetailInfoWrapper>
       <div>
@@ -83,7 +123,7 @@ const DetailInfo = ({ auctionData }: Props) => {
       <Spacer y={SPACER_LITERARY} />
 
       {/* 경매 시작 전, 진행, 경매 종료 */}
-      <BidButton />
+      <BidButton maxBidPrice={bidData?.bid_price} />
     </StDetailInfoWrapper>
   );
 };
