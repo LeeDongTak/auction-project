@@ -42,7 +42,7 @@ const Home = () => {
   }, [selectedCategories]);
 
   // 카테고리 선택 핸들러
-  const handleCategorySelect = (category: Category) => {
+  const categorySelectHandler = (category: Category) => {
     console.log(category);
     setSelectedCategories((prev) => {
       // 이미 선택된 카테고리를 다시 클릭하면 제거, 아니면 추가
@@ -54,10 +54,14 @@ const Home = () => {
     });
   };
 
+  console.log(selectedCategories);
   return (
     <div>
       {/* 카테고리 선택 컴포넌트 */}
-      <CategorySelector onCategorySelect={handleCategorySelect} />
+      <CategorySelector
+        onCategorySelect={categorySelectHandler}
+        selectedCategories={selectedCategories}
+      />
       {/* 경매 목록 컴포넌트 */}
       <AuctionList auctions={auctionData} />
     </div>
