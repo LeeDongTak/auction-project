@@ -2,7 +2,6 @@ import { Bids } from "../types/databaseRetrunTypes";
 import connectSupabase from "./connectSupabase";
 
 export const fetchAuctionMaxBid = async (auction_id: string): Promise<Bids> => {
-  console.log("fetchAuctionMaxBid => ", auction_id);
   const { data, error } = await connectSupabase
     .from("bids")
     .select("*")

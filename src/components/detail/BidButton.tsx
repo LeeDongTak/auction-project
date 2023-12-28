@@ -3,14 +3,21 @@ import { AuctionStatus } from "../../types/detailTyps";
 import { styled } from "styled-components";
 import { selectorAuctionTimeStamp } from "../../redux/modules/auctionTimestampSlice";
 import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../redux/config/configStore";
+import { openBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
 
 const BidButton = () => {
+  const dispatch = useAppDispatch();
   const { auctionTimeStamp, auctionOver } = useSelector(
     selectorAuctionTimeStamp
   );
 
+  const onClickBidCustomModalOpenHandler = () => {
+    dispatch(openBidCustomModal());
+  };
+
   return (
-    <StButton $isOver={auctionOver}>
+    <StButton $isOver={auctionOver} onClick={onClickBidCustomModalOpenHandler}>
       {formatAuctionStatusByButton(auctionOver)}
     </StButton>
   );
