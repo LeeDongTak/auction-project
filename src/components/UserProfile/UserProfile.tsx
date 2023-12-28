@@ -10,14 +10,13 @@ type AvatarShapeType = "circle" | "square";
 const UserProfile = () => {
   const [avatarShape, setAvatarShape] = useState<AvatarShapeType>("circle");
 
-  const userData = JSON.parse(
+  const { user: userData } = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
-  const userId = userData.user.id;
 
-  const socialLoginUser = userData.user.user_metadata;
+  const userId = userData.id;
 
-  console.log(socialLoginUser);
+  const socialLoginUser = userData.user_metadata;
 
   const {
     data: user,

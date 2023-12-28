@@ -5,14 +5,18 @@ import { useState } from "react";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../../api/auth";
 import { QUERY_KEYS } from "../../../query/keys.constant";
+import { StListWrapper } from "../../MyPagePosts/MyPagePosts.styles";
 
 const EditProfile = ({ title }: { title: string }) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  const userData = JSON.parse(
+  const { user: userData } = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
-  const userId = userData.user.id;
+
+  const userId = userData.id;
+
+  const socialLoginUser = userData.user_metadata;
 
   const { data: user } = useQuery({
     queryKey: [QUERY_KEYS.USER],
@@ -43,28 +47,49 @@ const EditProfile = ({ title }: { title: string }) => {
   };
 
   return (
-    <StEditProfileWrapper>
-      <h3>{title}</h3>
-
+    <StListWrapper>
+      <h2>{title}</h2>
       <div>
-        {user?.map((item) => (
+        {socialLoginUser ? (
           <>
             <StTopSection>
-              {item.profile_image ? (
+              {socialLoginUser.avatar_url ? (
                 <StImgBox>
-                  <img src="" alt="user-image" />
+                  <img src={socialLoginUser.avatar_url} alt="user-image" />
                 </StImgBox>
               ) : (
                 <Avatar shape="circle" size={64} icon={<UserOutlined />} />
               )}
-              <p>{item.nickname}</p>
+              <p>{socialLoginUser.user_name}</p>
             </StTopSection>
             <section>
-              <p>{item.address1}</p>
-              <p>{item.address2}</p>
+              <p>{socialLoginUser.address1 || "현재 주소가 없습니다."}</p>
+              <p>{socialLoginUser.address2 || "현재 상세주소가 없습니다."}</p>
             </section>
           </>
-        ))}
+        ) : (
+          <>
+            {user?.map((item) => (
+              <>
+                <StTopSection>
+                  {item.profile_image ? (
+                    <StImgBox>
+                      <img src="" alt="user-image" />
+                    </StImgBox>
+                  ) : (
+                    <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+                  )}
+                  <p>{item.nickname}</p>
+                </StTopSection>
+                <section>
+                  <p>{item.address1}</p>
+                  <p>{item.address2}</p>
+                </section>
+              </>
+            ))}
+          </>
+        )}
+
         <ButtonSection>
           {isEdit ? (
             <>
@@ -76,22 +101,9 @@ const EditProfile = ({ title }: { title: string }) => {
           )}
         </ButtonSection>
       </div>
-    </StEditProfileWrapper>
+    </StListWrapper>
   );
 };
-
-const StEditProfileWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  width: 100%;
-
-  h3 {
-    font-size: medium;
-    font-weight: 500;
-  }
-`;
 
 const StTopSection = styled.section`
   display: flex;

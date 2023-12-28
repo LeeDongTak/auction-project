@@ -4,6 +4,7 @@ import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
 import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
 import ListSkeleton from "../../ListSkeletom/ListSkeleton";
+import { StListWrapper } from "../MyPagePosts.styles";
 import PostItem from "./PostItem/PostItem";
 
 const PostList = ({ title }: { title: string }) => {
@@ -50,7 +51,7 @@ const PostList = ({ title }: { title: string }) => {
   }
 
   return (
-    <StPostListWrapper>
+    <StListWrapper>
       <h2>{title}</h2>
       {posts?.length === 0 ? (
         <div>포스트가 없습니다.</div>
@@ -58,21 +59,9 @@ const PostList = ({ title }: { title: string }) => {
         <>{posts?.map((post, index) => <PostItem post={post} key={index} />)}</>
       )}
       <Pagination defaultCurrent={1} total={50} />
-    </StPostListWrapper>
+    </StListWrapper>
   );
 };
-
-const StPostListWrapper = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  h2 {
-    padding: 1rem 0;
-    font-size: medium;
-    font-weight: 500;
-  }
-`;
 
 const StSkeleton = styled.div`
   display: flex;

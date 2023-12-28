@@ -1,8 +1,10 @@
+import { StListWrapper } from "../MyPagePosts.styles";
+
 const WishList = ({ title }: { title: string }) => {
   return (
-    <div>
-      <h3>{title}</h3>
-    </div>
+    <StListWrapper>
+      <h2>{title}</h2>
+    </StListWrapper>
   );
 };
 
