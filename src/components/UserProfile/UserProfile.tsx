@@ -1,5 +1,6 @@
+import { UserOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "antd";
+import { Avatar, Skeleton } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../api/auth";
@@ -37,10 +38,18 @@ const UserProfile = () => {
 
   return (
     <StProfileContainer>
-      <StImgBox>
-        <img src="" alt="img" />
-      </StImgBox>
-      {user?.map((item) => <p>{item.nickname}</p>)}
+      {user?.map((item) => (
+        <>
+          {item.profile_image ? (
+            <StImgBox>
+              <img src="" alt="user-image" />
+            </StImgBox>
+          ) : (
+            <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+          )}
+          <p>{item.nickname}</p>
+        </>
+      ))}
     </StProfileContainer>
   );
 };
@@ -61,6 +70,12 @@ const StImgBox = styled.div`
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    width: inherit;
+    height: inherit;
+  }
 `;
 
 const StSkeleton = styled.div`
