@@ -53,19 +53,19 @@ export interface Database {
           auction_id: string
           created_at: string
           image_id: string
-          image_path: string | null
+          image_path: string
         }
         Insert: {
           auction_id: string
           created_at?: string
           image_id?: string
-          image_path?: string | null
+          image_path: string
         }
         Update: {
           auction_id?: string
           created_at?: string
           image_id?: string
-          image_path?: string | null
+          image_path?: string
         }
         Relationships: [
           {
@@ -218,6 +218,45 @@ export interface Database {
           }
         ]
       }
+      bids: {
+        Row: {
+          auction_id: string
+          bid_id: string
+          bid_price: number
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          auction_id: string
+          bid_id?: string
+          bid_price: number
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          auction_id?: string
+          bid_id?: string
+          bid_price?: number
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auction_post"
+            referencedColumns: ["auction_id"]
+          },
+          {
+            foreignKeyName: "bids_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_info"
+            referencedColumns: ["user_id"]
+          }
+        ]
+      }
       category: {
         Row: {
           category_id: string
@@ -241,6 +280,7 @@ export interface Database {
           address1: string | null
           address2: string | null
           created_at: string
+          nickname: string | null
           profile_image: string | null
           user_email: string
           user_id: string
@@ -249,6 +289,7 @@ export interface Database {
           address1?: string | null
           address2?: string | null
           created_at?: string
+          nickname?: string | null
           profile_image?: string | null
           user_email?: string
           user_id?: string
@@ -257,6 +298,7 @@ export interface Database {
           address1?: string | null
           address2?: string | null
           created_at?: string
+          nickname?: string | null
           profile_image?: string | null
           user_email?: string
           user_id?: string

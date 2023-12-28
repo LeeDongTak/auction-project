@@ -4,9 +4,11 @@ import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import transDate from "../../common/dayjs";
 import { Spacer } from "../ui/Spacer";
-import { ProductStatus, ShippingType } from "../../types/detailTyps";
+import { ShippingType } from "../../types/detailTyps";
+import { transDate } from "../../common/dayjs";
+import BidButton from "./BidButton";
+import React from "react";
 
 type Props = {
   auctionData: Auction_post | undefined;
@@ -66,7 +68,9 @@ const DetailInfo = ({ auctionData }: Props) => {
         <span>{formatProductStatus(Number(auctionData?.product_status))}</span>
       </StAuctionStatusWrapper>
       <Spacer y={SPACER_LITERARY} />
-      <StButton>입찰하기</StButton>
+
+      {/* 경매 시작 전, 진행, 경매 종료 */}
+      <BidButton />
     </StDetailInfoWrapper>
   );
 };
@@ -101,19 +105,4 @@ const StAuctionStatusWrapper = styled.div`
   font-weight: bold;
 `;
 
-const StButton = styled.button`
-  border: 1px solid rgba(0, 0, 0, 0);
-  height: 40px;
-  border-radius: 5px;
-  color: white;
-  background-color: black;
-  transition: all 0.3s ease-in;
-  cursor: pointer;
-  &:hover {
-    color: black;
-    background-color: white;
-    border-color: black;
-  }
-`;
-
-export default DetailInfo;
+export default React.memo(DetailInfo);

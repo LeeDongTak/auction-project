@@ -15,6 +15,8 @@ const UserProfile = () => {
   );
   const userId = userData.user.id;
 
+  console.log(userId);
+
   const {
     data: user,
     isLoading,
