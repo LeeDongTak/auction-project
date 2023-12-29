@@ -5,6 +5,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { addUser } from "../../api/auth";
+import { useAppDispatch } from "../../redux/config/configStore";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
 import SocialLogin from "./SocialLogin/SocialLogin";
@@ -23,6 +24,8 @@ type FormValues = {
 };
 
 const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
+  const dispatch = useAppDispatch();
+
   const queryClient = new QueryClient();
 
   const insertMutation = useMutation({
@@ -67,8 +70,8 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   const userPassword = {
     required: "필수 입력란입니다.",
     minLength: {
-      value: 4,
-      message: "최소 4자를 입력해주세요.",
+      value: 8,
+      message: "최소 8자를 입력해주세요.",
     },
     maxLength: {
       value: 15,
@@ -162,7 +165,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
           address1,
           address2,
           nickname,
-          profile_image: undefined,
+          profile_image: "/user_img.jpeg",
         };
 
         insertMutation.mutate(newUserInfo);

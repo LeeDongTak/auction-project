@@ -10,10 +10,15 @@ type AvatarShapeType = "circle" | "square";
 const UserProfile = () => {
   const [avatarShape, setAvatarShape] = useState<AvatarShapeType>("circle");
 
-  const userData = JSON.parse(
+  const { user: userData } = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
-  const userId = userData.user.id;
+
+  const userId = userData.id;
+
+  const socialLoginUser = userData.user_metadata;
+
+  console.log();
 
   const {
     data: user,
@@ -26,7 +31,7 @@ const UserProfile = () => {
     enabled: !!userId,
   });
 
-  console.log(user);
+  console.log("user info", user);
 
   if (isLoading)
     return (
@@ -38,18 +43,33 @@ const UserProfile = () => {
 
   return (
     <StProfileContainer>
-      {user?.map((item) => (
+      {!user?.[0] ? (
         <>
-          {item.profile_image ? (
+          {socialLoginUser.avatar_url ? (
             <StImgBox>
-              <img src="" alt="user-image" />
+              <img src={socialLoginUser.avatar_url} alt="user-image" />
             </StImgBox>
           ) : (
             <Avatar shape="circle" size={64} icon={<UserOutlined />} />
           )}
-          <p>{item.nickname}</p>
+          <p>{socialLoginUser.user_name}</p>
         </>
-      ))}
+      ) : (
+        <>
+          {user?.map((item) => (
+            <>
+              {item.profile_image ? (
+                <StImgBox>
+                  <img src={item.profile_image} alt="user-image" />
+                </StImgBox>
+              ) : (
+                <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+              )}
+              <p>{item.nickname}</p>
+            </>
+          ))}
+        </>
+      )}
     </StProfileContainer>
   );
 };

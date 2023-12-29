@@ -1,16 +1,17 @@
+import { styled } from "styled-components";
 import { supabase } from "../../../supabase";
 
 const SocialLogin = () => {
   const onGoogleLoginHandler = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
-        },
-      },
     });
+
+    if (error) {
+      console.error("로그인 중 오류 발생!", error.message);
+    } else {
+      console.log(data);
+    }
   };
 
   const onGitHubLoginHandler = async () => {
@@ -26,33 +27,18 @@ const SocialLogin = () => {
   };
 
   return (
-    <div>
-      <div onClick={onGoogleLoginHandler}>google</div>
-      <div onClick={onGitHubLoginHandler}>GitHub</div>
-      <div onClick={onKakaoLoginHandler}>Kakao</div>
-
-      {/* <Auth
-        supabaseClient={supabase}
-        providers={["github"]}
-        queryParams={{
-          access_type: "offline",
-          prompt: "consent",
-          hd: "domain.com",
-        }}
-        onlyThirdPartyProviders
-      />
-      <Auth
-        supabaseClient={supabase}
-        providers={["kakao"]}
-        queryParams={{
-          access_type: "offline",
-          prompt: "consent",
-          hd: "domain.com",
-        }}
-        onlyThirdPartyProviders
-      /> */}
-    </div>
+    <StSocialLoginWrapper>
+      <span onClick={onGoogleLoginHandler}>google</span>
+      <span onClick={onGitHubLoginHandler}>GitHub</span>
+      <span onClick={onKakaoLoginHandler}>Kakao</span>
+    </StSocialLoginWrapper>
   );
 };
+
+const StSocialLoginWrapper = styled.section`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+`;
 
 export default SocialLogin;
