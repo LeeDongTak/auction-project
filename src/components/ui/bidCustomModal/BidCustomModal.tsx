@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import { Spacer } from "../Spacer";
 import {
+  formatAuctionStatusByButton,
   formatBidPriceByComma,
   formatNumberWithCommas,
 } from "../../../common/formatUtil";
@@ -12,12 +13,18 @@ import {
 } from "../../../redux/modules/bidCustomModalSlice";
 import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
+import { selectorAuctionTimeStamp } from "../../../redux/modules/auctionTimestampSlice";
+import { AuctionStatus } from "../../../types/detailTyps";
+import DetailTimeStamp from "../../detail/DetailTimeStamp";
 
 const BidCustomModal = () => {
   const queryClient = useQueryClient();
   const [bidPriceState, setBidPriceState] = useState<string>("0");
   const dispatch = useAppDispatch();
   const { isOpen, maxBidPrice } = useSelector(selectorBidCustomModal);
+  const { auctionTimeStamp, auctionOver } = useSelector(
+    selectorAuctionTimeStamp
+  );
 
   const onChangePriceHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setBidPriceState(formatBidPriceByComma(e.target.value));
@@ -29,20 +36,22 @@ const BidCustomModal = () => {
     }
   };
 
-  const onSubmitBidHandler = (e: React.FormEvent<unknown>) => {
+  const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
     e.preventDefault();
-    queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
+    await queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
     console.log("maxBidPrice in submit ", maxBidPrice);
   };
 
   return (
     <StCustomModalWrapper onClick={onClickCloseModalHandler} $isOpen={isOpen}>
       <StCustomModalContentWrapper>
+        <DetailTimeStamp />
+        <Spacer y={40} />
         <div>
           <h1>현재 최고 입찰가</h1>
           <span> ₩ {formatNumberWithCommas(maxBidPrice)}</span>
         </div>
-        <Spacer y={70} />
+        <Spacer y={40} />
         <StBidForm onSubmit={onSubmitBidHandler}>
           <label htmlFor="bid_price">
             <input
@@ -53,11 +62,13 @@ const BidCustomModal = () => {
             />
           </label>
           <Spacer y={40} />
-          <StModalButtonWrapper>
+          <StModalButtonWrapper $isOver={auctionOver}>
             <button type="button" onClick={onClickCloseModalHandler}>
               취소
             </button>
-            <button type="submit">입찰하기</button>
+            <button type="submit">
+              {formatAuctionStatusByButton(auctionOver)}
+            </button>
           </StModalButtonWrapper>
         </StBidForm>
         <StCloseButton>
@@ -190,7 +201,7 @@ const StCloseButton = styled.div`
   }
 `;
 
-const StModalButtonWrapper = styled.div`
+const StModalButtonWrapper = styled.div<{ $isOver: AuctionStatus }>`
   display: flex;
   width: 100%;
   justify-content: center;
@@ -214,8 +225,21 @@ const StModalButtonWrapper = styled.div`
     }
   }
   > button:last-child {
-    background-color: #bdc3c7;
     color: white;
+
+    pointer-events: ${({ $isOver }) =>
+      $isOver !== AuctionStatus.START ? "none" : "auto"};
+    background-color: ${({ $isOver }) => {
+      switch ($isOver) {
+        case AuctionStatus.END:
+          return "#e84118";
+        case AuctionStatus.READY:
+          return "#dcdde1";
+        default:
+          return "#bdc3c7";
+      }
+    }};
+
     &:hover {
       background-color: black;
     }

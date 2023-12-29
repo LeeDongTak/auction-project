@@ -8,15 +8,25 @@ import {
   setAuctionTimeStamp,
 } from "../redux/modules/auctionTimestampSlice";
 import { useSelector } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
+import { fetchPatchAuctionPost } from "../api/auction";
+import { useCustomMutation } from "./useCustomMutation";
 
-type Parameter =
-  | Pick<
-      Auction_post,
-      "auction_status" | "auction_end_date" | "auction_start_date"
-    >
-  | undefined;
+type Parameter = Auction_post | undefined;
 
 const useAuctionStatus = (data: Parameter) => {
+  const queryClient = useQueryClient();
+
+  // bid 상태 update
+  const auctionPostUpdateMutationOptions = {
+    mutationFn: fetchPatchAuctionPost,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["getAuction"] });
+    },
+  };
+
+  const mutation = useCustomMutation(auctionPostUpdateMutationOptions);
+
   const dispatch = useAppDispatch();
   const { auctionTimeStamp, auctionOver } = useSelector(
     selectorAuctionTimeStamp
@@ -30,6 +40,24 @@ const useAuctionStatus = (data: Parameter) => {
         data?.auction_end_date
       );
 
+      // auction db의 status값이 변경되는 상태값과 다르다면 patch 진행
+      if (data?.auction_id) {
+        if (data?.auction_status !== String(result.auctionOver)) {
+          const updateAuctionPost: Pick<
+            Auction_post,
+            "auction_id" | "auction_status"
+          > = {
+            auction_id: data?.auction_id,
+            auction_status: data?.auction_status,
+          };
+
+          updateAuctionPost.auction_status = String(result.auctionOver);
+          // auction db의 status값이 변경되는 상태값과 다르다면 patch 진행
+          if (data.auction_status !== updateAuctionPost.auction_status) {
+            mutation(updateAuctionPost);
+          }
+        }
+      }
       // 조건부 업데이트
       if (result.auctionOver !== auctionOver) {
         dispatch(setAuctionTimeStamp(result));
@@ -43,11 +71,14 @@ const useAuctionStatus = (data: Parameter) => {
       }
     };
 
-    // 상태 업데이트 함수 호출
-    updateStatus();
+    // 경매가 종료 되지않았다면
+    if (data?.auction_status !== String(AuctionStatus.END)) {
+      // 상태 업데이트 함수 호출
+      updateStatus();
 
-    // 1초마다 상태 업데이트
-    intervalRef.current = setInterval(updateStatus, 1000);
+      // 1초마다 상태 업데이트
+      intervalRef.current = setInterval(updateStatus, 1000);
+    }
 
     // 컴포넌트 언마운트시 인터벌 정리
     return () => {

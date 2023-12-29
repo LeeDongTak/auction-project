@@ -53,7 +53,7 @@ const DetailInfo = ({ auctionData }: Props) => {
     ) => {
       if ("auction_id" in payload.new) {
         if (payload.new.auction_id === auctionData?.auction_id) {
-          queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
+          await queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
         }
       }
     };
@@ -97,7 +97,7 @@ const DetailInfo = ({ auctionData }: Props) => {
         </li>
         <li>
           <span>시작가격 : </span>
-          <span> ₩ {formatNumberWithCommas(auctionData?.upper_limit)}</span>
+          <span> ₩ {formatNumberWithCommas(auctionData?.lower_limit)}</span>
           <Spacer y={SPACER_HEIGHT} />
         </li>
         <li>
