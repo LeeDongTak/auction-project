@@ -42,35 +42,20 @@ const UserProfile = () => {
     );
 
   return (
-    <StProfileContainer>
-      {!user?.[0] ? (
-        <>
-          {socialLoginUser.avatar_url ? (
+    <>
+      {user?.map((item) => (
+        <StProfileContainer key={item.user_id}>
+          {item.profile_image ? (
             <StImgBox>
-              <img src={socialLoginUser.avatar_url} alt="user-image" />
+              <img src={item.profile_image} alt="user-image" />
             </StImgBox>
           ) : (
             <Avatar shape="circle" size={64} icon={<UserOutlined />} />
           )}
-          <p>{socialLoginUser.user_name}</p>
-        </>
-      ) : (
-        <>
-          {user?.map((item) => (
-            <>
-              {item.profile_image ? (
-                <StImgBox>
-                  <img src={item.profile_image} alt="user-image" />
-                </StImgBox>
-              ) : (
-                <Avatar shape="circle" size={64} icon={<UserOutlined />} />
-              )}
-              <p>{item.nickname}</p>
-            </>
-          ))}
-        </>
-      )}
-    </StProfileContainer>
+          <p>{item.nickname || "new user"}</p>
+        </StProfileContainer>
+      ))}
+    </>
   );
 };
 
