@@ -3,11 +3,29 @@ import { Spacer } from "../ui/Spacer";
 import { AuctionStatus } from "../../types/detailTyps";
 import { useSelector } from "react-redux";
 import { selectorAuctionTimeStamp } from "../../redux/modules/auctionTimestampSlice";
+import { formatNumberWithCommas } from "../../common/formatUtil";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Bids } from "../../types/databaseRetrunTypes";
 
-const DetailTimeStamp = () => {
+type Props = {
+  maxBid: Bids | undefined;
+};
+
+const DetailTimeStamp = ({ maxBid }: Props) => {
+  const queryClient = useQueryClient();
   const { auctionOver, auctionTimeStamp } = useSelector(
     selectorAuctionTimeStamp
   );
+
+  useEffect(() => {
+    if (!maxBid) {
+      (async () => {
+        await queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
+      })();
+    }
+  }, [maxBid]);
+  console.log(maxBid);
 
   return (
     <StTimeStampWrapper>
@@ -20,6 +38,27 @@ const DetailTimeStamp = () => {
         <div>
           {/* 경매 종료 시 낙찰자 출력 또는 불발 표시*/}
           <h2>경매가 종료되었습니다.</h2>
+          <Spacer y={20} />
+          {maxBid ? (
+            <StBidInfoWrapper>
+              <StSuccessBidWrapper>
+                <span>낙찰자 : </span>
+                <h1>
+                  {maxBid?.user_info?.nickname} ({maxBid?.user_info?.user_email}
+                  )
+                </h1>
+              </StSuccessBidWrapper>
+              <Spacer y={20} />
+              <StSuccessBidWrapper>
+                <span>낙찰가 : </span>
+                <h1>₩ {formatNumberWithCommas(maxBid?.bid_price)}</h1>
+              </StSuccessBidWrapper>
+            </StBidInfoWrapper>
+          ) : (
+            <StBidInfoWrapper>
+              <StFailedBidText>유찰 되었습니다.</StFailedBidText>
+            </StBidInfoWrapper>
+          )}
           {/* 경매 종료 시 낙찰자 출력 또는 불발 표시*/}
         </div>
       )}
@@ -48,4 +87,26 @@ const StTimeStampWrapper = styled.div`
     font-size: 24px;
   }
 `;
+
+const StBidInfoWrapper = styled.section`
+  h1 {
+    font-size: 30px;
+  }
+`;
+
+const StSuccessBidWrapper = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+
+  > span,
+  > h1 {
+    letter-spacing: 1px;
+  }
+`;
+
+const StFailedBidText = styled.h1`
+  color: #e84118;
+`;
+
 export default DetailTimeStamp;
