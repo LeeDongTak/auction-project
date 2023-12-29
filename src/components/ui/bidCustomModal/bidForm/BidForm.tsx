@@ -48,7 +48,6 @@ const BidForm = (props: {
   };
 
   const mutation = useCustomMutation(postBidMutationOptions);
-
   const { maxBidPrice } = useSelector(selectorBidCustomModal);
 
   const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
@@ -61,12 +60,13 @@ const BidForm = (props: {
     }
 
     if (Number(bidPrice) <= 0) {
+      await handleOpenCustomModal("0이상의 값을 입력하세요.", "alert");
       setBidCondition(0);
       forwardRef.current?.focus();
       return;
     }
 
-    if (maxBidPrice) {
+    if (typeof maxBidPrice === "number" && maxBidPrice >= 0) {
       if (maxBidPrice >= Number(bidPrice)) {
         setBidCondition(0);
         forwardRef.current?.focus();

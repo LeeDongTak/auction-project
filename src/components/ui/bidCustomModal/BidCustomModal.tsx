@@ -27,6 +27,7 @@ const BidCustomModal = () => {
 
   const [bidCondition, setBidCondition] = useState<BidCondition>(1);
 
+  console.log(maxBidPrice);
   useEffect(() => {
     const bidPrice = bidPriceState.replaceAll(",", "");
     if (Number(bidPrice) !== 0) {
@@ -47,8 +48,6 @@ const BidCustomModal = () => {
   }, []);
 
   const onChangePriceHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const price = e.target.value;
-
     setBidPriceState(formatBidPriceByComma(e.target.value));
   };
 
