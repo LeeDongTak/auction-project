@@ -1,6 +1,8 @@
+import { useQueries } from "@tanstack/react-query";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { fetchAuctionMaxBid } from "../../api/bid";
 import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import placeholder from "../../images/placeholder.svg";
@@ -11,38 +13,56 @@ interface AuctionListProps {
 
 const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const navigate = useNavigate();
+
+  const bidsQueries = useQueries({
+    queries:
+      auctions?.map((auction) => ({
+        queryKey: ["auctionBid", auction.auction_id],
+        queryFn: () =>
+          fetchAuctionMaxBid(auction.auction_id).then(
+            (data) => data ?? { bid_price: 0 }
+          ),
+      })) || [],
+  });
+
   return (
     <StListwrapper>
       {auctions && auctions.length > 0 ? (
         <ul>
-          {auctions.map((auction) => (
-            <li
-              key={auction.auction_id}
-              onClick={() => navigate(`/detail/${auction.auction_id}`)}
-            >
-              <h6>
-                <img src={clock} />
-                {transDate(auction.created_at)}
-              </h6>
-              <span>
-                <img
-                  src={
-                    auction.auction_images && auction.auction_images.length > 0
-                      ? auction.auction_images[0].image_path
-                      : placeholder
-                  } // 이미지가 없을 경우 플레이스홀더 사용
-                  alt="Auction"
-                />
-              </span>
-              <h2> {auction.title}</h2>
-              <p> {auction.content}</p>
-              <h3>시작{transDate(auction.auction_start_date)}</h3>
-              <h3>마감{transDate(auction.auction_end_date)}</h3>
-              <h3>시작가격{auction.lower_limit}</h3>
-              <h3>입찰가격</h3>
-              {auction.category && <h5> {auction.category.category_name}</h5>}
-            </li>
-          ))}
+          {auctions.map((auction, index) => {
+            const bidData = bidsQueries[index]?.data ?? { bid_price: 0 };
+            const formattedBidPrice = bidData.bid_price.toLocaleString();
+
+            return (
+              <li
+                key={auction.auction_id}
+                onClick={() => navigate(`/detail/${auction.auction_id}`)}
+              >
+                <h6>
+                  <img src={clock} alt="Clock" />
+                  {transDate(auction.created_at)}
+                </h6>
+                <span>
+                  <img
+                    src={
+                      auction.auction_images &&
+                      auction.auction_images.length > 0
+                        ? auction.auction_images[0].image_path
+                        : placeholder
+                    }
+                    alt="Auction"
+                  />
+                </span>
+                <h2>{auction.title}</h2>
+                <p>{auction.content}</p>
+                <h3>시작: {transDate(auction.auction_start_date)}</h3>
+                <h3>마감: {transDate(auction.auction_end_date)}</h3>
+                <h3>시작가격: ₩ {auction.lower_limit.toLocaleString()}</h3>
+                <h3>입찰가격: ₩ {formattedBidPrice}</h3>
+                {auction.category && <h5>{auction.category.category_name}</h5>}
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <>
