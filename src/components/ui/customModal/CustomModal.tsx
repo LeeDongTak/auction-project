@@ -89,6 +89,11 @@ const StCustomModalContent = styled.div`
 const StModalMessageWrapper = styled.div`
   font-size: 30px;
   font-weight: bold;
+  > h1 {
+    text-align: center;
+    white-space: pre-wrap;
+    line-height: 1.3;
+  }
 `;
 const StButtonWrapper = styled.div`
   display: flex;
@@ -100,6 +105,8 @@ const StButtonWrapper = styled.div`
     border: unset;
     cursor: pointer;
     border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
   }
 `;
 

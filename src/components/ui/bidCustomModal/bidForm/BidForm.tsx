@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { fetchPostAuctionBid } from "../../../../api/bid";
 import { useCustomMutation } from "../../../../hooks/useCustomMutation";
 import { useAppDispatch } from "../../../../redux/config/configStore";
+import { selectorAuctionTimeStamp } from "../../../../redux/modules/auctionTimestampSlice";
 
 const BidForm = (props: {
   $isOver: any;
@@ -37,7 +38,7 @@ const BidForm = (props: {
   const { handleOpenCustomModal } = useCustomModal();
 
   const { auction_id } = useSelector(selectorBidCustomModal);
-
+  const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const postBidMutationOptions = {
     mutationFn: fetchPostAuctionBid,
     onSuccess: async () => {
@@ -47,27 +48,32 @@ const BidForm = (props: {
   };
 
   const mutation = useCustomMutation(postBidMutationOptions);
-
-  const { maxBidPrice } = useSelector(selectorBidCustomModal);
+  const { maxBid } = useSelector(selectorBidCustomModal);
 
   const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
     e.preventDefault();
     const bidPrice = value.replaceAll(",", "");
 
+    if (auctionOver === AuctionStatus.END) {
+      await handleOpenCustomModal("경매가 종료되었습니다.", "alert");
+      return;
+    }
+
     if (Number(bidPrice) <= 0) {
+      await handleOpenCustomModal("0이상의 값을 입력하세요.", "alert");
       setBidCondition(0);
       forwardRef.current?.focus();
       return;
     }
 
-    if (maxBidPrice) {
-      if (maxBidPrice >= Number(bidPrice)) {
+    if (typeof maxBid?.bid_price === "number" && maxBid.bid_price >= 0) {
+      if (maxBid.bid_price >= Number(bidPrice)) {
         setBidCondition(0);
         forwardRef.current?.focus();
         return;
       }
 
-      const modalMessage = `₩ ${value}에 입찰하시겠습니까?`;
+      const modalMessage = `₩ ${value}에 \n 입찰하시겠습니까?`;
       if (await handleOpenCustomModal(modalMessage, "confirm")) {
         // 입찰 금액을 가지고 insert 쿼리
         // TODO: 여기 진행
