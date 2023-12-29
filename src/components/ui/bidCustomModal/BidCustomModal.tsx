@@ -5,7 +5,7 @@ import {
   formatBidPriceByComma,
   formatNumberWithCommas,
 } from "../../../common/formatUtil";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useAppDispatch } from "../../../redux/config/configStore";
 import {
   closeBidCustomModal,
@@ -17,16 +17,40 @@ import { selectorAuctionTimeStamp } from "../../../redux/modules/auctionTimestam
 import { AuctionStatus } from "../../../types/detailTyps";
 import DetailTimeStamp from "../../detail/DetailTimeStamp";
 
+type BidCondition = 0 | 1;
+
 const BidCustomModal = () => {
   const queryClient = useQueryClient();
   const [bidPriceState, setBidPriceState] = useState<string>("0");
   const dispatch = useAppDispatch();
   const { isOpen, maxBidPrice } = useSelector(selectorBidCustomModal);
-  const { auctionTimeStamp, auctionOver } = useSelector(
-    selectorAuctionTimeStamp
-  );
+  const { auctionOver } = useSelector(selectorAuctionTimeStamp);
+  const bidInputRef = useRef<HTMLInputElement>(null);
+
+  const [bidCondition, setBidCondition] = useState<BidCondition>(1);
+
+  useEffect(() => {
+    const bidPrice = bidPriceState.replaceAll(",", "");
+    if (Number(bidPrice) !== 0) {
+      if (bidPriceState && maxBidPrice) {
+        Number(bidPrice) <= maxBidPrice
+          ? setBidCondition(0)
+          : bidCondition !== 1 && setBidCondition(1);
+      }
+    } else setBidCondition(1);
+  }, [maxBidPrice, bidPriceState]);
+
+  useEffect(() => {
+    bidInputRef.current?.focus();
+    return () => {
+      setBidPriceState("0");
+      setBidCondition(1);
+    };
+  }, []);
 
   const onChangePriceHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const price = e.target.value;
+
     setBidPriceState(formatBidPriceByComma(e.target.value));
   };
 
@@ -36,12 +60,28 @@ const BidCustomModal = () => {
     }
   };
 
-  const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
+  const onSubmitBidHandler = (e: React.FormEvent<unknown>) => {
     e.preventDefault();
-    await queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
-    console.log("maxBidPrice in submit ", maxBidPrice);
-  };
+    const bidPrice = bidPriceState.replaceAll(",", "");
 
+    if (Number(bidPrice) <= 0) {
+      setBidCondition(0);
+      bidInputRef.current?.focus();
+      return;
+    }
+
+    // 경매 입찰가와 새로 refatch한 maxBidPrice를 비교한다.
+    if (maxBidPrice) {
+      if (maxBidPrice >= Number(bidPrice)) {
+        setBidCondition(0);
+        bidInputRef.current?.focus();
+        return;
+      }
+    }
+
+    // 만약 maxBidPrice가 더 크다면 입력을 막는다.
+    // 그렇지 않다면 입력을 실행한다.
+  };
   return (
     <StCustomModalWrapper onClick={onClickCloseModalHandler} $isOpen={isOpen}>
       <StCustomModalContentWrapper>
@@ -53,16 +93,25 @@ const BidCustomModal = () => {
         </div>
         <Spacer y={40} />
         <StBidForm onSubmit={onSubmitBidHandler}>
-          <label htmlFor="bid_price">
+          <StBidInputLabel
+            htmlFor="bid_price"
+            $isOver={auctionOver}
+            $isCondition={bidCondition}
+          >
             <input
               type="text"
               id="bid_price"
               value={bidPriceState}
               onChange={onChangePriceHandler}
+              ref={bidInputRef}
+              readOnly={auctionOver === AuctionStatus.END}
             />
-          </label>
+          </StBidInputLabel>
           <Spacer y={40} />
-          <StModalButtonWrapper $isOver={auctionOver}>
+          <StModalButtonWrapper
+            $isOver={auctionOver}
+            $isCondition={bidCondition}
+          >
             <button type="button" onClick={onClickCloseModalHandler}>
               취소
             </button>
@@ -90,8 +139,7 @@ const StCustomModalWrapper = styled.div<{ $isOpen: boolean }>`
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
   transition: all 0.2s ease-in;
-  opacity: ${({ $isOpen }) => ($isOpen ? "10" : "0")};
-  z-index: ${({ $isOpen }) => ($isOpen ? "10" : "-1")};
+  z-index: 10;
 `;
 
 const StCustomModalContentWrapper = styled.div`
@@ -129,22 +177,40 @@ const StBidForm = styled.form`
   margin: 0 auto;
   max-width: 400px;
   width: 100%;
-  > label {
-    width: 100%;
-    position: relative;
-    &::before {
-      content: "₩ ";
-      position: absolute;
-      top: 50%;
-      transform: translateY(-45%);
-      left: 10px;
-      z-index: 200;
-      font-size: 24px;
-      font-weight: bold;
-    }
+`;
+
+const StBidInputLabel = styled.label<{
+  $isOver: AuctionStatus;
+  $isCondition: BidCondition;
+}>`
+  position: relative;
+
+  opacity: ${({ $isOver }) => ($isOver === AuctionStatus.END ? "0.5" : "1")};
+
+  &::after {
+    color: #e84118;
+    content: "최고 경매가 보다 낮습니다.";
+    bottom: -20px;
+    position: absolute;
+    left: 0;
+    font-size: 1.4rem;
+    display: ${({ $isCondition }) => ($isCondition ? "none" : "block")};
   }
-  > label > input {
+
+  &::before {
+    content: "₩ ";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-45%);
+    left: 10px;
+    z-index: 200;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  > input {
     outline: none;
+    border: 1px solid
+      ${({ $isCondition }) => ($isCondition ? "black" : "#e84118")};
     padding: 10px 10px;
     width: 100%;
     text-align: right;
@@ -201,7 +267,10 @@ const StCloseButton = styled.div`
   }
 `;
 
-const StModalButtonWrapper = styled.div<{ $isOver: AuctionStatus }>`
+const StModalButtonWrapper = styled.div<{
+  $isOver: AuctionStatus;
+  $isCondition: BidCondition;
+}>`
   display: flex;
   width: 100%;
   justify-content: center;
@@ -227,21 +296,27 @@ const StModalButtonWrapper = styled.div<{ $isOver: AuctionStatus }>`
   > button:last-child {
     color: white;
 
-    pointer-events: ${({ $isOver }) =>
-      $isOver !== AuctionStatus.START ? "none" : "auto"};
-    background-color: ${({ $isOver }) => {
+    pointer-events: ${({ $isOver, $isCondition }) => {
+      if ($isOver !== AuctionStatus.START || !$isCondition) return "none";
+      else return "auto";
+    }};
+
+    background-color: ${({ $isOver, $isCondition }) => {
+      // $isCondition이 false이거나 $isOver가 AuctionStatus.END일 때
+      if (!$isCondition || $isOver === AuctionStatus.END) {
+        return "#e84118"; // 동일한 색상 반환
+      }
+
       switch ($isOver) {
-        case AuctionStatus.END:
-          return "#e84118";
         case AuctionStatus.READY:
-          return "#dcdde1";
+          return "#dcdde1"; // 경매 준비 중인 경우의 색상
         default:
-          return "#bdc3c7";
+          return "black"; // 기본 색상
       }
     }};
 
     &:hover {
-      background-color: black;
+      background-color: #bdc3c7;
     }
   }
 `;
