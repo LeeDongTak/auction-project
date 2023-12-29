@@ -6,6 +6,7 @@ import Detail from "../pages/Detail";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import AuthLayout from "./AuthLayout";
+
 const Router = () => {
   return (
     <BrowserRouter>
