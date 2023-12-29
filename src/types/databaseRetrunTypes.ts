@@ -71,8 +71,8 @@ export interface Auction_like {
 }
 
 export interface Bids {
-  bid_id: string;
-  created_at: string;
+  bid_id?: string;
+  created_at?: string;
   auction_id: string;
   user_id: string;
   bid_price: number;

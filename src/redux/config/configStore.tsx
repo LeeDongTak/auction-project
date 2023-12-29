@@ -4,9 +4,10 @@ import template from "../modules/templateSlice";
 import auctionTimestamp from "../modules/auctionTimestampSlice";
 import profile from "../modules/profileSlice";
 import bidCustomModal from "../modules/bidCustomModalSlice";
+import customModal from "../modules/customModalSlice";
 
 const store = configureStore({
-  reducer: { template, auctionTimestamp, profile, bidCustomModal },
+  reducer: { template, auctionTimestamp, profile, bidCustomModal, customModal },
 });
 
 type RootState = ReturnType<typeof store.getState>;
