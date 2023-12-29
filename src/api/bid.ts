@@ -4,7 +4,7 @@ import connectSupabase from "./connectSupabase";
 export const fetchAuctionMaxBid = async (auction_id: string): Promise<Bids> => {
   const { data, error } = await connectSupabase
     .from("bids")
-    .select("*")
+    .select("*, user_info(user_email, nickname)")
     .eq("auction_id", auction_id);
 
   if (error) throw new Error(error.message);

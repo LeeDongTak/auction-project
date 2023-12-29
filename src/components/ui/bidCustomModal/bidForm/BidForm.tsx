@@ -48,7 +48,7 @@ const BidForm = (props: {
   };
 
   const mutation = useCustomMutation(postBidMutationOptions);
-  const { maxBidPrice } = useSelector(selectorBidCustomModal);
+  const { maxBid } = useSelector(selectorBidCustomModal);
 
   const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
     e.preventDefault();
@@ -66,14 +66,14 @@ const BidForm = (props: {
       return;
     }
 
-    if (typeof maxBidPrice === "number" && maxBidPrice >= 0) {
-      if (maxBidPrice >= Number(bidPrice)) {
+    if (typeof maxBid?.bid_price === "number" && maxBid.bid_price >= 0) {
+      if (maxBid.bid_price >= Number(bidPrice)) {
         setBidCondition(0);
         forwardRef.current?.focus();
         return;
       }
 
-      const modalMessage = `₩ ${value}에 입찰하시겠습니까?`;
+      const modalMessage = `₩ ${value}에 \n 입찰하시겠습니까?`;
       if (await handleOpenCustomModal(modalMessage, "confirm")) {
         // 입찰 금액을 가지고 insert 쿼리
         // TODO: 여기 진행

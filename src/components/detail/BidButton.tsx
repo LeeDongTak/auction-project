@@ -9,12 +9,13 @@ import {
   selectorBidCustomModal,
 } from "../../redux/modules/bidCustomModalSlice";
 import { useEffect } from "react";
+import { Bids } from "../../types/databaseRetrunTypes";
 
 type Props = {
-  maxBidPrice: number | undefined;
+  maxBid: Bids | undefined;
   auctionId: string | undefined;
 };
-const BidButton = ({ maxBidPrice, auctionId }: Props) => {
+const BidButton = ({ maxBid, auctionId }: Props) => {
   const dispatch = useAppDispatch();
   const { isOpen } = useSelector(selectorBidCustomModal);
   const { auctionTimeStamp, auctionOver } = useSelector(
@@ -23,21 +24,20 @@ const BidButton = ({ maxBidPrice, auctionId }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      const bidPrice = {
-        maxBidPrice,
+      const bidData = {
+        maxBid: maxBid,
         auction_id: auctionId,
       };
-
-      dispatch(openBidCustomModal(bidPrice));
+      dispatch(openBidCustomModal(bidData));
     }
-  }, [maxBidPrice]);
+  }, [maxBid]);
 
   const onClickBidCustomModalOpenHandler = () => {
-    const bidPrice = {
-      maxBidPrice,
+    const bidData = {
+      maxBid,
       auction_id: auctionId,
     };
-    dispatch(openBidCustomModal(bidPrice));
+    dispatch(openBidCustomModal(bidData));
   };
 
   return (

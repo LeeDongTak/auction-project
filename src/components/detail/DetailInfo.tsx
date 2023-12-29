@@ -5,35 +5,28 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { fetchAuctionMaxBid } from "../../api/bid";
 import connectSupabase from "../../api/connectSupabase";
 import { transDate } from "../../common/dayjs";
 import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import { useCustomQuery } from "../../hooks/useCustomQuery";
 import { Auction_post, Bids } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
+import { useAppDispatch } from "../../redux/config/configStore";
 
 type Props = {
   auctionData: Auction_post | undefined;
+  maxBid: Bids | undefined;
 };
 
 const SPACER_HEIGHT = 10;
 const SPACER_LITERARY = 20;
-const DetailInfo = ({ auctionData }: Props) => {
+const DetailInfo = ({ auctionData, maxBid }: Props) => {
   const queryClient = useQueryClient();
-
-  const queryBidOptions = {
-    queryKey: ["getBidMaxPrice"],
-    queryFn: () => fetchAuctionMaxBid(auctionData?.auction_id!),
-    // ^^7 (갓진호 킹진호 신진호 미친진호 킹갓제너럴진호)
-    enabled: !!auctionData?.auction_id,
-  };
-  const bidData = useCustomQuery<Bids, Error>(queryBidOptions);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const changeObserverHandler = async (
@@ -92,7 +85,7 @@ const DetailInfo = ({ auctionData }: Props) => {
         </li>
         <li>
           <span>입찰가격 : </span>
-          <span> ₩ {formatNumberWithCommas(bidData?.bid_price)}</span>
+          <span> ₩ {formatNumberWithCommas(maxBid?.bid_price)}</span>
           <Spacer y={SPACER_HEIGHT} />
         </li>
       </StAuctionInfo>
@@ -113,10 +106,7 @@ const DetailInfo = ({ auctionData }: Props) => {
       <Spacer y={SPACER_LITERARY} />
 
       {/* 경매 시작 전, 진행, 경매 종료 */}
-      <BidButton
-        maxBidPrice={bidData?.bid_price || 0}
-        auctionId={auctionData?.auction_id}
-      />
+      <BidButton maxBid={maxBid} auctionId={auctionData?.auction_id} />
     </StDetailInfoWrapper>
   );
 };

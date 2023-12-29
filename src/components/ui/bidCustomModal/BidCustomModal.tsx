@@ -21,23 +21,22 @@ export type BidCondition = 0 | 1;
 const BidCustomModal = () => {
   const [bidPriceState, setBidPriceState] = useState<string>("0");
   const dispatch = useAppDispatch();
-  const { isOpen, maxBidPrice } = useSelector(selectorBidCustomModal);
+  const { isOpen, maxBid } = useSelector(selectorBidCustomModal);
   const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const bidInputRef = useRef<HTMLInputElement>(null);
 
   const [bidCondition, setBidCondition] = useState<BidCondition>(1);
 
-  console.log(maxBidPrice);
   useEffect(() => {
     const bidPrice = bidPriceState.replaceAll(",", "");
     if (Number(bidPrice) !== 0) {
-      if (bidPriceState && maxBidPrice) {
-        Number(bidPrice) <= maxBidPrice
+      if (bidPriceState && maxBid?.bid_price) {
+        Number(bidPrice) <= maxBid?.bid_price
           ? setBidCondition(0)
           : bidCondition !== 1 && setBidCondition(1);
       }
     } else setBidCondition(1);
-  }, [maxBidPrice, bidPriceState]);
+  }, [maxBid?.bid_price, bidPriceState]);
 
   useEffect(() => {
     bidInputRef.current?.focus();
@@ -60,11 +59,11 @@ const BidCustomModal = () => {
   return (
     <StCustomModalWrapper onClick={onClickCloseModalHandler} $isOpen={isOpen}>
       <StCustomModalContentWrapper>
-        <DetailTimeStamp />
+        <DetailTimeStamp maxBid={maxBid} />
         <Spacer y={40} />
         <div>
           <h1>현재 최고 입찰가</h1>
-          <span> ₩ {formatNumberWithCommas(maxBidPrice)}</span>
+          <span> ₩ {formatNumberWithCommas(maxBid?.bid_price)}</span>
         </div>
         <Spacer y={40} />
         <BidForm
