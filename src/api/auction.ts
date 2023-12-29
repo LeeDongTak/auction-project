@@ -21,7 +21,6 @@ export async function fetchGetAuctions(
   order: boolean = false,
   user_id: string = ""
 ) {
-  console.log(categories);
   const categoryIds = categories.map((category) => {
     return category.category_id;
   });
@@ -31,7 +30,8 @@ export async function fetchGetAuctions(
     .select(
       "*, category(category_name), user_info(user_email),auction_images(image_id, image_path)"
     )
-    .order(`${orderBy}`, { ascending: order });
+    .order(`${orderBy}`, { ascending: order })
+    .range(0, 20);
 
   searchKeyword.trim() !== "" &&
     query
@@ -45,7 +45,6 @@ export async function fetchGetAuctions(
   }
 
   const { data, error } = await query.returns<Auction_post[]>();
-  console.log(data);
   if (error) throw new Error(error.message);
 
   return data;

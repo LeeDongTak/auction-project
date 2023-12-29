@@ -9,7 +9,8 @@ import { Spacer } from "../components/ui/Spacer";
 import useAuctionStatus from "../hooks/useAuctionStatus";
 import { useCustomQuery } from "../hooks/useCustomQuery";
 import placeholder from "../images/placeholder.svg";
-import { Auction_post } from "../types/databaseRetrunTypes";
+import { Auction_post, Bids } from "../types/databaseRetrunTypes";
+import { fetchAuctionMaxBid } from "../api/bid";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -22,6 +23,16 @@ const Detail = () => {
   const data = useCustomQuery<Auction_post, Error>(queryAuctionOptions);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
 
+  const queryBidOptions = {
+    queryKey: ["getBidMaxPrice"],
+    queryFn: () => fetchAuctionMaxBid(data?.auction_id!),
+    // ^^7 (갓진호 킹진호 신진호 미친진호 킹갓제너럴진호)
+    enabled: !!data?.auction_id,
+    staleTime: Infinity,
+  };
+
+  const bidData = useCustomQuery<Bids, Error>(queryBidOptions);
+
   useAuctionStatus(data);
 
   return (
@@ -30,10 +41,10 @@ const Detail = () => {
         <StDetailImgWrapper>
           <img src={thumbnailImg} alt={data?.title} />
         </StDetailImgWrapper>
-        <DetailInfo auctionData={data} />
+        <DetailInfo auctionData={data} maxBid={bidData} />
       </StDetailInfo>
       <Spacer y={40} />
-      <DetailTimeStamp />
+      <DetailTimeStamp maxBid={bidData} />
       <Spacer y={20} />
       <DetailContent auctionContent={data?.content} />
     </StDetailWrapper>

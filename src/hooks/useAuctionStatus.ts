@@ -78,6 +78,13 @@ const useAuctionStatus = (data: Parameter) => {
 
       // 1초마다 상태 업데이트
       intervalRef.current = setInterval(updateStatus, 1000);
+    } else {
+      dispatch(
+        setAuctionTimeStamp({
+          auctionOver: AuctionStatus.END,
+          auctionTimeStamp: "경매가 종료되었습니다.",
+        })
+      );
     }
 
     // 컴포넌트 언마운트시 인터벌 정리

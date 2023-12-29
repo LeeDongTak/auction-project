@@ -106,7 +106,7 @@ const Home = () => {
         <button
           onClick={() => setSortType("title")}
           style={{
-            color: sortType === "title" ? "#80ABFF" : "inherit",
+            color: sortType === "title" ? "#023e7d" : "inherit",
           }}
         >
           이름순
@@ -114,7 +114,7 @@ const Home = () => {
         <button
           onClick={() => setSortType("createdAt")}
           style={{
-            color: sortType === "createdAt" ? "#80ABFF" : "inherit",
+            color: sortType === "createdAt" ? "#023e7d" : "inherit",
           }}
         >
           최신순
