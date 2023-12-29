@@ -3,9 +3,10 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import template from "../modules/templateSlice";
 import auctionTimestamp from "../modules/auctionTimestampSlice";
 import profile from "../modules/profileSlice";
+import bidCustomModal from "../modules/bidCustomModalSlice";
 
 const store = configureStore({
-  reducer: { template, auctionTimestamp, profile },
+  reducer: { template, auctionTimestamp, profile, bidCustomModal },
 });
 
 type RootState = ReturnType<typeof store.getState>;

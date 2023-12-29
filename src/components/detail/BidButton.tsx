@@ -3,14 +3,35 @@ import { AuctionStatus } from "../../types/detailTyps";
 import { styled } from "styled-components";
 import { selectorAuctionTimeStamp } from "../../redux/modules/auctionTimestampSlice";
 import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../redux/config/configStore";
+import {
+  openBidCustomModal,
+  selectorBidCustomModal,
+} from "../../redux/modules/bidCustomModalSlice";
+import { useEffect } from "react";
 
-const BidButton = () => {
+type Props = {
+  maxBidPrice: number | undefined;
+};
+const BidButton = ({ maxBidPrice }: Props) => {
+  const dispatch = useAppDispatch();
+  const { isOpen } = useSelector(selectorBidCustomModal);
   const { auctionTimeStamp, auctionOver } = useSelector(
     selectorAuctionTimeStamp
   );
 
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(openBidCustomModal(maxBidPrice));
+    }
+  }, [maxBidPrice]);
+
+  const onClickBidCustomModalOpenHandler = () => {
+    dispatch(openBidCustomModal(maxBidPrice));
+  };
+
   return (
-    <StButton $isOver={auctionOver}>
+    <StButton $isOver={auctionOver} onClick={onClickBidCustomModalOpenHandler}>
       {formatAuctionStatusByButton(auctionOver)}
     </StButton>
   );
