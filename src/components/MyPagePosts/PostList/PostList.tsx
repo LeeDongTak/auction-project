@@ -4,7 +4,6 @@ import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
 import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
 import ListSkeleton from "../../ListSkeletom/ListSkeleton";
-import { StListWrapper } from "../MyPagePosts.styles";
 import PostItem from "./PostItem/PostItem";
 
 const PostList = ({ title }: { title: string }) => {
@@ -51,17 +50,35 @@ const PostList = ({ title }: { title: string }) => {
   }
 
   return (
-    <StListWrapper>
+    <>
       <h2>{title}</h2>
-      {posts?.length === 0 ? (
-        <div>포스트가 없습니다.</div>
-      ) : (
-        <>{posts?.map((post, index) => <PostItem post={post} key={index} />)}</>
-      )}
-      <Pagination defaultCurrent={1} total={50} />
-    </StListWrapper>
+      <StPostListWrapper>
+        {posts?.length === 0 ? (
+          <div>포스트가 없습니다.</div>
+        ) : (
+          <>
+            {posts?.map((post, index) => <PostItem post={post} key={index} />)}
+          </>
+        )}
+        <StPaginationSection>
+          <Pagination defaultCurrent={1} total={50} />
+        </StPaginationSection>
+      </StPostListWrapper>
+    </>
   );
 };
+
+const StPostListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 2rem;
+`;
+
+const StPaginationSection = styled.section`
+  display: flex;
+  justify-content: center;
+`;
 
 const StSkeleton = styled.div`
   display: flex;
