@@ -46,7 +46,11 @@ const PostList = ({ title }: { title: string }) => {
   console.log(posts);
 
   if (isLoading) {
-    return <ListSkeleton />;
+    return (
+      <StPostListWrapper>
+        <ListSkeleton />
+      </StPostListWrapper>
+    );
   }
 
   return (

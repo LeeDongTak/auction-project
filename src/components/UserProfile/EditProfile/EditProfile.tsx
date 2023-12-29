@@ -1,6 +1,6 @@
 import { UserOutlined } from "@ant-design/icons";
 import { QueryClient, useQuery } from "@tanstack/react-query";
-import { Avatar } from "antd";
+import { Avatar, Button } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../../api/auth";
@@ -64,6 +64,7 @@ const EditProfile = ({ title }: { title: string }) => {
 
     if (!answer) return;
 
+    setFileImage(undefined);
     setIsEdit(false);
   };
 
@@ -186,12 +187,16 @@ const EditProfile = ({ title }: { title: string }) => {
 
         <ButtonSection>
           {isEdit ? (
-            <>
-              <button onClick={cancelHandler}>취소</button>
-              <button onClick={submitHandler}>완료</button>
-            </>
+            <div>
+              <Button onClick={cancelHandler}>취소</Button>
+              <Button type="primary" onClick={submitHandler}>
+                완료
+              </Button>
+            </div>
           ) : (
-            <button onClick={() => setIsEdit(true)}>프로필 수정</button>
+            <Button type="primary" onClick={() => setIsEdit(true)}>
+              프로필 수정
+            </Button>
           )}
         </ButtonSection>
       </StProfileWrapper>
@@ -270,6 +275,11 @@ const ButtonSection = styled.section`
   display: flex;
   justify-content: center;
   margin-top: 2rem;
+
+  > div {
+    display: flex;
+    gap: 1rem;
+  }
 `;
 
 const StInputFile = styled.input`

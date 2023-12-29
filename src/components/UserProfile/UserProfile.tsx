@@ -52,10 +52,12 @@ const UserProfile = () => {
           ) : (
             <Avatar shape="circle" size={64} icon={<UserOutlined />} />
           )}
-          <div>
+          <StInfoBox>
             <h3>{item.nickname || "new user"}</h3>
-            <p>가입일</p>
-          </div>
+            <p>
+              <span>가입일: 0000.00.00</span> <span>작성글 수: 00</span>
+            </p>
+          </StInfoBox>
         </StProfileContainer>
       ))}
     </>
@@ -70,15 +72,6 @@ const StProfileContainer = styled.div`
   padding: 2rem;
   background-color: #222;
   color: #fff;
-
-  h3 {
-    font-size: 2rem;
-  }
-
-  p {
-    margin: 1rem 0;
-    color: #777;
-  }
 `;
 
 const StImgBox = styled.div`
@@ -92,6 +85,19 @@ const StImgBox = styled.div`
     width: inherit;
     height: inherit;
     object-fit: cover;
+  }
+`;
+
+const StInfoBox = styled.div`
+  h3 {
+    font-size: 2rem;
+  }
+
+  p {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    color: #777;
   }
 `;
 
