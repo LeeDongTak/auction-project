@@ -103,7 +103,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     },
   };
 
-  const nickname = {
+  const userNickname = {
     required: "필수 입력란입니다.",
     minLength: {
       value: 1,
@@ -222,7 +222,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
                 <input
                   type="nickname"
                   placeholder="닉네임"
-                  {...register("nickname", nickname)}
+                  {...register("nickname", userNickname)}
                 />
                 {errors?.nickname && ( // 에러 메시지
                   <div>{errors?.nickname?.message as string}</div>
