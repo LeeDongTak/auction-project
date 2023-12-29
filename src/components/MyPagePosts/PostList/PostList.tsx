@@ -3,7 +3,6 @@ import { Pagination } from "antd";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
 import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
-import ListSkeleton from "../../ListSkeletom/ListSkeleton";
 import PostItem from "./PostItem/PostItem";
 
 const PostList = ({ title }: { title: string }) => {
@@ -45,14 +44,6 @@ const PostList = ({ title }: { title: string }) => {
 
   console.log(posts);
 
-  if (isLoading) {
-    return (
-      <StPostListWrapper>
-        <ListSkeleton />
-      </StPostListWrapper>
-    );
-  }
-
   return (
     <>
       <h2>{title}</h2>
@@ -82,11 +73,7 @@ const StPostListWrapper = styled.div`
 const StPaginationSection = styled.section`
   display: flex;
   justify-content: center;
-`;
-
-const StSkeleton = styled.div`
-  display: flex;
-  flex-direction: column;
+  width: 100%;
 `;
 
 export default PostList;

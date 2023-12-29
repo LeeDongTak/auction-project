@@ -32,40 +32,48 @@ const MyPagePosts = () => {
 
   return (
     <StPostContainer>
-      <StCategoryWrapper>
-        {categories.map((category) => (
-          <StCategory
-            isActive={activeTitle === category.category_title}
-            key={category.id}
-            onClick={() => onClickCategoryHandler(category.category_title)}
-          >
-            {category.category_title}
-          </StCategory>
-        ))}
-      </StCategoryWrapper>
-      <StListWrapper>
-        {activeTitle === "내 게시물" && <PostList title={activeTitle} />}
-        {activeTitle === "찜한 목록" && <PostList title={activeTitle} />}
-        {activeTitle === "프로필 수정" && <EditProfile title={activeTitle} />}
-      </StListWrapper>
+      <StPostWrapper>
+        <StCategoryWrapper>
+          {categories.map((category) => (
+            <StCategory
+              isActive={activeTitle === category.category_title}
+              key={category.id}
+              onClick={() => onClickCategoryHandler(category.category_title)}
+            >
+              {category.category_title}
+            </StCategory>
+          ))}
+        </StCategoryWrapper>
+        <StListWrapper>
+          {activeTitle === "내 게시물" && <PostList title={activeTitle} />}
+          {activeTitle === "찜한 목록" && <PostList title={activeTitle} />}
+          {activeTitle === "프로필 수정" && <EditProfile title={activeTitle} />}
+        </StListWrapper>
+      </StPostWrapper>
     </StPostContainer>
   );
 };
 
 const StPostContainer = styled.div`
   display: flex;
-  gap: 1rem;
   width: 100%;
+`;
+
+const StPostWrapper = styled.div`
+  display: flex;
+  gap: 1rem;
+  width: 1200px;
+  margin: 0 auto;
   padding: 0 1rem;
 `;
 
 const StCategoryWrapper = styled.ul`
   display: flex;
   flex-direction: column;
-  width: 15rem;
+  width: 18rem;
   min-width: 10rem;
   padding: 1rem;
-  font-size: small;
+  font-size: medium;
 
   span {
     cursor: pointer;
@@ -74,13 +82,14 @@ const StCategoryWrapper = styled.ul`
 
 const StCategory = styled.span<{ isActive: boolean }>`
   display: flex;
-  padding: 0.5rem;
-  background-color: ${({ isActive }) => (isActive ? "#999" : "transparent")};
+  padding: 1rem;
+  background-color: ${({ isActive }) => (isActive ? "#023e7d" : "transparent")};
+  color: ${({ isActive }) => (isActive ? "#fff" : "#222")};
   transition: all 0.3s ease-in-out;
   border-radius: 0.25rem;
 
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? "#999" : "#d9d9d9")};
+    background-color: ${({ isActive }) => (isActive ? "#023e7d" : "#d9d9d9")};
   }
 `;
 

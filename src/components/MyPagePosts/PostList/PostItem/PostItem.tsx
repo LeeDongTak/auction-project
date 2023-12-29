@@ -14,7 +14,7 @@ const PostItem = ({ post }: { post: Auction_post }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
     console.log(isLoading);
 
     return () => clearTimeout(timer);
@@ -22,7 +22,7 @@ const PostItem = ({ post }: { post: Auction_post }) => {
 
   return (
     <StPostItemWrapper>
-      <Skeleton loading={isLoading} active avatar title paragraph={{ rows: 3 }}>
+      <Skeleton loading={isLoading} active title paragraph={{ rows: 6 }}>
         <StImage>사진</StImage>
         <StPostInfoSection>
           <h3>{post.title}</h3>
@@ -38,13 +38,14 @@ const StPostItemWrapper = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+  width: 100%;
   border: 1px solid #222;
   padding: 1rem;
 `;
 
 const StImage = styled.div`
-  width: 300px;
-  height: 100px;
+  min-width: 200px;
+  height: 200px;
   background-color: #888;
 `;
 
