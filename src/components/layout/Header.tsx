@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import logo from "../../images/logo2.png";
 import search from "../../images/search.svg";
 import { supabase } from "../../supabase";
 
@@ -60,7 +61,10 @@ function Header() {
 
   return (
     <StHeader>
-      <p onClick={() => navigate("/")}>엘리트옥션</p>
+      <p onClick={() => navigate("/")}>
+        <img src={logo} />
+        &nbsp; 엘리트옥션
+      </p>
       <div>
         <img src={search} />
         {isLogin ? (
@@ -104,6 +108,7 @@ const StHeader = styled.header`
   img {
     width: 30px;
     cursor: pointer;
+    vertical-align: middle;
   }
   p {
     cursor: pointer;
