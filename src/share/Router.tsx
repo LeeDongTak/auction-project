@@ -1,10 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Layout from "../layout/Layout";
-import AddAuction from "../pages/AddAuction";
 import Auth from "../pages/Auth";
 import Detail from "../pages/Detail";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
+import SetAuction from "../pages/SetAuction";
 import AuthLayout from "./AuthLayout";
 
 const Router = () => {
@@ -17,7 +17,7 @@ const Router = () => {
           <Route element={<AuthLayout />}>
             <Route path="detail/:auctionId" element={<Detail />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="addAuction" element={<AddAuction />} />
+            <Route path="setAuction" element={<SetAuction />} />
           </Route>
           <Route path="*" element={<Navigate replace to={"/"} />} />
         </Route>
