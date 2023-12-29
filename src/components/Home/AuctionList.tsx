@@ -5,6 +5,9 @@ import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
 import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
+import coin from "../../images/coin.svg";
+import end from "../../images/end.svg";
+import flag from "../../images/flag.svg";
 import placeholder from "../../images/placeholder.svg";
 import { Auction_post } from "../../types/databaseRetrunTypes";
 interface AuctionListProps {
@@ -38,10 +41,6 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                 key={auction.auction_id}
                 onClick={() => navigate(`/detail/${auction.auction_id}`)}
               >
-                <h6>
-                  <img src={clock} alt="Clock" />
-                  {transDate(auction.created_at)}
-                </h6>
                 <span>
                   <img
                     src={
@@ -53,13 +52,34 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                     alt="Auction"
                   />
                 </span>
-                <h2>{auction.title}</h2>
-                <p>{auction.content}</p>
-                <h3>시작: {transDate(auction.auction_start_date)}</h3>
-                <h3>마감: {transDate(auction.auction_end_date)}</h3>
-                <h3>시작가격: ₩ {auction.lower_limit.toLocaleString()}</h3>
-                <h3>입찰가격: ₩ {formattedBidPrice}</h3>
-                {auction.category && <h5>{auction.category.category_name}</h5>}
+                <StInfoContainer>
+                  <h6>
+                    <img src={clock} alt="Clock" />
+                    {transDate(auction.created_at)}
+                  </h6>
+
+                  <h1>{auction.title}</h1>
+                  <p>{auction.content}</p>
+                  <div>
+                    <h3>
+                      <img src={flag} />
+                      &nbsp;
+                      {transDate(auction.auction_start_date)} 시작
+                    </h3>
+                    <h3>
+                      <img src={end} /> &nbsp;
+                      {transDate(auction.auction_end_date)} 마감
+                    </h3>
+                    <h3>
+                      <img src={coin} /> &nbsp;시작 가격 ₩
+                      {auction.lower_limit.toLocaleString()}
+                    </h3>
+                  </div>
+                  <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
+                  {auction.category && (
+                    <h5>{auction.category.category_name}</h5>
+                  )}
+                </StInfoContainer>
               </li>
             );
           })}
@@ -90,17 +110,27 @@ const StListwrapper = styled.div`
       font-size: 1.3rem;
       border: 2px solid #afcaff;
       padding: 15px 20px 15px 30px;
+      display: flex;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: space-between;
       line-height: 2rem;
       cursor: pointer;
       border-radius: 10px;
-      margin: 10px 0;
+      margin: 20px 0;
       position: relative;
       width: 1200px;
       box-shadow: 2px 3px 4px #ccc;
-      h2 {
+      h1 {
         font-size: 1.8rem;
         font-weight: bold;
         margin-bottom: 10px;
+      }
+      h2 {
+        font-size: 1.6rem;
+        text-align: right;
+        font-weight: bold;
+        color: #80abff;
       }
       h6 {
         text-align: right;
@@ -121,11 +151,11 @@ const StListwrapper = styled.div`
         right: 10px;
         text-align: center;
         bottom: 10px;
-        width: 75px;
+        width: 85px;
         margin-top: 14px;
       }
       p {
-        width: 1100px;
+        width: 960px;
         height: 24px;
         white-space: nowrap;
         overflow: hidden;
@@ -145,4 +175,19 @@ const StNoItemMessage = styled.h4`
   text-align: center;
   font-size: 1.5rem;
   line-height: 2.3rem;
+`;
+
+const StInfoContainer = styled.div`
+  width: calc(100% - 180px);
+
+  div {
+    display: flex;
+    margin-top: 20px;
+    gap: 20px;
+    align-items: center;
+    img {
+      height: 25px;
+      vertical-align: middle;
+    }
+  }
 `;
