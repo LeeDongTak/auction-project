@@ -28,7 +28,9 @@ export async function fetchGetAuctions(
 
   const query = connectSupabase
     .from("auction_post")
-    .select("*, category(category_name), user_info(user_email)")
+    .select(
+      "*, category(category_name), user_info(user_email),auction_images(image_id, image_path)"
+    )
     .order(`${orderBy}`, { ascending: order });
 
   searchKeyword.trim() !== "" &&
