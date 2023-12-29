@@ -6,13 +6,16 @@ import { selectorAuctionTimeStamp } from "../../redux/modules/auctionTimestampSl
 import { formatNumberWithCommas } from "../../common/formatUtil";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bids } from "../../types/databaseRetrunTypes";
+import { MaxBids } from "../../types/databaseRetrunTypes";
+import { useAppDispatch } from "../../redux/config/configStore";
+import { resetBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
 
 type Props = {
-  maxBid: Bids | undefined;
+  maxBid: MaxBids | undefined;
 };
 
 const DetailTimeStamp = ({ maxBid }: Props) => {
+  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { auctionOver, auctionTimeStamp } = useSelector(
     selectorAuctionTimeStamp
@@ -25,7 +28,12 @@ const DetailTimeStamp = ({ maxBid }: Props) => {
       })();
     }
   }, [maxBid]);
-  console.log(maxBid);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetBidCustomModal());
+    };
+  }, []);
 
   return (
     <StTimeStampWrapper>
@@ -44,8 +52,7 @@ const DetailTimeStamp = ({ maxBid }: Props) => {
               <StSuccessBidWrapper>
                 <span>낙찰자 : </span>
                 <h1>
-                  {maxBid?.user_info?.nickname} ({maxBid?.user_info?.user_email}
-                  )
+                  {maxBid?.nickname} ({maxBid?.user_email})
                 </h1>
               </StSuccessBidWrapper>
               <Spacer y={20} />

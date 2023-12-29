@@ -21,7 +21,7 @@ export type BidCondition = 0 | 1;
 const BidCustomModal = () => {
   const [bidPriceState, setBidPriceState] = useState<string>("0");
   const dispatch = useAppDispatch();
-  const { isOpen, maxBid } = useSelector(selectorBidCustomModal);
+  const { isOpen, maxBid, minBid } = useSelector(selectorBidCustomModal);
   const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const bidInputRef = useRef<HTMLInputElement>(null);
 
@@ -29,9 +29,10 @@ const BidCustomModal = () => {
 
   useEffect(() => {
     const bidPrice = bidPriceState.replaceAll(",", "");
+    const minBidPrice = maxBid || minBid;
     if (Number(bidPrice) !== 0) {
-      if (bidPriceState && maxBid?.bid_price) {
-        Number(bidPrice) <= maxBid?.bid_price
+      if (bidPriceState && minBidPrice) {
+        Number(bidPrice) <= minBidPrice
           ? setBidCondition(0)
           : bidCondition !== 1 && setBidCondition(1);
       }

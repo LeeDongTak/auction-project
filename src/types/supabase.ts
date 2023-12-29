@@ -310,7 +310,20 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      fetch_max_bid_for_auction: {
+        Args: {
+          input_auction_id: string
+        }
+        Returns: {
+          bid_id: string
+          auction_id: string
+          user_id: string
+          bid_price: number
+          created_at: string
+          user_email: string
+          nickname: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
