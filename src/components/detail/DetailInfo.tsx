@@ -89,7 +89,7 @@ const DetailInfo = ({ auctionData }: Props) => {
           <Spacer y={SPACER_HEIGHT} />
         </li>
         <li>
-          <span>경매 시작 날짜 : </span>
+          <span>경매 종료 날짜 : </span>
           <span>{transDate(auctionData?.auction_end_date!)}</span>
           <Spacer y={SPACER_HEIGHT} />
         </li>

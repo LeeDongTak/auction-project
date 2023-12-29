@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { fetchPostAuctionBid } from "../../../../api/bid";
 import { useCustomMutation } from "../../../../hooks/useCustomMutation";
 import { useAppDispatch } from "../../../../redux/config/configStore";
+import { selectorAuctionTimeStamp } from "../../../../redux/modules/auctionTimestampSlice";
 
 const BidForm = (props: {
   $isOver: any;
@@ -37,7 +38,7 @@ const BidForm = (props: {
   const { handleOpenCustomModal } = useCustomModal();
 
   const { auction_id } = useSelector(selectorBidCustomModal);
-
+  const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const postBidMutationOptions = {
     mutationFn: fetchPostAuctionBid,
     onSuccess: async () => {
@@ -53,6 +54,11 @@ const BidForm = (props: {
   const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
     e.preventDefault();
     const bidPrice = value.replaceAll(",", "");
+
+    if (auctionOver === AuctionStatus.END) {
+      await handleOpenCustomModal("경매가 종료되었습니다.", "alert");
+      return;
+    }
 
     if (Number(bidPrice) <= 0) {
       setBidCondition(0);
