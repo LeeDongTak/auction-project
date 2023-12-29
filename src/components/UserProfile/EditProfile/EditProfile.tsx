@@ -1,10 +1,11 @@
 import { UserOutlined } from "@ant-design/icons";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { Avatar } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { getUserInfo, updateUser } from "../../../api/auth";
+import { getUserInfo } from "../../../api/auth";
 import { QUERY_KEYS } from "../../../query/keys.constant";
+import { useUserUpdateMutation } from "../../../query/useUsersQuery";
 import { StListWrapper } from "../../MyPagePosts/MyPagePosts.styles";
 
 const EditProfile = ({ title }: { title: string }) => {
@@ -16,10 +17,11 @@ const EditProfile = ({ title }: { title: string }) => {
 
   const queryClient = new QueryClient();
 
+  const { mutate: updateMutate } = useUserUpdateMutation();
+
   const { user: userData } = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
-
   const userId = userData.id;
 
   const { data: user } = useQuery({
@@ -27,15 +29,6 @@ const EditProfile = ({ title }: { title: string }) => {
     queryFn: () => getUserInfo(userId),
     enabled: !!userId,
   });
-
-  const updateMutation = useMutation({
-    mutationFn: updateUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
-  });
-
-  const socialLoginUser = userData.user_metadata;
 
   console.log(user);
 
@@ -51,9 +44,12 @@ const EditProfile = ({ title }: { title: string }) => {
       address2: inputAddress2 || user?.[0].address2,
     };
 
-    updateMutation.mutate(updateProfile);
+    updateMutate(updateProfile, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
+      },
+    });
 
-    // TODO: clear
     setIsEdit(false);
   };
 
@@ -79,77 +75,56 @@ const EditProfile = ({ title }: { title: string }) => {
     <StListWrapper>
       <h2>{title}</h2>
       <div>
-        {!user?.[0] ? (
+        {isEdit ? (
           <>
             <StTopSection>
-              {socialLoginUser.avatar_url ? (
+              {user?.[0].profile_image ? (
                 <StImgBox>
-                  <img src={socialLoginUser.avatar_url} alt="user-image" />
+                  <img src={user?.[0].profile_image} alt="user-image" />
                 </StImgBox>
               ) : (
                 <Avatar shape="circle" size={64} icon={<UserOutlined />} />
               )}
-              <p>{socialLoginUser.user_name}</p>
+              <label htmlFor="file">프로필 사진 수정</label>
+              <input type="file" id="file" onChange={handleChange} />
+              <input
+                type="text"
+                placeholder="nickname"
+                defaultValue={user?.[0].nickname}
+                onChange={(e) => setInputNickname(e.target.value)}
+              />
             </StTopSection>
             <section>
-              <p>{socialLoginUser.address1 || "현재 주소가 없습니다."}</p>
-              <p>{socialLoginUser.address2 || "현재 상세주소가 없습니다."}</p>
+              <input
+                type="text"
+                placeholder="주소1"
+                defaultValue={user?.[0].address1}
+                onChange={(e) => setInputAddress1(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="주소2"
+                defaultValue={user?.[0].address2}
+                onChange={(e) => setInputAddress2(e.target.value)}
+              />
             </section>
           </>
         ) : (
           <>
-            {isEdit ? (
-              <>
-                <StTopSection>
-                  {user?.[0].profile_image ? (
-                    <StImgBox>
-                      <img src={user?.[0].profile_image} alt="user-image" />
-                    </StImgBox>
-                  ) : (
-                    <Avatar shape="circle" size={64} icon={<UserOutlined />} />
-                  )}
-                  <label htmlFor="file">프로필 사진 수정</label>
-                  <input type="file" id="file" onChange={handleChange} />
-                  <input
-                    type="text"
-                    placeholder="nickname"
-                    defaultValue={user?.[0].nickname}
-                    onChange={(e) => setInputNickname(e.target.value)}
-                  />
-                </StTopSection>
-                <section>
-                  <input
-                    type="text"
-                    placeholder="주소1"
-                    defaultValue={user?.[0].address1}
-                    onChange={(e) => setInputAddress1(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="주소2"
-                    defaultValue={user?.[0].address2}
-                    onChange={(e) => setInputAddress2(e.target.value)}
-                  />
-                </section>
-              </>
-            ) : (
-              <>
-                <StTopSection>
-                  {user?.[0].profile_image ? (
-                    <StImgBox>
-                      <img src={user?.[0].profile_image} alt="user-image" />
-                    </StImgBox>
-                  ) : (
-                    <Avatar shape="circle" size={64} icon={<UserOutlined />} />
-                  )}
-                  <p>{user?.[0].nickname}</p>
-                </StTopSection>
-                <section>
-                  <p>{user?.[0].address1 || "현재 주소가 없습니다."}</p>
-                  <p>{user?.[0].address2 || "현재 상세주소가 없습니다."}</p>
-                </section>
-              </>
-            )}
+            <StTopSection>
+              {user?.[0].profile_image ? (
+                <StImgBox>
+                  <img src={user?.[0].profile_image} alt="user-image" />
+                </StImgBox>
+              ) : (
+                <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+              )}
+              <p>{user?.[0].nickname || "new user"}</p>
+            </StTopSection>
+            <section>
+              <p>{user?.[0].address1 || "현재 주소가 없습니다."}</p>
+              <p>{user?.[0].address2 || "현재 상세주소가 없습니다."}</p>
+            </section>
           </>
         )}
 

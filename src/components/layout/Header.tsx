@@ -16,10 +16,37 @@ function Header() {
     if (userData?.access_token) {
       setIsLogin(true);
     } else {
-      console.log("로그인 실패");
+      console.log("@@@@");
       setIsLogin(false);
     }
   }, []);
+
+  useEffect(() => {
+    socialSignUp();
+  }, []);
+
+  // 소셜 로그인일 때 최초 로그인시 회원가입
+  const socialSignUp = async () => {
+    if (userData?.user.user_metadata) {
+      console.log(userData?.user);
+
+      const socialData = userData?.user.user_metadata;
+
+      const { data, error } = await supabase.from("user_info").upsert({
+        user_id: userData?.user.id,
+        nickname: socialData.user_name,
+        created_at: userData?.user.created_at,
+        profile_image: socialData.avatar_url,
+        user_email: socialData.email,
+      });
+
+      setIsLogin(true);
+
+      if (error) {
+        console.log("소셜로그인 회원가입 중 에러", error.message);
+      }
+    }
+  };
 
   const signIn = () => {
     navigate("/login");
@@ -30,6 +57,7 @@ function Header() {
     const { error } = await supabase.auth.signOut();
     setIsLogin(false);
     alert("로그아웃 되었습니다.");
+    navigate("/");
     console.log(error);
   };
 
@@ -59,7 +87,7 @@ const StHeader = styled.header`
   justify-content: space-between;
   padding: 15px 20px;
   align-items: center;
-  margin-bottom: 20px;
+
   button {
     border: none;
     font-size: 1.5rem;
