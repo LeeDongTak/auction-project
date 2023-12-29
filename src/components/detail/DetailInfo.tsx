@@ -121,7 +121,10 @@ const DetailInfo = ({ auctionData }: Props) => {
       <Spacer y={SPACER_LITERARY} />
 
       {/* 경매 시작 전, 진행, 경매 종료 */}
-      <BidButton maxBidPrice={bidData?.bid_price} />
+      <BidButton
+        maxBidPrice={bidData?.bid_price}
+        auctionId={auctionData?.auction_id}
+      />
     </StDetailInfoWrapper>
   );
 };

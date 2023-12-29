@@ -12,8 +12,9 @@ import { useEffect } from "react";
 
 type Props = {
   maxBidPrice: number | undefined;
+  auctionId: string | undefined;
 };
-const BidButton = ({ maxBidPrice }: Props) => {
+const BidButton = ({ maxBidPrice, auctionId }: Props) => {
   const dispatch = useAppDispatch();
   const { isOpen } = useSelector(selectorBidCustomModal);
   const { auctionTimeStamp, auctionOver } = useSelector(
@@ -22,12 +23,21 @@ const BidButton = ({ maxBidPrice }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      dispatch(openBidCustomModal(maxBidPrice));
+      const bidPrice = {
+        maxBidPrice,
+        auction_id: auctionId,
+      };
+
+      dispatch(openBidCustomModal(bidPrice));
     }
   }, [maxBidPrice]);
 
   const onClickBidCustomModalOpenHandler = () => {
-    dispatch(openBidCustomModal(maxBidPrice));
+    const bidPrice = {
+      maxBidPrice,
+      auction_id: auctionId,
+    };
+    dispatch(openBidCustomModal(bidPrice));
   };
 
   return (
