@@ -23,6 +23,15 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                 <img src={clock} />
                 {transDate(auction.created_at)}
               </h6>
+              <h3>
+                {auction.auction_images &&
+                  auction.auction_images.length > 0 && (
+                    <img
+                      src={auction.auction_images[0].image_path}
+                      alt="Auction"
+                    />
+                  )}
+              </h3>
               <h2> {auction.title}</h2>
               <p> {auction.content}</p>
               {auction.category && <h5> {auction.category.category_name}</h5>}
@@ -69,6 +78,12 @@ const StListwrapper = styled.div`
       }
       h6 {
         text-align: right;
+        img {
+          box-shadow: none !important;
+          width: 20px;
+          vertical-align: middle;
+          margin-right: 5px;
+        }
       }
       h5 {
         background-color: #afcaff;
@@ -90,11 +105,11 @@ const StListwrapper = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      img {
-        box-shadow: none !important;
-        width: 20px;
-        vertical-align: middle;
-        margin-right: 5px;
+      h3 {
+        img {
+          height: 150px;
+          border-radius: 10px;
+        }
       }
     }
   }
