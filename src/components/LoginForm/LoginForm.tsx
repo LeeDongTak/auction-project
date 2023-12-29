@@ -257,13 +257,13 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
           {mode === "로그인" ? (
             <>
               <SocialLogin />
-              <Button
+              <StButton
                 type="primary"
                 htmlType="submit"
                 onClick={handleSubmit(signInHandler)}
               >
                 로그인하기
-              </Button>
+              </StButton>
               <p>
                 아직 계정이 없으신가요?{" "}
                 <span onClick={onClickHandler}>회원가입</span>
@@ -271,13 +271,13 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
             </>
           ) : (
             <>
-              <Button
+              <StButton
                 type="primary"
                 htmlType="submit"
                 onClick={handleSubmit(signUpHandler)}
               >
                 회원가입하기
-              </Button>
+              </StButton>
               <p>
                 이미 계정이 있으신가요?{" "}
                 <span onClick={onClickHandler}>로그인</span>{" "}
@@ -297,11 +297,10 @@ const StFormContainer = styled.div`
   align-items: flex-end;
   margin: auto;
   width: 650px;
-  max-width: 650px;
-  margin-top: 50px;
+  height: 550px;
 
   h2 {
-    font-size: large;
+    font-size: x-large;
     font-weight: 600;
     margin-bottom: 1.25rem;
   }
@@ -332,20 +331,32 @@ const StInputSection = styled.section`
     width: 300px;
     padding: 0.5rem;
     margin: 0.5rem 0;
+    font-size: medium;
   }
 `;
 
 const StButtonSection = styled.section`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
   margin-top: 2rem;
 
+  p {
+    font-size: small;
+  }
+
   span {
     cursor: pointer;
-    font-size: small;
+    font-size: medium;
     font-weight: 500;
   }
+`;
+
+const StButton = styled(Button)`
+  text-align: center;
+  height: 3rem;
+  width: 300px;
 `;
 
 export default LoginForm;

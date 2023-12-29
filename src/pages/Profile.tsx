@@ -1,3 +1,5 @@
+import { VerticalAlignTopOutlined } from "@ant-design/icons";
+import { FloatButton } from "antd";
 import { styled } from "styled-components";
 import MyPagePosts from "../components/MyPagePosts/MyPagePosts";
 import UserProfile from "../components/UserProfile/UserProfile";
@@ -18,6 +20,12 @@ const Profile = () => {
     <StProfileContainer>
       <UserProfile />
       <MyPagePosts />
+      <FloatButton
+        shape="circle"
+        type="primary"
+        style={{ right: 24 }}
+        icon={<VerticalAlignTopOutlined />}
+      />
     </StProfileContainer>
   );
 };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import search from "../../images/search.svg";
 import { supabase } from "../../supabase";
+import Nav from "./Nav";
 
 function Header() {
   const navigate = useNavigate();
@@ -59,31 +59,45 @@ function Header() {
   };
 
   return (
-    <StHeader>
-      <p onClick={() => navigate("/")}>엘리트옥션</p>
-      <div>
-        <img src={search} />
-        {isLogin ? (
-          <button onClick={signOut}>로그아웃</button>
-        ) : (
-          <button onClick={signIn}>로그인</button>
-        )}
-      </div>
-    </StHeader>
+    <StHeaderContainer>
+      <StHeaderWrapper>
+        <h1 onClick={() => navigate("/")}>ELETE</h1>
+        <div>
+          {isLogin ? (
+            <>
+              <Nav signOut={signOut} userId={userData?.user.id} />
+            </>
+          ) : (
+            <>
+              <button onClick={signIn}>로그인</button>
+            </>
+          )}
+        </div>
+      </StHeaderWrapper>
+    </StHeaderContainer>
   );
 }
 
 export default Header;
-const StHeader = styled.header`
-  background-color: #afcaff;
+
+const StHeaderContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 7rem;
+  background-color: var(--main-color);
+  color: #fff;
+`;
+
+const StHeaderWrapper = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1200px;
+  margin: 0 auto;
   font-size: 1.5rem;
   font-weight: bold;
-  display: flex;
-
   user-select: none;
-  justify-content: space-between;
   padding: 15px 20px;
-  align-items: center;
 
   button {
     border: none;
@@ -97,13 +111,19 @@ const StHeader = styled.header`
       background-color: #fffacd;
     }
   }
+
   div {
     display: flex;
+
+    img > {
+      width: 10px;
+      cursor: pointer;
+    }
   }
-  img {
-    width: 30px;
-    cursor: pointer;
+  h1 {
+    font-size: xx-large;
   }
+
   p {
     cursor: pointer;
   }
