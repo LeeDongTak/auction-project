@@ -3,8 +3,8 @@ import { styled } from "styled-components";
 import { useAppDispatch } from "../../redux/config/configStore";
 import { setCategory } from "../../redux/modules/profileSlice";
 import EditProfile from "../UserProfile/EditProfile/EditProfile";
+import { StListWrapper } from "./MyPagePosts.styles";
 import PostList from "./PostList/PostList";
-import WishList from "./WishList/WishList";
 
 const MyPagePosts = () => {
   const dispatch = useAppDispatch();
@@ -43,9 +43,11 @@ const MyPagePosts = () => {
           </StCategory>
         ))}
       </StCategoryWrapper>
-      {activeTitle === "내 게시물" && <PostList title={activeTitle} />}
-      {activeTitle === "찜한 목록" && <WishList title={activeTitle} />}
-      {activeTitle === "프로필 수정" && <EditProfile title={activeTitle} />}
+      <StListWrapper>
+        {activeTitle === "내 게시물" && <PostList title={activeTitle} />}
+        {activeTitle === "찜한 목록" && <PostList title={activeTitle} />}
+        {activeTitle === "프로필 수정" && <EditProfile title={activeTitle} />}
+      </StListWrapper>
     </StPostContainer>
   );
 };
@@ -60,6 +62,7 @@ const StPostContainer = styled.div`
 const StCategoryWrapper = styled.ul`
   display: flex;
   flex-direction: column;
+  width: 15rem;
   min-width: 10rem;
   padding: 1rem;
   font-size: small;
@@ -74,6 +77,7 @@ const StCategory = styled.span<{ isActive: boolean }>`
   padding: 0.5rem;
   background-color: ${({ isActive }) => (isActive ? "#999" : "transparent")};
   transition: all 0.3s ease-in-out;
+  border-radius: 0.25rem;
 
   &:hover {
     background-color: ${({ isActive }) => (isActive ? "#999" : "#d9d9d9")};

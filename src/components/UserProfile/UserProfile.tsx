@@ -36,7 +36,7 @@ const UserProfile = () => {
   if (isLoading)
     return (
       <StSkeleton>
-        <Skeleton.Avatar active shape={avatarShape} size={70} />
+        <Skeleton.Avatar active shape={avatarShape} size={80} />
         <Skeleton.Input active />
       </StSkeleton>
     );
@@ -52,7 +52,10 @@ const UserProfile = () => {
           ) : (
             <Avatar shape="circle" size={64} icon={<UserOutlined />} />
           )}
-          <p>{item.nickname || "new user"}</p>
+          <div>
+            <h3>{item.nickname || "new user"}</h3>
+            <p>가입일</p>
+          </div>
         </StProfileContainer>
       ))}
     </>
@@ -61,24 +64,34 @@ const UserProfile = () => {
 
 const StProfileContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   width: 100%;
-  gap: 1rem;
+  gap: 2rem;
   padding: 2rem;
-  font-size: 2rem;
-  background-color: #eee;
+  background-color: #222;
+  color: #fff;
+
+  h3 {
+    font-size: 2rem;
+  }
+
+  p {
+    margin: 1rem 0;
+    color: #777;
+  }
 `;
 
 const StImgBox = styled.div`
   background-color: gray;
-  width: 6rem;
-  height: 6rem;
+  width: 7rem;
+  height: 7rem;
   border-radius: 50%;
   overflow: hidden;
 
   img {
     width: inherit;
     height: inherit;
+    object-fit: cover;
   }
 `;
 
