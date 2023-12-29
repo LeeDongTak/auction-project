@@ -6,6 +6,7 @@ interface updateProps {
   nickname?: string;
   address1?: string;
   address2?: string;
+  profile_image?: string;
 }
 
 // 모든 유저 데이터 불러오기
@@ -63,10 +64,11 @@ const updateUser = async ({
   nickname,
   address1,
   address2,
+  profile_image,
 }: updateProps) => {
   const { data, error } = await supabase
     .from("user_info")
-    .update({ nickname, address1, address2 })
+    .update({ nickname, address1, address2, profile_image })
     .eq("user_id", user_id)
     .select();
 

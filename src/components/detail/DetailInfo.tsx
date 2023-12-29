@@ -1,7 +1,12 @@
+import {
+  RealtimePostgresChangesPayload,
+  RealtimePostgresInsertPayload,
+} from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
+import connectSupabase from "../../api/connectSupabase";
 import { transDate } from "../../common/dayjs";
 import {
   formatNumberWithCommas,
@@ -12,11 +17,6 @@ import { Auction_post, Bids } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
-import connectSupabase from "../../api/connectSupabase";
-import {
-  RealtimePostgresChangesPayload,
-  RealtimePostgresInsertPayload,
-} from "@supabase/supabase-js";
 
 type Props = {
   auctionData: Auction_post | undefined;
@@ -81,7 +81,7 @@ const DetailInfo = ({ auctionData }: Props) => {
           <Spacer y={SPACER_HEIGHT} />
         </li>
         <li>
-          <span>경매 종료 날짜 : </span>
+          <span>경매 마감 날짜 : </span>
           <span>{transDate(auctionData?.auction_end_date!)}</span>
           <Spacer y={SPACER_HEIGHT} />
         </li>
