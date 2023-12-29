@@ -3,5 +3,3 @@ export const QUERY_KEYS = {
   USERS: "users",
   USER: "user",
 };
-
-export const BID_REFETCH_COUNTER = 100000;

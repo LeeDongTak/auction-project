@@ -12,7 +12,6 @@ import { Auction_post, Bids } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
-import { BID_REFETCH_COUNTER } from "../../query/keys.constant";
 import connectSupabase from "../../api/connectSupabase";
 import {
   RealtimePostgresChangesPayload,
@@ -38,7 +37,6 @@ const DetailInfo = ({ auctionData }: Props) => {
   const queryBidOptions = {
     queryKey: ["getBidMaxPrice"],
     queryFn: () => fetchAuctionMaxBid(auctionData?.auction_id!),
-    refetchInterval: BID_REFETCH_COUNTER,
     // ^^7 (갓진호 킹진호 신진호 미친진호 킹갓제너럴진호)
     enabled: !!auctionData?.auction_id,
     staleTime: Infinity,
