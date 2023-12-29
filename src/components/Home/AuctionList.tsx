@@ -12,7 +12,7 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const navigate = useNavigate();
   return (
     <StListwrapper>
-      {auctions ? (
+      {auctions && auctions.length > 0 ? (
         <ul>
           {auctions.map((auction) => (
             <li
@@ -30,7 +30,14 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
           ))}
         </ul>
       ) : (
-        <p>로딩중입니다...</p>
+        <>
+          <StNoItemMessage>
+            해당 카테고리에는 경매 아이템이 없습니다.
+          </StNoItemMessage>
+          <StNoItemMessage>
+            다른 카테고리를 선택하시거나 새로운 경매아이템을 등록해주세요.
+          </StNoItemMessage>
+        </>
       )}
     </StListwrapper>
   );
@@ -43,6 +50,7 @@ const StListwrapper = styled.div`
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    user-select: none;
     li {
       font-size: 1.3rem;
       border: 2px solid #afcaff;
@@ -90,4 +98,10 @@ const StListwrapper = styled.div`
       }
     }
   }
+`;
+
+const StNoItemMessage = styled.h4`
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 2.3rem;
 `;
