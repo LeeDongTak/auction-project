@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
+import placeholder from "../../images/placeholder.svg";
 import { Auction_post } from "../../types/databaseRetrunTypes";
 interface AuctionListProps {
   auctions: Auction_post[] | null;
@@ -23,8 +24,22 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                 <img src={clock} />
                 {transDate(auction.created_at)}
               </h6>
+              <span>
+                <img
+                  src={
+                    auction.auction_images && auction.auction_images.length > 0
+                      ? auction.auction_images[0].image_path
+                      : placeholder
+                  } // 이미지가 없을 경우 플레이스홀더 사용
+                  alt="Auction"
+                />
+              </span>
               <h2> {auction.title}</h2>
               <p> {auction.content}</p>
+              <h3>시작{transDate(auction.auction_start_date)}</h3>
+              <h3>마감{transDate(auction.auction_end_date)}</h3>
+              <h3>시작가격{auction.lower_limit}</h3>
+              <h3>입찰가격</h3>
               {auction.category && <h5> {auction.category.category_name}</h5>}
             </li>
           ))}
@@ -69,6 +84,12 @@ const StListwrapper = styled.div`
       }
       h6 {
         text-align: right;
+        img {
+          box-shadow: none !important;
+          width: 20px;
+          vertical-align: middle;
+          margin-right: 5px;
+        }
       }
       h5 {
         background-color: #afcaff;
@@ -90,11 +111,11 @@ const StListwrapper = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      img {
-        box-shadow: none !important;
-        width: 20px;
-        vertical-align: middle;
-        margin-right: 5px;
+      span {
+        img {
+          height: 150px;
+          border-radius: 10px;
+        }
       }
     }
   }
