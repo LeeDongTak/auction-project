@@ -1,6 +1,6 @@
 import Router from "./share/Router";
 import GlobalStyle from "./styled/GlobalStyle";
-import BidCustomModal from "./components/ui/customModal/BidCustomModal";
+import BidCustomModal from "./components/ui/bidCustomModal/BidCustomModal";
 
 function App() {
   return (

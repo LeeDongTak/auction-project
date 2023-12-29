@@ -82,6 +82,8 @@ const StHeader = styled.header`
   font-size: 1.5rem;
   font-weight: bold;
   display: flex;
+
+  user-select: none;
   justify-content: space-between;
   padding: 15px 20px;
   align-items: center;
@@ -103,6 +105,9 @@ const StHeader = styled.header`
   }
   img {
     width: 30px;
+    cursor: pointer;
+  }
+  p {
     cursor: pointer;
   }
 `;

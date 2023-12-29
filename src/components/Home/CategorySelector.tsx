@@ -49,6 +49,7 @@ export default CategorySelector;
 const StCategoryContainer = styled.div`
   display: flex;
   justify-content: center;
+  user-select: none;
   flex-wrap: wrap;
   margin-bottom: 20px;
   button {
