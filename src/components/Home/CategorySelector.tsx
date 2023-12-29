@@ -32,7 +32,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
               backgroundColor: selectedCategories.some(
                 (c) => c.category_id === category.category_id
               )
-                ? "#afcaff"
+                ? "#fffacd"
                 : "transparent",
             }}
           >
@@ -58,7 +58,7 @@ const StCategoryContainer = styled.div`
     font-weight: bold;
     border-radius: 5px;
     font-size: 1.5rem;
-    border: 2px solid #afcaff;
+    border: 2px solid #023e7d;
     margin: 10px;
     &:hover {
       background-color: #fffacd !important;
