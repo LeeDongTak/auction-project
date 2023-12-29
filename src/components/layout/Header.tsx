@@ -12,8 +12,11 @@ function Header() {
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
 
+  const socialData = userData?.user.user_metadata;
+
   useEffect(() => {
     if (userData?.access_token) {
+      socialSignUp();
       setIsLogin(true);
     } else {
       console.log("@@@@");
@@ -21,30 +24,24 @@ function Header() {
     }
   }, []);
 
-  useEffect(() => {
-    socialSignUp();
-  }, []);
-
-  // 소셜 로그인일 때 최초 로그인시 회원가입
+  // 최초 소셜 로그인시 회원가입
   const socialSignUp = async () => {
-    if (userData?.user.user_metadata) {
-      console.log(userData?.user);
+    try {
+      if (socialData) {
+        const { data, error } = await supabase.from("user_info").upsert({
+          user_id: userData?.user.id,
+          nickname: socialData.user_name,
+          created_at: userData?.user.created_at,
+          profile_image: socialData.avatar_url,
+          user_email: socialData.email,
+        });
 
-      const socialData = userData?.user.user_metadata;
-
-      const { data, error } = await supabase.from("user_info").upsert({
-        user_id: userData?.user.id,
-        nickname: socialData.user_name,
-        created_at: userData?.user.created_at,
-        profile_image: socialData.avatar_url,
-        user_email: socialData.email,
-      });
-
-      setIsLogin(true);
-
-      if (error) {
-        console.log("소셜로그인 회원가입 중 에러", error.message);
+        if (error) {
+          console.log("소셜로그인 회원가입 실패", error.message);
+        }
       }
+    } catch (error) {
+      console.log("소셜 회원가입 중 오류 발생", error);
     }
   };
 

@@ -1,19 +1,34 @@
+import { Skeleton } from "antd";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 
 const PostItem = ({ post }: { post: Auction_post }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const { title, content } = post;
 
   const viewContent =
     content.length > 20 ? content.slice(0, 50) + "..." : content;
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    console.log(isLoading);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <StPostItemWrapper>
-      <StImage>사진</StImage>
-      <StPostInfoSection>
-        <h3>{post.title}</h3>
-        <p>{viewContent}</p>
-      </StPostInfoSection>
+      <Skeleton loading={isLoading} active avatar title paragraph={{ rows: 3 }}>
+        <StImage>사진</StImage>
+        <StPostInfoSection>
+          <h3>{post.title}</h3>
+          <p>{viewContent}</p>
+        </StPostInfoSection>
+      </Skeleton>
     </StPostItemWrapper>
   );
 };
