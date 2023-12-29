@@ -108,7 +108,7 @@ const StListwrapper = styled.div`
     user-select: none;
     li {
       font-size: 1.3rem;
-      border: 2px solid #afcaff;
+      border: 2px solid #023e7d;
       padding: 15px 20px 15px 30px;
       display: flex;
       box-sizing: border-box;
@@ -130,7 +130,7 @@ const StListwrapper = styled.div`
         font-size: 1.6rem;
         text-align: right;
         font-weight: bold;
-        color: #80abff;
+        color: #023e7d;
       }
       h6 {
         text-align: right;
@@ -142,16 +142,19 @@ const StListwrapper = styled.div`
         }
       }
       h5 {
-        background-color: #afcaff;
+        background-color: #fffacd;
         padding: 5px 10px;
         font-size: 1.1rem;
         font-weight: bold;
         border-radius: 5px;
         float: right;
+        box-sizing: border-box;
+        color: #023e7d;
+        border: 1px solid #023e7d;
         right: 10px;
         text-align: center;
         bottom: 10px;
-        width: 100px;
+        width: 105px;
         margin-top: 14px;
       }
       p {
