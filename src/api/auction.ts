@@ -21,7 +21,6 @@ export async function fetchGetAuctions(
   order: boolean = false,
   user_id: string = ""
 ) {
-
   console.log(categories);
   const categoryIds = categories.map((category) => {
     return category.category_id;
@@ -75,4 +74,15 @@ export const fetchGetAuctionById = async (auction_id: string) => {
   if (error) throw new Error(error.message);
 
   return data;
+};
+export const fetchPatchAuctionPost = async (
+  auctionPost: Partial<Auction_post>
+): Promise<number> => {
+  const { status, error, statusText } = await connectSupabase
+    .from("auction_post")
+    .update({ ...auctionPost })
+    .eq("auction_id", auctionPost.auction_id!);
+  if (error) throw new Error(error.message);
+
+  return status;
 };

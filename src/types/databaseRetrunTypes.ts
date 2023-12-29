@@ -71,11 +71,20 @@ export interface Auction_like {
 }
 
 export interface Bids {
-  bid_id: string /* primary key */;
+  bid_id: string;
   created_at: string;
-  auction_id: string /* foreign key to auction_post.auction_id */;
-  user_id: string /* foreign key to user_info.user_id */;
+  auction_id: string;
+  user_id: string;
   bid_price: number;
   auction_post?: Auction_post;
   user_info?: User_info;
+}
+
+export interface Payload<T> {
+  schema: string;
+  table: string;
+  commit_timestamp: string;
+  eventType: string;
+  new: T;
+  old?: T;
 }
