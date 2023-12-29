@@ -151,7 +151,7 @@ const StListwrapper = styled.div`
         right: 10px;
         text-align: center;
         bottom: 10px;
-        width: 85px;
+        width: 100px;
         margin-top: 14px;
       }
       p {
@@ -162,9 +162,18 @@ const StListwrapper = styled.div`
         text-overflow: ellipsis;
       }
       span {
+        overflow: hidden;
+        width: 150px;
+        height: 150px;
+        border: 2px solid #eee;
+
+        border-radius: 10px;
         img {
-          height: 150px;
-          border-radius: 10px;
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+          vertical-align: middle;
+          margin: auto;
         }
       }
     }

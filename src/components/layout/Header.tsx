@@ -78,11 +78,11 @@ function Header() {
 
 export default Header;
 const StHeader = styled.header`
-  background-color: #afcaff;
+  background-color: #023e7d;
   font-size: 1.5rem;
   font-weight: bold;
   display: flex;
-
+  color: #fff;
   user-select: none;
   justify-content: space-between;
   padding: 15px 20px;
@@ -93,8 +93,9 @@ const StHeader = styled.header`
     font-size: 1.5rem;
     font-weight: bold;
     border-radius: 5px;
+    color: #fff;
     cursor: pointer;
-    background-color: #afcaff;
+    background-color: #023e7d;
     margin-left: 10px;
     &:hover {
       background-color: #fffacd;
