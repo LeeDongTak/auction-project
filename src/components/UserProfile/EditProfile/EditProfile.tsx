@@ -259,6 +259,12 @@ const StInfoSection = styled.section`
   display: flex;
   align-items: center;
   gap: 2rem;
+  margin-top: 1.5rem;
+
+  span,
+  p {
+    font-size: medium;
+  }
 
   > div {
     display: flex;
@@ -266,7 +272,7 @@ const StInfoSection = styled.section`
     gap: 1.5rem;
 
     input {
-      font-size: 0.8rem;
+      font-size: small;
     }
   }
 `;

@@ -42,9 +42,9 @@ const UserProfile = () => {
     );
 
   return (
-    <>
+    <StProfileContainer>
       {user?.map((item) => (
-        <StProfileContainer key={item.user_id}>
+        <StProfileWrapper key={item.user_id}>
           {item.profile_image ? (
             <StImgBox>
               <img src={item.profile_image} alt="user-image" />
@@ -58,19 +58,27 @@ const UserProfile = () => {
               <span>가입일: 0000.00.00</span> <span>작성글 수: 00</span>
             </p>
           </StInfoBox>
-        </StProfileContainer>
+        </StProfileWrapper>
       ))}
-    </>
+    </StProfileContainer>
   );
 };
 
 const StProfileContainer = styled.div`
   display: flex;
-  align-items: flex-end;
   width: 100%;
+  background-color: #222;
+  height: 200px;
+  align-items: center;
+`;
+
+const StProfileWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+  margin: 0 auto;
+  width: 1200px;
   gap: 2rem;
   padding: 2rem;
-  background-color: #222;
   color: #fff;
 `;
 
