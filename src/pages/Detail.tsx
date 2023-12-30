@@ -10,13 +10,14 @@ import placeholder from "../images/placeholder.svg";
 import { Skeleton } from "antd";
 import useDetailAuctionPost from "../hooks/useDetailAuctionPost";
 import useSubscribeBidTable from "../hooks/useSubscribeBidTable";
+import BidPopUpLayout from "../components/detail/bidPopup/BidPopUpLayout";
 
 const Detail = () => {
   const { auctionId } = useParams();
   const [data, isLoading] = useDetailAuctionPost(auctionId!);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
-  useSubscribeBidTable(auctionId!);
 
+  useSubscribeBidTable(auctionId!);
   useAuctionStatus(data);
 
   return (
@@ -64,6 +65,8 @@ const Detail = () => {
       >
         <DetailContent auctionContent={data?.content} />
       </Skeleton>
+
+      <BidPopUpLayout auctionId={auctionId!} />
     </StDetailWrapper>
   );
 };
@@ -72,6 +75,7 @@ const StDetailWrapper = styled.main`
   max-width: 1200px;
   width: 100%;
   margin: 100px auto 0;
+  position: relative;
 `;
 
 const StDetailInfo = styled.section`
