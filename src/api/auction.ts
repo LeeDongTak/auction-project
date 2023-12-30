@@ -21,7 +21,7 @@ export async function fetchGetAuctions({
   orderBy = "created_at",
   order = false,
   user_id = "",
-  pageParam = 1,
+  // pageParam = 1,
 }: Auction_option) {
   console.log(categories);
   const categoryIds = categories?.map((category) => {

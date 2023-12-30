@@ -15,7 +15,6 @@ const Title = ({ title }: Props) => {
 const StTitleWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 40px;
   > h1 {
     font-size: 24px;
     font-weight: bold;

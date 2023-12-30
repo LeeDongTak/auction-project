@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { BidCard } from "./BidCard";
 import { Skeleton } from "antd";
 import { Spacer } from "../../ui/Spacer";
+import Title from "./Title";
 
 interface Props {
   auctionId: string;
@@ -22,6 +23,15 @@ const BidList = ({ auctionId }: Props) => {
 
   return (
     <StBidListWrapper>
+      <Skeleton
+        loading={isLoading}
+        active
+        title
+        style={{ width: "100%", height: "5px" }}
+      >
+        <Title title={"입찰 현황"} />
+      </Skeleton>
+      <Spacer y={30} />
       {data?.map((bid: Bids, index) => (
         <>
           <Skeleton

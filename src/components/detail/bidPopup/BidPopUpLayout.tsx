@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import BidList from "./BidList";
 import React from "react";
-import Title from "./Title";
 import CloseButton from "../../ui/CloseButton";
 
 interface Props {
@@ -15,7 +14,6 @@ const BidPopUpLayout = ({ auctionId }: Props) => {
   return (
     <StBidLayoutWrapper>
       <div>
-        <Title title={"입찰 현황"} />
         <BidList auctionId={auctionId} />
         <CloseButton handler={OnClickCloseButtonHandler} />
       </div>
