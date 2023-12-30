@@ -157,7 +157,7 @@ const StScrollEvent = styled.div`
   left: 0;
   transition: 0.2s;
   opacity: 1;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(2, 62, 125, 0.7);
 `;
 const StChevronContainer = styled.div`
   position: relative;
@@ -209,7 +209,7 @@ const StChevron = styled.div`
     top: 0;
     height: 100%;
     width: 51%;
-    background: #fff;
+    background: #FFFACD;
     left: 0;
     transform: skew(0deg, 30deg);
   }
@@ -219,7 +219,7 @@ const StChevron = styled.div`
     top: 0;
     height: 100%;
     width: 51%;
-    background: #fff;
+    background: #FFFACD;
     right: 0;
     width: 50%;
     transform: skew(0deg, -30deg);
@@ -228,7 +228,7 @@ const StChevron = styled.div`
 const StScrollText = styled.div`
   color: #fff;
   margin-top: 10%;
-  text-shadow: 0 0 0.1em #fff;
+  text-shadow: 0 0 0.1em #FFFACD;
 `;
 
 // left list 영역
@@ -255,11 +255,11 @@ const StCategoryLabel = styled.label`
 
 // right list 영역
 // const StChoiceCategory = styled.span`
-//   background-color: #AFCAFF;
+//   background-color: #023E7D;
 //   width: auto;
 //   height: auto;
-//   color: #fff;
-//   border: 1px solid #000;
+//   color: #FFFACD;
+//   border: 1px solid #023E7D;
 //   padding: 0.5em  1.5em;
 //   font-size: 0.8em;
 //   font-weight: bold;
@@ -269,14 +269,14 @@ const StCategoryLabel = styled.label`
 // `
 
 const StChoiceCategory = styled.div<{ $listType?: string }>`
-  background-color: #afcaff;
+  background-color: #023E7D;
   width: 80%;
   height: 2.8em;
-  color: #fff;
+  color: #FFFACD;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #000;
+  border: 1px solid #023E7D;
   font-size: 1.2em;
   font-weight: bold;
   margin: 3% auto;
@@ -285,8 +285,8 @@ const StChoiceCategory = styled.div<{ $listType?: string }>`
     $listType === "choiceCategoryTitle" &&
     `
       border: none;
-      background-color: #fff;
-      color: #000;
+      background-color: #FFFACD;
+      color: #023E7D;
       align-items: flex-start;
     `}
 `;
