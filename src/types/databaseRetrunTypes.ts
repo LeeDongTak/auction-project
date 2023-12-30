@@ -70,6 +70,17 @@ export interface Auction_like {
   auction_post?: Auction_post;
 }
 
+export interface Auction_option {
+  searchKeyword?: string;
+  categories?: Category[];
+  limit?: number;
+  offset?: number;
+  orderBy?: string;
+  order?: boolean;
+  user_id?: string;
+  pageParam?: number;
+}
+
 export interface Bids {
   bid_id?: string;
   created_at?: string;

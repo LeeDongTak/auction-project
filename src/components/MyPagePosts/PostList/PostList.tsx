@@ -1,8 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "antd";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
-import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
+import { QUERY_KEYS } from "../../../query/keys.constant";
+import {
+  Auction_option,
+  Auction_post,
+} from "../../../types/databaseRetrunTypes";
 import PostItem from "./PostItem/PostItem";
 
 interface PostListProps {
@@ -11,21 +16,20 @@ interface PostListProps {
 }
 
 const PostList = ({ title, userId }: PostListProps) => {
-  // localstorage로 user-id 가져오기
-  const userData = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(5);
+  const [limit, setLimit] = useState<number>(5);
 
-  // const userId = userData?.id;
+  useEffect(() => {
+    console.log("limit", pageSize + (page - 1) * pageSize);
+    console.log("offset", (page - 1) * pageSize);
+    console.log("page", page);
+  }, [page, pageSize]);
 
-  const queryOption = {
-    searchKeyword: "",
-    categories: [] as Category[],
-    limit: 20,
-    offset: 0,
-    orderBy: "created_at",
-    order: false,
-    user_id: userId,
+  const queryOption: Auction_option = {
+    // user_id: userId,
+    limit: pageSize + (page - 1) * pageSize,
+    offset: (page - 1) * pageSize,
   };
 
   const {
@@ -33,22 +37,38 @@ const PostList = ({ title, userId }: PostListProps) => {
     isLoading,
     isError,
     error,
+    isFetching,
   } = useQuery<Auction_post[]>({
-    queryKey: ["posts"],
-    queryFn: () =>
-      fetchGetAuctions(
-        queryOption.searchKeyword,
-        queryOption.categories,
-        queryOption.limit,
-        queryOption.offset,
-        queryOption.orderBy,
-        queryOption.order,
-        queryOption.user_id
-      ),
+    queryKey: [QUERY_KEYS.POSTS],
+    queryFn: () => fetchGetAuctions(queryOption),
     enabled: !!userId,
+    // keepPreviousData: true,
   });
 
-  console.log(posts);
+  // 옵션 import 오류
+  // const {
+  //   fetchNextPage,
+  //   fetchPreviousPage,
+  //   hasNextPage,
+  //   hasPreviousPage,
+  //   isFetchingNextPage,
+  //   isFetchingPreviousPage,
+  //   ...result
+  // } = useInfiniteQuery({
+  //   queryKey: ["posts"],
+  //   queryFn: ({ pageParam = 1 }) =>
+  //     fetchGetAuctions({ ...queryOption, pageParam }),
+  //   getNextPageParam: (lastPage) => lastPage.nextCursor,
+  //   getPreviousPageParam: (firstPage) => firstPage.prevCursor,
+  // });
+
+  //TODO: 무한 스크롤 구현
+
+  // TODO: 페이지네이션
+  const onClickPage = (selected: number) => {
+    console.log(selected);
+    setPage(selected);
+  };
 
   return (
     <>
@@ -61,8 +81,14 @@ const PostList = ({ title, userId }: PostListProps) => {
             {posts?.map((post, index) => <PostItem post={post} key={index} />)}
           </>
         )}
+        {/* <button onClick={() => setLimit((prev) => prev + 5)}>더보기</button> */}
         <StPaginationSection>
-          <Pagination defaultCurrent={1} total={50} />
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={50}
+            onChange={onClickPage}
+          />
         </StPaginationSection>
       </StPostListWrapper>
     </>

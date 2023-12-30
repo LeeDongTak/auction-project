@@ -12,7 +12,6 @@ import Nav from "./Nav";
 function Header() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const queryClient = new QueryClient();
 
@@ -22,6 +21,8 @@ function Header() {
 
   const userId = userData?.user?.id;
 
+  const socialData = userData?.user.user_metadata;
+
   const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
 
   const { data: allUser } = useQuery({
@@ -29,15 +30,11 @@ function Header() {
     queryFn: getUsersInfo,
   });
 
-  const { data: currentUser } = useQuery({
+  const { data: currentUser, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId),
     enabled: !!userId,
   });
-
-  console.log("로그인시 user 데이터", currentUser);
-
-  const socialData = userData?.user.user_metadata;
 
   useEffect(() => {
     if (userData?.access_token) {
@@ -45,7 +42,6 @@ function Header() {
     } else {
       setIsLogin(false);
     }
-    setIsLoading(false);
   }, [currentUser]);
 
   useEffect(() => {
@@ -59,10 +55,10 @@ function Header() {
     try {
       const newUser = {
         user_id: userData?.user.id,
-        nickname: socialData.name,
+        nickname: socialData?.name,
         created_at: userData?.user.created_at,
-        profile_image: socialData.avatar_url,
-        user_email: socialData.email,
+        profile_image: socialData?.avatar_url,
+        user_email: socialData?.email,
       };
 
       addSocialUserMutate(newUser, {
@@ -92,17 +88,19 @@ function Header() {
     <StHeaderContainer>
       <StHeaderWrapper>
         <h1 onClick={() => navigate("/")}>ELETE</h1>
-        <div>
-          {isLogin ? (
-            <>
-              <Nav signOut={signOut} userId={userData?.user.id} />
-            </>
-          ) : (
-            <>
-              {isLoading ? <Spin /> : <button onClick={signIn}>로그인</button>}
-            </>
-          )}
-        </div>
+        {isLoading ? (
+          <Spin />
+        ) : (
+          <div>
+            {isLogin ? (
+              <>
+                <Nav signOut={signOut} userId={userData?.user.id} />
+              </>
+            ) : (
+              <button onClick={signIn}>로그인</button>
+            )}
+          </div>
+        )}
       </StHeaderWrapper>
     </StHeaderContainer>
   );
@@ -158,5 +156,3 @@ const StHeaderWrapper = styled.header`
     cursor: pointer;
   }
 `;
-
-const StSpin = styled(Spin)``;

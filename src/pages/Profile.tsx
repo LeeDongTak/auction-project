@@ -30,15 +30,16 @@ const Profile = () => {
     queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId),
     enabled: !!userId,
+    select: (user) => user[0],
   });
 
   console.log("현재 유저 데이터", user);
 
-  const currentUser = user?.[0] as User_info;
+  // const user = user?.[0] as User_info;
 
   return (
     <StProfileContainer>
-      <UserProfile user={currentUser} isLoading={isLoading} />
+      <UserProfile user={user as User_info} isLoading={isLoading} />
       <StPostWrapper>
         <ProfileMenu
           activeTitle={activeTitle}
@@ -52,7 +53,7 @@ const Profile = () => {
             <PostList title={activeTitle} userId={userId} />
           )}
           {activeTitle === "프로필 수정" && (
-            <EditProfile title={activeTitle} user={currentUser} />
+            <EditProfile title={activeTitle} user={user as User_info} />
           )}
         </StListWrapper>
       </StPostWrapper>
