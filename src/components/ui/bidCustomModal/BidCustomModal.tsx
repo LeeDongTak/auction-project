@@ -62,15 +62,15 @@ const BidCustomModal = () => {
       <StCustomModalContentWrapper>
         <DetailTimeStamp />
         <Spacer y={40} />
-        <div>
+        <StSuccessBidWrapper>
           <h1>시작 입찰가</h1>
           <span> ₩ {formatNumberWithCommas(lowerPrice)}</span>
-        </div>
+        </StSuccessBidWrapper>
         <Spacer y={20} />
-        <div>
+        <StSuccessBidWrapper>
           <h1>현재 최고 입찰가</h1>
           <span> ₩ {formatNumberWithCommas(maxBid?.bid_price)}</span>
-        </div>
+        </StSuccessBidWrapper>
         <Spacer y={40} />
         <BidForm
           $isOver={auctionOver}
@@ -126,6 +126,11 @@ const StCustomModalContentWrapper = styled.div`
       font-size: 30px;
     }
   }
+`;
+
+const StSuccessBidWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export default BidCustomModal;

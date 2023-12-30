@@ -5,9 +5,17 @@ import bidCustomModal from "../modules/bidCustomModalSlice";
 import customModal from "../modules/customModalSlice";
 import profile from "../modules/profileSlice";
 import setAuction from "../modules/setAuctionSlice";
+import bidList from "../modules/bidListSlice";
 
 const store = configureStore({
-  reducer: { setAuction, auctionTimestamp, profile, bidCustomModal, customModal },
+  reducer: {
+    setAuction,
+    auctionTimestamp,
+    profile,
+    bidCustomModal,
+    customModal,
+    bidList,
+  },
 });
 
 type RootState = ReturnType<typeof store.getState>;

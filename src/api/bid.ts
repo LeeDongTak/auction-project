@@ -1,22 +1,6 @@
 import { Bids } from "../types/databaseRetrunTypes";
 import connectSupabase from "./connectSupabase";
 
-// export const fetchAuctionMaxBid = async (auction_id: string): Promise<Bids> => {
-//   const { data, error } = await connectSupabase
-//     .from("bids")
-//     .select("*, user_info(user_email, nickname)")
-//     .eq("auction_id", auction_id);
-//
-//   if (error) throw new Error(error.message);
-//
-//   return data?.reduce(
-//     (acc, cur) => {
-//       if (acc.bid_price < cur.bid_price) acc = cur;
-//       return acc;
-//     },
-//     data ? data[0] : { bid_price: 0 }
-//   ) as Bids;
-// };
 export const fetchAuctionMaxBid = async (inputAuctionId: string) => {
   const { data, error } = await connectSupabase.rpc(
     "fetch_max_bid_for_auction",
@@ -36,10 +20,17 @@ export const fetchPostAuctionBid = async (bid: Bids): Promise<number> => {
   return status;
 };
 
-export const fetchPatchAuctionBid = async (bid: Bids): Promise<number> => {
-  const { status, error } = await connectSupabase.from("bids").update(bid);
+export const fetchGetAuctionBidList = async (
+  auction_id: string
+): Promise<Bids[]> => {
+  const { data, error } = await connectSupabase
+    .from("bids")
+    .select("*, user_info(user_email, nickname)")
+    .eq("auction_id", auction_id)
+    .order("bid_price", { ascending: false })
+    .returns<Bids[]>();
 
-  if (error) throw new Error(error.message);
+  if (error) throw error;
 
-  return status;
+  return data;
 };
