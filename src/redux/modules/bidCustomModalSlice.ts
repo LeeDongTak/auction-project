@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootStateType } from "../config/configStore";
+import { Bids } from "../../types/databaseRetrunTypes";
 
 type BidCustomModalActionPayload = {
-  maxBidPrice: number | undefined;
+  maxBid: Bids | undefined;
   auction_id: string | undefined;
 };
 const initialState = {
   isOpen: false,
   result: false,
-  maxBidPrice: 0 as number | undefined,
+  maxBid: {} as Bids | undefined,
   auction_id: "" as string | undefined,
 };
 
@@ -21,12 +22,13 @@ const bidCustomModalSlice = createSlice({
       action: PayloadAction<BidCustomModalActionPayload>
     ) => {
       state.isOpen = true;
-      state.maxBidPrice = action.payload.maxBidPrice;
+      console.log(action.payload.maxBid);
+      state.maxBid = action.payload.maxBid;
       state.auction_id = action.payload.auction_id;
     },
     closeBidCustomModal: (state) => {
       state.isOpen = false;
-      state.maxBidPrice = 0;
+      state.maxBid = {} as Bids | undefined;
     },
   },
 });
