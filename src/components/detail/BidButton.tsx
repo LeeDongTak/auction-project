@@ -18,9 +18,7 @@ type Props = {
 const BidButton = ({ maxBid, auctionData }: Props) => {
   const dispatch = useAppDispatch();
   const { isOpen } = useSelector(selectorBidCustomModal);
-  const { auctionTimeStamp, auctionOver } = useSelector(
-    selectorAuctionTimeStamp
-  );
+  const { auctionOver } = useSelector(selectorAuctionTimeStamp);
 
   useEffect(() => {
     if (isOpen) {

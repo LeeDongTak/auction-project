@@ -29,9 +29,7 @@ export const fetchAuctionMaxBid = async (inputAuctionId: string) => {
 };
 
 export const fetchPostAuctionBid = async (bid: Bids): Promise<number> => {
-  const { status, error, statusText } = await connectSupabase
-    .from("bids")
-    .insert(bid);
+  const { status, error } = await connectSupabase.from("bids").insert(bid);
 
   if (error) throw new Error(error.message);
 
@@ -39,9 +37,7 @@ export const fetchPostAuctionBid = async (bid: Bids): Promise<number> => {
 };
 
 export const fetchPatchAuctionBid = async (bid: Bids): Promise<number> => {
-  const { status, error, statusText } = await connectSupabase
-    .from("bids")
-    .update(bid);
+  const { status, error } = await connectSupabase.from("bids").update(bid);
 
   if (error) throw new Error(error.message);
 
