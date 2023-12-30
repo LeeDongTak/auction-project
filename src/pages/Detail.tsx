@@ -11,6 +11,7 @@ import { useCustomQuery } from "../hooks/useCustomQuery";
 import placeholder from "../images/placeholder.svg";
 import { Auction_post, MaxBids } from "../types/databaseRetrunTypes";
 import { fetchAuctionMaxBid } from "../api/bid";
+import { Skeleton } from "antd";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -19,7 +20,9 @@ const Detail = () => {
     queryFn: () => fetchGetAuctionById(auctionId!),
     queryOptions: { staleTime: Infinity },
   };
-  const data = useCustomQuery<Auction_post, Error>(queryAuctionOptions);
+  const [data, isLoading] = useCustomQuery<Auction_post, Error>(
+    queryAuctionOptions
+  );
 
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
 
@@ -29,7 +32,9 @@ const Detail = () => {
     queryOptions: { staleTime: 0 },
   };
 
-  const bidData = useCustomQuery<MaxBids, Error>(queryBidOptions);
+  const [bidData, bidIsLoading] = useCustomQuery<MaxBids, Error>(
+    queryBidOptions
+  );
 
   useAuctionStatus(data);
 
@@ -37,14 +42,47 @@ const Detail = () => {
     <StDetailWrapper>
       <StDetailInfo>
         <StDetailImgWrapper>
-          <img src={thumbnailImg} alt={data?.title} />
+          {isLoading ? (
+            <StSkeletonImageWrapper
+              active
+              style={{ width: "100%", height: "100%" }}
+            />
+          ) : (
+            <img src={thumbnailImg} alt={data?.title} />
+          )}
         </StDetailImgWrapper>
-        <DetailInfo auctionData={data} maxBid={bidData} />
+
+        <Skeleton
+          loading={isLoading}
+          active
+          title
+          paragraph={{ rows: 8 }}
+          style={{ maxWidth: "300px", width: "100%", height: "100%" }}
+        >
+          <DetailInfo auctionData={data} maxBid={bidData} />
+        </Skeleton>
       </StDetailInfo>
       <Spacer y={40} />
-      <DetailTimeStamp maxBid={bidData} />
+
+      <Skeleton
+        loading={isLoading}
+        active
+        title
+        style={{ width: "500px", height: "100%", margin: "0 auto" }}
+      >
+        <DetailTimeStamp maxBid={bidData} />
+      </Skeleton>
+
       <Spacer y={20} />
-      <DetailContent auctionContent={data?.content} />
+
+      <Skeleton
+        loading={isLoading}
+        active
+        paragraph={{ rows: 10 }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        <DetailContent auctionContent={data?.content} />
+      </Skeleton>
     </StDetailWrapper>
   );
 };
@@ -58,15 +96,25 @@ const StDetailWrapper = styled.main`
 const StDetailInfo = styled.section`
   display: flex;
   column-gap: 45px;
+  max-width: 1000px;
   margin: 0 auto;
   justify-content: center;
 `;
 
 const StDetailImgWrapper = styled.div`
   max-width: 300px;
+  width: 100%;
   > img {
     width: 100%;
   }
 `;
 
+const StSkeletonImageWrapper = styled(Skeleton.Image)`
+  width: 100% !important;
+  height: 100%;
+  > svg {
+    width: 100%;
+    height: 100%;
+  }
+`;
 export default React.memo(Detail);
