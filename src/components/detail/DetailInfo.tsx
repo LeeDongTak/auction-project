@@ -1,64 +1,25 @@
-import {
-  RealtimePostgresChangesPayload,
-  RealtimePostgresInsertPayload,
-} from "@supabase/supabase-js";
-import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import connectSupabase from "../../api/connectSupabase";
 import { transDate } from "../../common/dayjs";
 import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import { Auction_post, Bids, MaxBids } from "../../types/databaseRetrunTypes";
+import { Auction_post } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
+import { useSelector } from "react-redux";
+import { selectorBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
 
 type Props = {
   auctionData: Auction_post | undefined;
-  maxBid: MaxBids | undefined;
 };
 
 const SPACER_HEIGHT = 10;
 const SPACER_LITERARY = 20;
-const DetailInfo = ({ auctionData, maxBid }: Props) => {
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const changeObserverHandler = async (
-      payload:
-        | RealtimePostgresChangesPayload<Bids>
-        | RealtimePostgresInsertPayload<Bids>
-    ) => {
-      if ("auction_id" in payload.new) {
-        if (payload.new.auction_id === auctionData?.auction_id) {
-          await queryClient.invalidateQueries({
-            queryKey: ["getBidMaxPrice", auctionData.auction_id],
-          });
-        }
-      }
-    };
-
-    const subscription = connectSupabase
-      .channel("bids")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "bids" },
-        changeObserverHandler
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "bids" },
-        changeObserverHandler
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [auctionData?.auction_id]);
+const DetailInfo = ({ auctionData }: Props) => {
+  const { maxBid } = useSelector(selectorBidCustomModal);
 
   return (
     <StDetailInfoWrapper>
@@ -85,7 +46,7 @@ const DetailInfo = ({ auctionData, maxBid }: Props) => {
         </li>
         <li>
           <span>입찰가격 : </span>
-          <span> ₩ {formatNumberWithCommas(maxBid?.bid_price)}</span>
+          <span> ₩ {formatNumberWithCommas(maxBid?.bid_price || 0)}</span>
           <Spacer y={SPACER_HEIGHT} />
         </li>
       </StAuctionInfo>
@@ -105,8 +66,7 @@ const DetailInfo = ({ auctionData, maxBid }: Props) => {
       </StAuctionStatusWrapper>
       <Spacer y={SPACER_LITERARY} />
 
-      {/* 경매 시작 전, 진행, 경매 종료 */}
-      <BidButton maxBid={maxBid} auctionData={auctionData} />
+      <BidButton />
     </StDetailInfoWrapper>
   );
 };
