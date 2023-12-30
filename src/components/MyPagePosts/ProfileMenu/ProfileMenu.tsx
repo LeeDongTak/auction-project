@@ -57,11 +57,16 @@ const StCategoryWrapper = styled.ul`
   span {
     cursor: pointer;
   }
+
+  @media (max-width: 650px) {
+    flex-direction: row;
+    width: 100%;
+  }
 `;
 
 const StCategory = styled.span<{ isActive: boolean }>`
   display: flex;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   background-color: ${({ isActive }) => (isActive ? "#023e7d" : "transparent")};
   color: ${({ isActive }) => (isActive ? "#fff" : "#222")};
   transition: all 0.3s ease-in-out;
