@@ -14,7 +14,7 @@ function SetAuctionImage() {
     imgRef?.current?.click();
   };
 
-  const setImgHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onchangeImgUrlHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.currentTarget;
     const files = (target.files as FileList)[0];
 
@@ -27,17 +27,21 @@ function SetAuctionImage() {
     reader.readAsDataURL(files);
   };
 
+  const onClickImgUrlCloseHandler = (imgUrl: string) => {
+    setImgArray([...imgArray.filter((x) => x !== imgUrl)])
+  }
+
   return (
     <StImageWrapper>
       <StImageTitle>이미지 등록</StImageTitle>
       <StImageUl>
         {
-          imgArray.map((item, index) => <StImageLi key={index} $imgUrl={item} />)
+          imgArray.map((item, index) => <StImageLi onClick={() => { onClickImgUrlCloseHandler(item) }} key={index} $imgUrl={item} />)
         }
-        <input style={{ display: "none" }} type="file" ref={imgRef} onChange={(event) => { setImgHandler(event) }} />
+        <input style={{ display: "none" }} type="file" ref={imgRef} onChange={(event) => { onchangeImgUrlHandler(event) }} />
         {imgArray.length < 4 &&
           <StImageButton onClick={handleClick}>
-            <StPlus />
+            <StPlus className="plus" />
           </StImageButton>
         }
       </StImageUl>
@@ -73,23 +77,68 @@ const StImageLi = styled.li<{ $imgUrl?: string }>`
   height: 15em;
   border-radius: 1em;
   margin-right: 2em;
-  background-image: url(${({ $imgUrl }) => $imgUrl});
+  background: url(${({ $imgUrl }) => $imgUrl});
   background-size: cover;
+  box-shadow: 0 0 0.5em 0 #023E7D;
+  transition: 0.1s;
+  position: relative;
+  cursor: pointer;
+  &:hover{
+    /* background-image: none; */
+    background: #023E7D;
+    &::before{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      content: "";
+      background-color: #FFFACD;
+      font-size: 2em;
+      color: #FFFACD;
+      width: 2.7em;
+      height: 0.4em;
+      border-radius: 50px;
+    }
+    &::after{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      content: "";
+      background-color: #FFFACD;
+      font-size: 2em;
+      color: #FFFACD;
+      width: 2.7em;
+      height: 0.4em;
+      border-radius: 50px;
+    }
+  }
 `
 
-const StImageButton = styled(StImageLi)`
+const StImageButton = styled.div`
+  width: 20em;
+  height: 15em;
+  border-radius: 1em;
+  margin-right: 2em;
+  background-size: cover;
+  box-shadow: 0 0 0.5em 0 #023E7D;
+  transition: 0.1s;
   display: flex;
   justify-content: center;
   align-items: center;
   background: none;
-  background-color: #AFCAFF;
+  background-color: #023E7D;
   cursor: pointer;
   transition: 0.1s;
   &:hover{
-    background-color: #bFdbFF;
+    background-color: #FFFACD;
+    box-shadow: 0 0 0.5em 0 #023E7D;
+  }
+  &:hover > .plus{
+    color: #023E7D;
   }
 `
 const StPlus = styled(FaPlus)`
   font-size: 6em;
-  color: #fff;
+  color: #FFFACD;
 `

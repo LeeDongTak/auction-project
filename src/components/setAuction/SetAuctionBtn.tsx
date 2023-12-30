@@ -1,6 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { FaPlus } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { AddAuctionPost } from "../../api/setAuction";
 import { useAddAuctionMutation } from "../../hooks/useAddAuctionMutation";
@@ -9,11 +10,6 @@ import { setIsAlert } from "../../redux/modules/setAuctionSlice";
 import { Auction_post, insert_Auction_post } from "../../types/databaseRetrunTypes";
 
 function SetAuctionButton() {
-
-  const queryClient = useQueryClient();
-  const mutationOptions = {
-    mutationFn: AddAuctionPost
-  }
   const {
     imgFileList,
     auctionTitle,
@@ -29,6 +25,9 @@ function SetAuctionButton() {
     categoryList,
   } = useAppSelector((state) => state.setAuction);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const accessTokenJson: string | null = localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token")
+  const accessToken = accessTokenJson && JSON.parse(accessTokenJson)
 
   const newAuctionData: insert_Auction_post = {
     title: auctionTitle,
@@ -40,7 +39,7 @@ function SetAuctionButton() {
     lower_limit: auctionLowerPrice,
     content: auctionContent,
     auction_status: '0', // default상태는 0
-    user_id: "2d85a9fe-18c2-4bf0-a0f8-bbca21d58cf2", //임의의 유저 id
+    user_id: accessToken.user.id,
     category_id: categoryList
   }
   const addAuctionData: {
@@ -54,7 +53,11 @@ function SetAuctionButton() {
     imgFileList: File[];
   }) => {
     //경매품 추가하기 유효성 검사
-    if (imgFileList.length === 0) {
+    if (accessTokenJson === null) {
+      alert("로그인 후 등록 가능합니다.")
+      navigate('/login')
+      return false;
+    } else if (imgFileList.length === 0) {
       dispatch(
         setIsAlert({ isAlert: true, ErrorMsg: "이미지를 등록해 주세요" })
       );
@@ -210,7 +213,7 @@ function SetAuctionButton() {
       <StButton onClick={() => {
         isValidAddAuction()
       }}>
-        <StPlus />
+        <StPlus className="plus" />
       </StButton>
     </StButtonWrapper>
   )
@@ -234,19 +237,20 @@ const StButton = styled.button`
   position: absolute;
   right: 0%;
   bottom: 5%;
-  background-color: #AFCAFF;
+  background-color: #023E7D;
   visibility: visible;
   width: 6em;
   height: 6em;
   border: 0;
   border-radius: 1em;
   cursor: pointer;
-  box-shadow: 0 0 1em 0 #AFCAFF;
+  box-shadow: 0 0 0.5em 0 #023E7D;
   transition: 0.1s;
   &:hover{
-    background-color: #bFdbFF;
+    background-color: #FFFACD;
     &::before{
       position: absolute;
+      color: #023E7D;
       top: -2em;
       left: 50%;
       width: 5em;
@@ -255,8 +259,11 @@ const StButton = styled.button`
       content: "등록하기";
     }
   }
+  &:hover > .plus{
+    color: #023E7D;
+  }
 `
 const StPlus = styled(FaPlus)`
   font-size: 3em;
-  color: #fff;
+  color: #FFFACD;
 `
