@@ -11,22 +11,20 @@ import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import { Auction_post, Bids } from "../../types/databaseRetrunTypes";
+import { Auction_post, Bids, MaxBids } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
-import { useAppDispatch } from "../../redux/config/configStore";
 
 type Props = {
   auctionData: Auction_post | undefined;
-  maxBid: Bids | undefined;
+  maxBid: MaxBids | undefined;
 };
 
 const SPACER_HEIGHT = 10;
 const SPACER_LITERARY = 20;
 const DetailInfo = ({ auctionData, maxBid }: Props) => {
   const queryClient = useQueryClient();
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const changeObserverHandler = async (
@@ -36,7 +34,9 @@ const DetailInfo = ({ auctionData, maxBid }: Props) => {
     ) => {
       if ("auction_id" in payload.new) {
         if (payload.new.auction_id === auctionData?.auction_id) {
-          await queryClient.invalidateQueries({ queryKey: ["getBidMaxPrice"] });
+          await queryClient.invalidateQueries({
+            queryKey: ["getBidMaxPrice", auctionData.auction_id],
+          });
         }
       }
     };
@@ -106,7 +106,7 @@ const DetailInfo = ({ auctionData, maxBid }: Props) => {
       <Spacer y={SPACER_LITERARY} />
 
       {/* 경매 시작 전, 진행, 경매 종료 */}
-      <BidButton maxBid={maxBid} auctionId={auctionData?.auction_id} />
+      <BidButton maxBid={maxBid} auctionData={auctionData} />
     </StDetailInfoWrapper>
   );
 };

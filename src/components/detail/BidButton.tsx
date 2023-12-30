@@ -9,24 +9,22 @@ import {
   selectorBidCustomModal,
 } from "../../redux/modules/bidCustomModalSlice";
 import { useEffect } from "react";
-import { Bids } from "../../types/databaseRetrunTypes";
+import { Auction_post, MaxBids } from "../../types/databaseRetrunTypes";
 
 type Props = {
-  maxBid: Bids | undefined;
-  auctionId: string | undefined;
+  auctionData: Auction_post | undefined;
+  maxBid: MaxBids | undefined;
 };
-const BidButton = ({ maxBid, auctionId }: Props) => {
+const BidButton = ({ maxBid, auctionData }: Props) => {
   const dispatch = useAppDispatch();
   const { isOpen } = useSelector(selectorBidCustomModal);
-  const { auctionTimeStamp, auctionOver } = useSelector(
-    selectorAuctionTimeStamp
-  );
+  const { auctionOver } = useSelector(selectorAuctionTimeStamp);
 
   useEffect(() => {
     if (isOpen) {
       const bidData = {
         maxBid: maxBid,
-        auction_id: auctionId,
+        auction_id: auctionData?.auction_id,
       };
       dispatch(openBidCustomModal(bidData));
     }
@@ -35,7 +33,8 @@ const BidButton = ({ maxBid, auctionId }: Props) => {
   const onClickBidCustomModalOpenHandler = () => {
     const bidData = {
       maxBid,
-      auction_id: auctionId,
+      auction_id: auctionData?.auction_id,
+      minBid: auctionData?.lower_limit,
     };
     dispatch(openBidCustomModal(bidData));
   };

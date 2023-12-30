@@ -51,6 +51,7 @@ const BidForm = (props: {
   const { maxBid } = useSelector(selectorBidCustomModal);
 
   const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
+    const maxBidPrice = maxBid?.bid_price || 0;
     e.preventDefault();
     const bidPrice = value.replaceAll(",", "");
 
@@ -66,8 +67,8 @@ const BidForm = (props: {
       return;
     }
 
-    if (typeof maxBid?.bid_price === "number" && maxBid.bid_price >= 0) {
-      if (maxBid.bid_price >= Number(bidPrice)) {
+    if (typeof maxBidPrice === "number" && maxBidPrice >= 0) {
+      if (maxBidPrice >= Number(bidPrice)) {
         setBidCondition(0);
         forwardRef.current?.focus();
         return;

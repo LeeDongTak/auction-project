@@ -106,3 +106,13 @@ export interface Payload<T> {
   new: T;
   old?: T;
 }
+
+export interface MaxBids {
+  bid_id: string;
+  auction_id: string;
+  user_id: string;
+  bid_price: number;
+  created_at: string;
+  user_email: string;
+  nickname: string;
+}
