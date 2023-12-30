@@ -1,19 +1,19 @@
-import { AuctionStatus } from "../../../../types/detailTyps";
-import { Spacer } from "../../Spacer";
-import { formatAuctionStatusByButton } from "../../../../common/formatUtil";
 import React from "react";
+import { useSelector } from "react-redux";
 import { styled } from "styled-components";
-import { BidCondition } from "../BidCustomModal";
+import { fetchPostAuctionBid } from "../../../../api/bid";
+import { formatAuctionStatusByButton } from "../../../../common/formatUtil";
 import { useCustomModal } from "../../../../hooks/useCustomModal";
+import { useCustomMutation } from "../../../../hooks/useCustomMutation";
+import { useAppDispatch } from "../../../../redux/config/configStore";
+import { selectorAuctionTimeStamp } from "../../../../redux/modules/auctionTimestampSlice";
 import {
   closeBidCustomModal,
   selectorBidCustomModal,
 } from "../../../../redux/modules/bidCustomModalSlice";
-import { useSelector } from "react-redux";
-import { fetchPostAuctionBid } from "../../../../api/bid";
-import { useCustomMutation } from "../../../../hooks/useCustomMutation";
-import { useAppDispatch } from "../../../../redux/config/configStore";
-import { selectorAuctionTimeStamp } from "../../../../redux/modules/auctionTimestampSlice";
+import { AuctionStatus } from "../../../../types/detailTyps";
+import { Spacer } from "../../Spacer";
+import { BidCondition } from "../BidCustomModal";
 
 const BidForm = (props: {
   $isOver: any;
@@ -37,7 +37,6 @@ const BidForm = (props: {
   const dispatch = useAppDispatch();
   const { handleOpenCustomModal } = useCustomModal();
 
-  const { auction_id } = useSelector(selectorBidCustomModal);
   const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const postBidMutationOptions = {
     mutationFn: fetchPostAuctionBid,
@@ -48,9 +47,12 @@ const BidForm = (props: {
   };
 
   const mutation = useCustomMutation(postBidMutationOptions);
-  const { maxBid } = useSelector(selectorBidCustomModal);
+  const { maxBid, lowerPrice, auction_id } = useSelector(
+    selectorBidCustomModal
+  );
 
   const onSubmitBidHandler = async (e: React.FormEvent<unknown>) => {
+    const maxBidPrice = maxBid?.bid_price || lowerPrice;
     e.preventDefault();
     const bidPrice = value.replaceAll(",", "");
 
@@ -66,8 +68,8 @@ const BidForm = (props: {
       return;
     }
 
-    if (typeof maxBid?.bid_price === "number" && maxBid.bid_price >= 0) {
-      if (maxBid.bid_price >= Number(bidPrice)) {
+    if (typeof maxBidPrice === "number" && maxBidPrice >= 0) {
+      if (maxBidPrice >= Number(bidPrice)) {
         setBidCondition(0);
         forwardRef.current?.focus();
         return;
@@ -75,9 +77,6 @@ const BidForm = (props: {
 
       const modalMessage = `₩ ${value}에 \n 입찰하시겠습니까?`;
       if (await handleOpenCustomModal(modalMessage, "confirm")) {
-        // 입찰 금액을 가지고 insert 쿼리
-        // TODO: 여기 진행
-
         const { user: userData } = JSON.parse(
           localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
         );

@@ -1,27 +1,35 @@
 import { Bids } from "../types/databaseRetrunTypes";
 import connectSupabase from "./connectSupabase";
 
-export const fetchAuctionMaxBid = async (auction_id: string): Promise<Bids> => {
-  const { data, error } = await connectSupabase
-    .from("bids")
-    .select("*, user_info(user_email, nickname)")
-    .eq("auction_id", auction_id);
-
+// export const fetchAuctionMaxBid = async (auction_id: string): Promise<Bids> => {
+//   const { data, error } = await connectSupabase
+//     .from("bids")
+//     .select("*, user_info(user_email, nickname)")
+//     .eq("auction_id", auction_id);
+//
+//   if (error) throw new Error(error.message);
+//
+//   return data?.reduce(
+//     (acc, cur) => {
+//       if (acc.bid_price < cur.bid_price) acc = cur;
+//       return acc;
+//     },
+//     data ? data[0] : { bid_price: 0 }
+//   ) as Bids;
+// };
+export const fetchAuctionMaxBid = async (inputAuctionId: string) => {
+  const { data, error } = await connectSupabase.rpc(
+    "fetch_max_bid_for_auction",
+    { input_auction_id: inputAuctionId }
+  );
   if (error) throw new Error(error.message);
+  if (!data) throw new Error("data is null");
 
-  return data?.reduce(
-    (acc, cur) => {
-      if (acc.bid_price < cur.bid_price) acc = cur;
-      return acc;
-    },
-    data ? data[0] : { bid_price: 0 }
-  ) as Bids;
+  return data[0];
 };
 
 export const fetchPostAuctionBid = async (bid: Bids): Promise<number> => {
-  const { status, error, statusText } = await connectSupabase
-    .from("bids")
-    .insert(bid);
+  const { status, error } = await connectSupabase.from("bids").insert(bid);
 
   if (error) throw new Error(error.message);
 
@@ -29,9 +37,7 @@ export const fetchPostAuctionBid = async (bid: Bids): Promise<number> => {
 };
 
 export const fetchPatchAuctionBid = async (bid: Bids): Promise<number> => {
-  const { status, error, statusText } = await connectSupabase
-    .from("bids")
-    .update(bid);
+  const { status, error } = await connectSupabase.from("bids").update(bid);
 
   if (error) throw new Error(error.message);
 

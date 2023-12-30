@@ -1,17 +1,20 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function useCustomQuery<T, TError extends Error = Error>(
   queryOptions: UseQueryOptions<T, TError>
-): T | undefined {
-  const { isLoading, isError, error, data, refetch } = useQuery<T, TError>(
+): [T | undefined, boolean] {
+  let { isLoading, isError, error, data, refetch } = useQuery<T, TError>(
     queryOptions
   );
 
+  const [isLoadingSkeleton, setIsLoadingSkeleton] = useState(true);
+
   useEffect(() => {
-    // loading 처리
-    if (isLoading) {
-      console.log("isLoading ", isLoading);
+    if (!isLoading) {
+      setTimeout(() => {
+        setIsLoadingSkeleton(isLoading);
+      }, 1000);
     }
   }, [isLoading]);
 
@@ -22,5 +25,5 @@ export function useCustomQuery<T, TError extends Error = Error>(
     }
   }, [isError, error]);
 
-  return data;
+  return [data, isLoadingSkeleton];
 }
