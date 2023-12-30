@@ -1,45 +1,75 @@
+import { QueryClient, useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { getUserInfo, getUsersInfo } from "../../api/auth";
+import { QUERY_KEYS } from "../../query/keys.constant";
+import { useSocialUserAddMutation } from "../../query/useUsersQuery";
 import { supabase } from "../../supabase";
 import Nav from "./Nav";
 
 function Header() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const queryClient = new QueryClient();
 
   const userData = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
 
+  const userId = userData?.user?.id;
+
+  const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
+
+  const { data: allUser } = useQuery({
+    queryKey: [QUERY_KEYS.USERS],
+    queryFn: getUsersInfo,
+  });
+
+  const { data: currentUser } = useQuery({
+    queryKey: [QUERY_KEYS.USER, userId],
+    queryFn: () => getUserInfo(userId),
+    enabled: !!userId,
+  });
+
+  console.log("로그인시 user 데이터", currentUser);
+
   const socialData = userData?.user.user_metadata;
 
   useEffect(() => {
     if (userData?.access_token) {
-      socialSignUp();
       setIsLogin(true);
     } else {
-      console.log("@@@@");
       setIsLogin(false);
+    }
+    setIsLoading(false);
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      socialSignUp();
     }
   }, []);
 
   // 최초 소셜 로그인시 회원가입
   const socialSignUp = async () => {
     try {
-      if (socialData) {
-        const { data, error } = await supabase.from("user_info").upsert({
-          user_id: userData?.user.id,
-          nickname: socialData.user_name,
-          created_at: userData?.user.created_at,
-          profile_image: socialData.avatar_url,
-          user_email: socialData.email,
-        });
+      const newUser = {
+        user_id: userData?.user.id,
+        nickname: socialData.name,
+        created_at: userData?.user.created_at,
+        profile_image: socialData.avatar_url,
+        user_email: socialData.email,
+      };
 
-        if (error) {
-          console.log("소셜로그인 회원가입 실패", error.message);
-        }
-      }
+      addSocialUserMutate(newUser, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
+        },
+      });
     } catch (error) {
       console.log("소셜 회원가입 중 오류 발생", error);
     }
@@ -69,7 +99,7 @@ function Header() {
             </>
           ) : (
             <>
-              <button onClick={signIn}>로그인</button>
+              {isLoading ? <Spin /> : <button onClick={signIn}>로그인</button>}
             </>
           )}
         </div>
@@ -128,3 +158,5 @@ const StHeaderWrapper = styled.header`
     cursor: pointer;
   }
 `;
+
+const StSpin = styled(Spin)``;

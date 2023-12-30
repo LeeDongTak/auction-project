@@ -2,9 +2,7 @@ import { useState } from "react";
 import { styled } from "styled-components";
 import { useAppDispatch } from "../../redux/config/configStore";
 import { setCategory } from "../../redux/modules/profileSlice";
-import EditProfile from "../UserProfile/EditProfile/EditProfile";
 import { StListWrapper } from "./MyPagePosts.styles";
-import PostList from "./PostList/PostList";
 
 const MyPagePosts = () => {
   const dispatch = useAppDispatch();
@@ -45,9 +43,9 @@ const MyPagePosts = () => {
           ))}
         </StCategoryWrapper>
         <StListWrapper>
-          {activeTitle === "내 게시물" && <PostList title={activeTitle} />}
+          {/* {activeTitle === "내 게시물" && <PostList title={activeTitle} />}
           {activeTitle === "찜한 목록" && <PostList title={activeTitle} />}
-          {activeTitle === "프로필 수정" && <EditProfile title={activeTitle} />}
+          {activeTitle === "프로필 수정" && <EditProfile title={activeTitle} />} */}
         </StListWrapper>
       </StPostWrapper>
     </StPostContainer>
@@ -61,10 +59,10 @@ const StPostContainer = styled.div`
 
 const StPostWrapper = styled.div`
   display: flex;
-  gap: 1rem;
   width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  gap: 1rem;
 `;
 
 const StCategoryWrapper = styled.ul`
@@ -72,7 +70,7 @@ const StCategoryWrapper = styled.ul`
   flex-direction: column;
   width: 18rem;
   min-width: 10rem;
-  padding: 1rem;
+  padding: 1rem 0;
   font-size: medium;
 
   span {

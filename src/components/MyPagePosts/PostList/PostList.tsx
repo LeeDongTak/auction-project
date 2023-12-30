@@ -5,12 +5,18 @@ import { fetchGetAuctions } from "../../../api/auction";
 import { Auction_post, Category } from "../../../types/databaseRetrunTypes";
 import PostItem from "./PostItem/PostItem";
 
-const PostList = ({ title }: { title: string }) => {
+interface PostListProps {
+  title: string;
+  userId: string;
+}
+
+const PostList = ({ title, userId }: PostListProps) => {
   // localstorage로 user-id 가져오기
   const userData = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
-  const userId = userData.user.id;
+
+  // const userId = userData?.id;
 
   const queryOption = {
     searchKeyword: "",
