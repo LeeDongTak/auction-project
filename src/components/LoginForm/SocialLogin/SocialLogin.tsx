@@ -23,7 +23,19 @@ const SocialLogin = () => {
   const onGitHubLoginHandler = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
+      options: {
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
     });
+
+    if (error) {
+      console.error("로그인 중 오류 발생!", error.message);
+    } else {
+      console.log(data);
+    }
   };
 
   const onKakaoLoginHandler = async () => {

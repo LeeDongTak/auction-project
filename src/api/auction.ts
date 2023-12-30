@@ -1,5 +1,5 @@
 // auction 전체 호출 (조건에 따라 필터링 호출)
-import { Auction_post, Category } from "../types/databaseRetrunTypes";
+import { Auction_option, Auction_post } from "../types/databaseRetrunTypes";
 import connectSupabase from "./connectSupabase";
 
 /**
@@ -12,16 +12,19 @@ import connectSupabase from "./connectSupabase";
  * @param order // 정렬 방식
  * @param user_id // 유저 아이디 (내가 쓴 글만 가져오기)
  */
-export async function fetchGetAuctions(
-  searchKeyword: string = "",
-  categories: Category[],
-  limit: number = 20,
-  offset: number = 0,
-  orderBy: string = "created_at",
-  order: boolean = false,
-  user_id: string = ""
-) {
-  const categoryIds = categories.map((category) => {
+
+export async function fetchGetAuctions({
+  searchKeyword = "",
+  categories = [],
+  limit = 8,
+  offset = 0,
+  orderBy = "created_at",
+  order = false,
+  user_id = "",
+  pageParam = 1,
+}: Auction_option) {
+  console.log(categories);
+  const categoryIds = categories?.map((category) => {
     return category.category_id;
   });
 
@@ -31,20 +34,21 @@ export async function fetchGetAuctions(
       "*, category(category_name), user_info(user_email),auction_images(image_id, image_path)"
     )
     .order(`${orderBy}`, { ascending: order })
-    .range(0, 20);
+    .range(offset, limit);
 
-  searchKeyword.trim() !== "" &&
+  searchKeyword?.trim() !== "" &&
     query
       .like("title", `%${searchKeyword}%`)
       .like("content", `%${searchKeyword}%`);
 
-  user_id.trim() !== "" && query.eq("user_id", user_id);
+  user_id?.trim() !== "" && query.eq("user_id", user_id);
 
-  if (categories.length > 0) {
+  if ((categories?.length as number) > 0) {
     query.in("category_id", categoryIds);
   }
 
-  const { data, error } = await query.returns<Auction_post[]>();
+  const { data, error } = await query.returns<Promise<Auction_post[]>>();
+  console.log(data);
   if (error) throw new Error(error.message);
 
   return data;

@@ -18,6 +18,7 @@ const Router = () => {
             <Route path="detail/:auctionId" element={<Detail />} />
             <Route path="profile" element={<Profile />} />
             <Route path="setAuction" element={<SetAuction />} />
+            <Route path="setAuction/:auctionId" element={<SetAuction />} />
           </Route>
           <Route path="*" element={<Navigate replace to={"/"} />} />
         </Route>

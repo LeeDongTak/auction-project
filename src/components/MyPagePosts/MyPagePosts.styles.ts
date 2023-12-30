@@ -8,6 +8,7 @@ export const StListWrapper = styled.ul`
   padding: 1.5rem 2.5rem;
   background-color: #eee;
   margin-top: 1rem;
+  border-radius: 0.15rem;
 
   h2 {
     font-size: large;

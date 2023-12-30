@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Dropdown, MenuProps } from "antd";
+import { Dropdown, MenuProps, Spin } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
@@ -12,12 +12,10 @@ interface Props {
 }
 
 const Nav: React.FC<Props> = ({ signOut, userId }) => {
-  const { data: user } = useQuery({
-    queryKey: ["user"],
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user", userId],
     queryFn: () => getUserInfo(userId as string),
   });
-
-  console.log("user", user?.[0]?.profile_image);
 
   const items: MenuProps["items"] = [
     {
@@ -37,11 +35,13 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
     },
   ];
 
+  if (isLoading) return <Spin />;
+
   return (
     <StDropdown menu={{ items }} trigger={["click"]}>
       <a onClick={(e) => e.preventDefault()}>
         <ProfileAvatar
-          size="5rem"
+          size="4rem"
           alt="header profile"
           src={user?.[0]?.profile_image as string}
         />

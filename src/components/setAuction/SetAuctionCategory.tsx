@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { keyframes, styled } from "styled-components";
 import { fetchGetCategories } from "../../api/auction";
 import { useCustomQuery } from "../../hooks/useCustomQuery";
@@ -6,8 +7,10 @@ import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setAuctionCategoryList } from "../../redux/modules/setAuctionSlice";
 
 function SetAuctionCategory() {
+  const { auctionId } = useParams();
   const dispatch = useAppDispatch();
   const { categoryList } = useAppSelector((state) => state.setAuction);
+  const [existingCategory, setExistingCategory] = useState("");
   const queryOptions = {
     queryKey: ["category"],
     queryFn: fetchGetCategories,
@@ -39,6 +42,10 @@ function SetAuctionCategory() {
   //     dispatch(setIsAlert({ isAlert: true, ErrorMsg: "카테고리는 5개까지 선택 가능합니다" }))
   //   }
   // }, [categoryList])
+
+  useEffect(() => {
+    setExistingCategory(categoryList);
+  }, [])
 
   return (
     <StCategoryWrapper>
@@ -80,18 +87,41 @@ function SetAuctionCategory() {
           })}
         </StCategoryListUl>
         <StCategoryListUl $ulType="resultCategory">
-          <StChoiceCategory $listType="choiceCategoryTitle">
-            선택한 카테고리
-          </StChoiceCategory>
-          {data
-            ?.filter((x) => categoryList.includes(x.category_id))
-            .map((item) => {
-              return (
-                <StChoiceCategory key={item.category_id}>
-                  {item.category_name}
+          {
+            !auctionId
+              ? <>
+                <StChoiceCategory $listType="choiceCategoryTitle">
+                  선택한 카테고리
                 </StChoiceCategory>
-              );
-            })}
+                {data?.filter((x) => categoryList.includes(x.category_id))
+                  .map((item) => {
+                    return (
+                      <StChoiceCategory key={item.category_id}>
+                        {item.category_name}
+                      </StChoiceCategory>
+                    );
+                  })}
+              </>
+              : <>
+                <StChoiceCategory $typeIsSet="update" $listType="choiceCategoryTitle">
+                  선택한 카테고리
+                </StChoiceCategory>
+                <StChoiceCategory $typeIsSet="update">
+                  {existingCategory}
+                </StChoiceCategory>
+                <StChoiceCategory $typeIsSet="update" $listType="choiceCategoryTitle">
+                  수정한 카테고리
+                </StChoiceCategory>
+                {data?.filter((x) => categoryList.includes(x.category_id))
+                  .map((item) => {
+                    return (
+                      <StChoiceCategory $typeIsSet="update" key={item.category_id}>
+                        {item.category_name}
+                      </StChoiceCategory>
+                    );
+                  })}
+              </>
+          }
         </StCategoryListUl>
       </StCategoryContentBox>
     </StCategoryWrapper>
@@ -121,7 +151,7 @@ const StCategoryContentBox = styled.div`
 
 const StCategoryListUl = styled.ul<{ $ulType?: string }>`
   width: ${({ $ulType }) => ($ulType === "resultCategory" ? "50%" : "40%")};
-  height: 15em;
+  height: ${({ $ulType }) => ($ulType === "resultCategory" ? "auto" : "15em")};;
   border-radius: 0.5em;
   font-size: 2.2em;
   box-shadow: ${({ $ulType }) =>
@@ -133,6 +163,10 @@ const StCategoryListUl = styled.ul<{ $ulType?: string }>`
   ${({ $ulType }) =>
     $ulType === "resultCategory" &&
     `padding: 2%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
   `}
   &::-webkit-scrollbar {
     display: none;
@@ -157,7 +191,7 @@ const StScrollEvent = styled.div`
   left: 0;
   transition: 0.2s;
   opacity: 1;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(2, 62, 125, 0.7);
 `;
 const StChevronContainer = styled.div`
   position: relative;
@@ -209,7 +243,7 @@ const StChevron = styled.div`
     top: 0;
     height: 100%;
     width: 51%;
-    background: #fff;
+    background: #FFFACD;
     left: 0;
     transform: skew(0deg, 30deg);
   }
@@ -219,7 +253,7 @@ const StChevron = styled.div`
     top: 0;
     height: 100%;
     width: 51%;
-    background: #fff;
+    background: #FFFACD;
     right: 0;
     width: 50%;
     transform: skew(0deg, -30deg);
@@ -228,7 +262,7 @@ const StChevron = styled.div`
 const StScrollText = styled.div`
   color: #fff;
   margin-top: 10%;
-  text-shadow: 0 0 0.1em #fff;
+  text-shadow: 0 0 0.1em #FFFACD;
 `;
 
 // left list 영역
@@ -255,11 +289,11 @@ const StCategoryLabel = styled.label`
 
 // right list 영역
 // const StChoiceCategory = styled.span`
-//   background-color: #AFCAFF;
+//   background-color: #023E7D;
 //   width: auto;
 //   height: auto;
-//   color: #fff;
-//   border: 1px solid #000;
+//   color: #FFFACD;
+//   border: 1px solid #023E7D;
 //   padding: 0.5em  1.5em;
 //   font-size: 0.8em;
 //   font-weight: bold;
@@ -268,25 +302,31 @@ const StCategoryLabel = styled.label`
 //   border-radius: 0.5em;
 // `
 
-const StChoiceCategory = styled.div<{ $listType?: string }>`
-  background-color: #afcaff;
-  width: 80%;
-  height: 2.8em;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #000;
+const StChoiceCategory = styled.span<{ $typeIsSet?: string, $listType?: string }>`
+  background-color: #023E7D;
+  width: auto;
+  height: auto;
+  color: #FFFACD;
+  border: 1px solid #023E7D;
   font-size: 1.2em;
-  font-weight: bold;
-  margin: 3% auto;
+  /* font-weight: bold;
+  margin: 3% auto; */
+  margin-bottom: ${({ $listType }) => $listType === "choiceCategoryTitle" ? '5%' : '13%'};
   border-radius: 0.5em;
+  padding: 2% 8%;
   ${({ $listType }) =>
     $listType === "choiceCategoryTitle" &&
     `
+      padding-top: 0;
       border: none;
-      background-color: #fff;
-      color: #000;
-      align-items: flex-start;
+      background-color: #FFFACD;
+      color: #023E7D;
     `}
+  ${({ $typeIsSet }) =>
+    $typeIsSet === "update" &&
+    `
+      font-size: 1em;
+      // margin: 0 auto;
+    `}
+  
 `;

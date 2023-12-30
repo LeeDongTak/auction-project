@@ -1,14 +1,19 @@
 import { UserOutlined } from "@ant-design/icons";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { Avatar, Button } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { getUserInfo } from "../../../api/auth";
 import { QUERY_KEYS } from "../../../query/keys.constant";
 import { useUserUpdateMutation } from "../../../query/useUsersQuery";
 import { supabase } from "../../../supabase";
+import { User_info } from "../../../types/databaseRetrunTypes";
 
-const EditProfile = ({ title }: { title: string }) => {
+interface EditProfileProps {
+  user: User_info;
+  title: string;
+}
+
+const EditProfile = ({ user, title }: EditProfileProps) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [inputNickname, setInputNickname] = useState("");
   const [inputAddress1, setInputAddress1] = useState("");
@@ -19,17 +24,6 @@ const EditProfile = ({ title }: { title: string }) => {
 
   const { mutate: updateMutate } = useUserUpdateMutation();
 
-  const { user: userData } = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
-  const userId = userData.id;
-
-  const { data: user } = useQuery({
-    queryKey: [QUERY_KEYS.USER],
-    queryFn: () => getUserInfo(userId),
-    enabled: !!userId,
-  });
-
   // 수정사항 저장
   const submitHandler = async () => {
     const answer = window.confirm("저장하시겠습니까?");
@@ -39,13 +33,11 @@ const EditProfile = ({ title }: { title: string }) => {
     const profileURL = await getFileUrl(fileImage as File);
 
     const updateProfile = {
-      user_id: user?.[0].user_id as string,
-      nickname: inputNickname || user?.[0].nickname,
-      address1: inputAddress1 || user?.[0].address1,
-      address2: inputAddress2 || user?.[0].address2,
-      profile_image: fileImage
-        ? (profileURL as string)
-        : user?.[0].profile_image,
+      user_id: user?.user_id as string,
+      nickname: inputNickname || user?.nickname,
+      address1: inputAddress1 || user?.address1,
+      address2: inputAddress2 || user?.address2,
+      profile_image: fileImage ? (profileURL as string) : user?.profile_image,
     };
 
     updateMutate(updateProfile, {
@@ -108,13 +100,13 @@ const EditProfile = ({ title }: { title: string }) => {
           <>
             <StTopSection>
               <div>
-                {user?.[0].profile_image ? (
+                {user?.profile_image ? (
                   <StImgBox>
                     <img
                       src={
                         fileImage
                           ? URL.createObjectURL(fileImage)
-                          : user?.[0].profile_image
+                          : user?.profile_image
                       }
                       alt="user-image"
                     />
@@ -133,7 +125,7 @@ const EditProfile = ({ title }: { title: string }) => {
               <input
                 type="text"
                 placeholder="nickname"
-                defaultValue={user?.[0].nickname}
+                defaultValue={user?.nickname}
                 onChange={(e) => setInputNickname(e.target.value)}
               />
             </StTopSection>
@@ -148,13 +140,13 @@ const EditProfile = ({ title }: { title: string }) => {
                 <input
                   type="text"
                   placeholder="주소1"
-                  defaultValue={user?.[0].address1}
+                  defaultValue={user?.address1}
                   onChange={(e) => setInputAddress1(e.target.value)}
                 />
                 <input
                   type="text"
                   placeholder="주소2"
-                  defaultValue={user?.[0].address2}
+                  defaultValue={user?.address2}
                   onChange={(e) => setInputAddress2(e.target.value)}
                 />
               </div>
@@ -163,14 +155,14 @@ const EditProfile = ({ title }: { title: string }) => {
         ) : (
           <>
             <StTopSection>
-              {user?.[0].profile_image ? (
+              {user?.profile_image ? (
                 <StImgBox>
-                  <img src={user?.[0].profile_image} alt="user-image" />
+                  <img src={user?.profile_image} alt="user-image" />
                 </StImgBox>
               ) : (
                 <Avatar shape="circle" size={64} icon={<UserOutlined />} />
               )}
-              <p>{user?.[0].nickname || "new user"}</p>
+              <p>{user?.nickname || "new user"}</p>
             </StTopSection>
             <StInfoSection>
               <div>
@@ -178,8 +170,8 @@ const EditProfile = ({ title }: { title: string }) => {
                 <span>상세 주소</span>
               </div>
               <div>
-                <p>{user?.[0].address1 || "현재 주소가 없습니다."}</p>
-                <p>{user?.[0].address2 || "현재 상세주소가 없습니다."}</p>
+                <p>{user?.address1 || "현재 주소가 없습니다."}</p>
+                <p>{user?.address2 || "현재 상세주소가 없습니다."}</p>
               </div>
             </StInfoSection>
           </>
