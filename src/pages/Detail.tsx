@@ -11,11 +11,8 @@ import { useCustomQuery } from "../hooks/useCustomQuery";
 import placeholder from "../images/placeholder.svg";
 import { Auction_post, MaxBids } from "../types/databaseRetrunTypes";
 import { fetchAuctionMaxBid } from "../api/bid";
-import { useQueryClient } from "@tanstack/react-query";
 
 const Detail = () => {
-  const queryClient = useQueryClient();
-
   const { auctionId } = useParams();
   const queryAuctionOptions = {
     queryKey: ["getAuction"],
