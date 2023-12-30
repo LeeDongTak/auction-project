@@ -6,17 +6,13 @@ import { selectorAuctionTimeStamp } from "../../redux/modules/auctionTimestampSl
 import { formatNumberWithCommas } from "../../common/formatUtil";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { MaxBids } from "../../types/databaseRetrunTypes";
-import { useAppDispatch } from "../../redux/config/configStore";
-import { resetBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
+import { selectorBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
 
-type Props = {
-  maxBid: MaxBids | undefined;
-};
-
-const DetailTimeStamp = ({ maxBid }: Props) => {
-  const dispatch = useAppDispatch();
+const DetailTimeStamp = () => {
   const queryClient = useQueryClient();
+
+  const { maxBid } = useSelector(selectorBidCustomModal);
+
   const { auctionOver, auctionTimeStamp } = useSelector(
     selectorAuctionTimeStamp
   );
@@ -28,12 +24,6 @@ const DetailTimeStamp = ({ maxBid }: Props) => {
       })();
     }
   }, [maxBid]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(resetBidCustomModal());
-    };
-  }, []);
 
   return (
     <StTimeStampWrapper>

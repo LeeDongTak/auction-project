@@ -14,7 +14,7 @@ export function useCustomQuery<T, TError extends Error = Error>(
     if (!isLoading) {
       setTimeout(() => {
         setIsLoadingSkeleton(isLoading);
-      }, 2000);
+      }, 1000);
     }
   }, [isLoading]);
 

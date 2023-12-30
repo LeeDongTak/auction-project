@@ -1,40 +1,21 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { fetchGetAuctionById } from "../api/auction";
 import DetailContent from "../components/detail/DetailContent";
 import DetailInfo from "../components/detail/DetailInfo";
 import DetailTimeStamp from "../components/detail/DetailTimeStamp";
 import { Spacer } from "../components/ui/Spacer";
 import useAuctionStatus from "../hooks/useAuctionStatus";
-import { useCustomQuery } from "../hooks/useCustomQuery";
 import placeholder from "../images/placeholder.svg";
-import { Auction_post, MaxBids } from "../types/databaseRetrunTypes";
-import { fetchAuctionMaxBid } from "../api/bid";
 import { Skeleton } from "antd";
+import useDetailAuctionPost from "../hooks/useDetailAuctionPost";
+import useSubscribeBidTable from "../hooks/useSubscribeBidTable";
 
 const Detail = () => {
   const { auctionId } = useParams();
-  const queryAuctionOptions = {
-    queryKey: ["getAuction"],
-    queryFn: () => fetchGetAuctionById(auctionId!),
-    queryOptions: { staleTime: Infinity },
-  };
-  const [data, isLoading] = useCustomQuery<Auction_post, Error>(
-    queryAuctionOptions
-  );
-
+  const [data, isLoading] = useDetailAuctionPost(auctionId!);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
-
-  const queryBidOptions = {
-    queryKey: ["getBidMaxPrice", auctionId],
-    queryFn: () => fetchAuctionMaxBid(auctionId!),
-    queryOptions: { staleTime: 0 },
-  };
-
-  const [bidData, bidIsLoading] = useCustomQuery<MaxBids, Error>(
-    queryBidOptions
-  );
+  useSubscribeBidTable(auctionId!);
 
   useAuctionStatus(data);
 
@@ -59,7 +40,7 @@ const Detail = () => {
           paragraph={{ rows: 8 }}
           style={{ maxWidth: "300px", width: "100%", height: "100%" }}
         >
-          <DetailInfo auctionData={data} maxBid={bidData} />
+          <DetailInfo auctionData={data} />
         </Skeleton>
       </StDetailInfo>
       <Spacer y={40} />
@@ -70,7 +51,7 @@ const Detail = () => {
         title
         style={{ width: "500px", height: "100%", margin: "0 auto" }}
       >
-        <DetailTimeStamp maxBid={bidData} />
+        <DetailTimeStamp />
       </Skeleton>
 
       <Spacer y={20} />
