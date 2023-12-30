@@ -16,19 +16,23 @@ const getUsersInfo = async () => {
     .select("*")
     .returns<User_info[]>();
 
+  if (error) {
+    console.log("유저 정보 불러오기 실패", error);
+  }
+
   return data;
 };
 
 // 현재 로그인한 유저 데이터 불러오기
 const getUserInfo = async (id: string) => {
-  console.log(id);
   const { data: user_info, error } = await supabase
     .from("user_info")
     .select("*")
     .eq("user_id", id);
 
-  console.log(user_info);
-  console.log(error);
+  if (error) {
+    console.log("현재 유저 데이터 불러오기 실패", error);
+  }
 
   return user_info as User_info[];
 };
@@ -72,8 +76,9 @@ const updateUser = async ({
     .eq("user_id", user_id)
     .select();
 
-  console.log(data);
-  console.log(error);
+  if (error) {
+    console.log("유저 업데이트 에러", error);
+  }
 };
 
 export { getUserInfo, getUsersInfo, addUser, addSocialUser, updateUser };

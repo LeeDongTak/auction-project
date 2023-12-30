@@ -1,37 +1,23 @@
 import { UserOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
 import { Avatar, Skeleton } from "antd";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { getUserInfo } from "../../api/auth";
+import { User_info } from "../../types/databaseRetrunTypes";
 
 type AvatarShapeType = "circle" | "square";
 
-const UserProfile = () => {
+interface ProfileProps {
+  user: User_info;
+  isLoading: boolean;
+}
+
+const UserProfile: React.FC<ProfileProps> = ({ user, isLoading }) => {
   const [avatarShape, setAvatarShape] = useState<AvatarShapeType>("circle");
 
-  const { user: userData } = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
+  const createAt = dayjs(user?.created_at).format("YY-MM-DD");
 
-  const userId = userData.id;
-
-  const socialLoginUser = userData.user_metadata;
-
-  console.log();
-
-  const {
-    data: user,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => getUserInfo(userId),
-    enabled: !!userId,
-  });
-
-  console.log("user info", user);
+  console.log(createAt);
 
   if (isLoading)
     return (
@@ -43,23 +29,21 @@ const UserProfile = () => {
 
   return (
     <StProfileContainer>
-      {user?.map((item) => (
-        <StProfileWrapper key={item.user_id}>
-          {item.profile_image ? (
-            <StImgBox>
-              <img src={item.profile_image} alt="user-image" />
-            </StImgBox>
-          ) : (
-            <Avatar shape="circle" size={64} icon={<UserOutlined />} />
-          )}
-          <StInfoBox>
-            <h3>{item.nickname || "new user"}</h3>
-            <p>
-              <span>가입일: 0000.00.00</span> <span>작성글 수: 00</span>
-            </p>
-          </StInfoBox>
-        </StProfileWrapper>
-      ))}
+      <StProfileWrapper key={user.user_id}>
+        {user.profile_image ? (
+          <StImgBox>
+            <img src={user.profile_image} alt="user-image" />
+          </StImgBox>
+        ) : (
+          <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+        )}
+        <StInfoBox>
+          <h3>{user.nickname || "new user"}</h3>
+          <p>
+            <span>가입일: {createAt}</span> <span>작성글 수: 00</span>
+          </p>
+        </StInfoBox>
+      </StProfileWrapper>
     </StProfileContainer>
   );
 };
@@ -77,15 +61,15 @@ const StProfileWrapper = styled.div`
   align-items: flex-end;
   margin: 0 auto;
   width: 1200px;
-  gap: 2rem;
+  gap: 4rem;
   padding: 2rem;
   color: #fff;
 `;
 
 const StImgBox = styled.div`
   background-color: gray;
-  width: 7rem;
-  height: 7rem;
+  width: 10rem;
+  height: 10rem;
   border-radius: 50%;
   overflow: hidden;
 
@@ -98,13 +82,13 @@ const StImgBox = styled.div`
 
 const StInfoBox = styled.div`
   h3 {
-    font-size: 2rem;
+    font-size: xx-large;
   }
 
   p {
     display: flex;
     gap: 1.5rem;
-    margin: 1rem 0;
+    margin: 1.5rem 0;
     color: #777;
   }
 `;

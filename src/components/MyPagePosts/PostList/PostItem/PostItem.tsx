@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 
-const PostItem = ({ post }: { post: Auction_post }) => {
+interface PostItemProps {
+  post: Auction_post;
+}
+
+const PostItem = ({ post }: PostItemProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { title, content } = post;

@@ -29,15 +29,7 @@ const Home = () => {
     error,
   } = useQuery({
     queryKey: ["auctionData", selectedCategories],
-    queryFn: () =>
-      fetchGetAuctions(
-        queryOption.searchKeyword,
-        queryOption.categories,
-        queryOption.limit,
-        queryOption.offset,
-        queryOption.orderBy,
-        queryOption.order
-      ),
+    queryFn: () => fetchGetAuctions(queryOption),
     refetchOnWindowFocus: false,
   });
 
