@@ -21,9 +21,9 @@ const PostList = ({ title, userId }: PostListProps) => {
   const [limit, setLimit] = useState<number>(5);
 
   useEffect(() => {
-    console.log("limit", pageSize + (page - 1) * pageSize);
-    console.log("offset", (page - 1) * pageSize);
-    console.log("page", page);
+    // console.log("limit", pageSize + (page - 1) * pageSize);
+    // console.log("offset", (page - 1) * pageSize);
+    // console.log("page", page);
   }, [page, pageSize]);
 
   const queryOption: Auction_option = {
@@ -45,6 +45,7 @@ const PostList = ({ title, userId }: PostListProps) => {
     // keepPreviousData: true,
   });
 
+  //TODO: 무한 스크롤 구현
   // 옵션 import 오류
   // const {
   //   fetchNextPage,
@@ -62,9 +63,7 @@ const PostList = ({ title, userId }: PostListProps) => {
   //   getPreviousPageParam: (firstPage) => firstPage.prevCursor,
   // });
 
-  //TODO: 무한 스크롤 구현
-
-  // TODO: 페이지네이션
+  // TODO: 페이지네이션 바로 refetch 안되는 오류 수정
   const onClickPage = (selected: number) => {
     console.log(selected);
     setPage(selected);
@@ -86,7 +85,7 @@ const PostList = ({ title, userId }: PostListProps) => {
           <Pagination
             current={page}
             pageSize={pageSize}
-            total={50}
+            total={16}
             onChange={onClickPage}
           />
         </StPaginationSection>

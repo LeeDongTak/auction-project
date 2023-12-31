@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo, getUsersInfo } from "../../api/auth";
+import Button from "../../common/Button";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
 import { supabase } from "../../supabase";
@@ -97,7 +98,7 @@ function Header() {
                 <Nav signOut={signOut} userId={userData?.user.id} />
               </>
             ) : (
-              <button onClick={signIn}>로그인</button>
+              <Button onClickHandler={signIn} text="로그인" />
             )}
           </div>
         )}
@@ -126,19 +127,6 @@ const StHeaderWrapper = styled.header`
   font-weight: bold;
   user-select: none;
   padding: 15px 20px;
-
-  button {
-    border: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #afcaff;
-    margin-left: 10px;
-    &:hover {
-      background-color: #fffacd;
-    }
-  }
 
   div {
     display: flex;

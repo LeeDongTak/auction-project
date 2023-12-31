@@ -1,5 +1,7 @@
+import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { styled } from "styled-components";
 import { supabase } from "../supabase";
 
 const AuthLayout = () => {
@@ -27,9 +29,12 @@ const AuthLayout = () => {
     fetchUser();
   }, []);
 
-  console.log(isLogin);
-
-  if (loading) return <div>loading...</div>;
+  if (loading)
+    return (
+      <StLoading>
+        <Spin tip="Loading" size="large"></Spin>
+      </StLoading>
+    );
 
   if (!isLogin) {
     alert("로그인이 필요한 페이지입니다. 로그인 페이지로 이동합니다!");
@@ -42,5 +47,13 @@ const AuthLayout = () => {
     </>
   );
 };
+
+const StLoading = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+`;
 
 export default AuthLayout;

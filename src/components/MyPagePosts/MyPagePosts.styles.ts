@@ -5,13 +5,15 @@ export const StListWrapper = styled.ul`
   flex-direction: column;
   width: 100%;
   gap: 2rem;
-  padding: 1.5rem 2.5rem;
-  background-color: #eee;
+  padding: 1rem 2.5rem;
   margin-top: 1rem;
-  border-radius: 0.15rem;
+
+  @media (max-width: 650px) {
+    padding: 0;
+  }
 
   h2 {
-    font-size: large;
+    font-size: x-large;
     font-weight: 500;
   }
 `;

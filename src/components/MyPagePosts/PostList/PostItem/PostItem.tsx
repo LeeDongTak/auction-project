@@ -1,6 +1,9 @@
 import { Skeleton } from "antd";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import Button from "../../../../common/Button";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 
 interface PostItemProps {
@@ -8,9 +11,28 @@ interface PostItemProps {
 }
 
 const PostItem = ({ post }: PostItemProps) => {
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(true);
 
-  const { title, content } = post;
+  const {
+    auction_id,
+    title,
+    content,
+    auction_images,
+    upper_limit,
+    auction_start_date,
+    auction_end_date,
+    created_at,
+    category,
+  } = post;
+
+  const createAt = dayjs(created_at).format("YYYY-MM-DD");
+  const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
+  const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
+  const upperLimit = upper_limit
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   const viewContent =
     content.length > 20 ? content.slice(0, 50) + "..." : content;
@@ -18,51 +40,165 @@ const PostItem = ({ post }: PostItemProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 500);
     console.log(isLoading);
 
     return () => clearTimeout(timer);
   }, []);
 
+  const goToDetailHandler = () => {
+    navigate(`/detail/${auction_id}`);
+  };
+
+  const editHandler = () => {};
+
+  const deleteHandler = () => {};
+
   return (
     <StPostItemWrapper>
-      <Skeleton loading={isLoading} active title paragraph={{ rows: 6 }}>
-        <StImage>사진</StImage>
-        <StPostInfoSection>
-          <h3>{post.title}</h3>
-          <p>{viewContent}</p>
-        </StPostInfoSection>
+      {isLoading ? (
+        <StImageSkeleton active></StImageSkeleton>
+      ) : (
+        <StImage>
+          <img src={auction_images?.[0].image_path} alt="" />
+        </StImage>
+      )}
+
+      <Skeleton loading={isLoading} active title paragraph={{ rows: 5 }}>
+        <div>
+          <StPostInfoSection>
+            <div>
+              <h3>{title}</h3>
+              <span>{createAt}</span>
+              <p>{viewContent}</p>
+            </div>
+            <div>
+              <p>최고 경매가: {upperLimit}원</p>
+              <p>시작일: {startDate}</p>
+              <p>종료일: {endDate}</p>
+            </div>
+            <p>카테고리: {category?.category_name}</p>
+          </StPostInfoSection>
+          <StButtonSection>
+            <Button text="수정" onClickHandler={editHandler} />
+            <Button text="삭제" onClickHandler={deleteHandler} />
+          </StButtonSection>
+        </div>
       </Skeleton>
     </StPostItemWrapper>
   );
 };
 
+const StButtonSection = styled.section`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+`;
+
 const StPostItemWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 1rem;
   width: 100%;
-  border: 1px solid #222;
   padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  box-shadow: 0px 0px 7px #d9d9d9;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.03);
+    background-color: #eee;
+    ${StButtonSection} {
+      opacity: 100%;
+    }
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 220px;
+  }
+
+  ${StButtonSection} {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
 `;
 
 const StImage = styled.div`
-  min-width: 200px;
-  height: 200px;
-  background-color: #888;
+  width: 300px;
+  height: 220px;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+
+  img {
+    width: inherit;
+    height: inherit;
+    object-fit: cover;
+    @media (max-width: 650px) {
+      object-fit: contain;
+    }
+  }
+
+  @media (max-width: 650px) {
+    width: 250px;
+    margin-right: 1rem;
+  }
+
+  @media (max-width: 500px) {
+    width: 150px;
+    margin-right: 1rem;
+  }
 `;
 
 const StPostInfoSection = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 0.25rem;
+  gap: 2rem;
+  padding: 0.5rem;
   width: 100%;
 
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   h3 {
-    font-size: medium;
+    font-size: large;
     font-weight: 500;
+  }
+
+  span {
+    font-size: small;
+    color: #888;
+  }
+`;
+
+const StImageSkeleton = styled(Skeleton.Image)`
+  width: 300px !important;
+  height: 200px !important;
+
+  svg {
+    width: inherit;
+    height: inherit;
+    object-fit: cover;
+  }
+
+  @media (max-width: 650px) {
+    width: 250px !important;
+    margin-right: 1rem;
+  }
+
+  @media (max-width: 500px) {
+    width: 150px !important;
+    margin-right: 1rem;
   }
 `;
 
