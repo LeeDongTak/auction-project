@@ -13,8 +13,8 @@ import useSubscribeBidTable from "../hooks/useSubscribeBidTable";
 import BidPopUpLayout from "../components/detail/bidPopup/BidPopUpLayout";
 import useCloseButtonState from "../hooks/useCloseButtonState";
 import PopupToggleButton from "../components/detail/bidPopup/PopupToggleButton";
-import Question from "../components/detail/qna/Question";
 import DetailWrapper from "../components/ui/detailWrapper/DetailWrapper";
+import { QnaWrapper } from "../components/detail/qna/QnaWrapper";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -80,7 +80,7 @@ const Detail = () => {
           paragraph={{ rows: 10 }}
           style={{ width: "100%", height: "100%" }}
         >
-          <Question auctionId={auctionId!} />
+          <QnaWrapper auctionId={auctionId!} />
         </Skeleton>
       </DetailWrapper>
 

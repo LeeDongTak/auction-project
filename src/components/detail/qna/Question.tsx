@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import Title from "../bidPopup/Title";
+import QuestionForm from "./QuestionForm";
 
 interface Props {
   auctionId: string;
@@ -8,10 +8,13 @@ interface Props {
 const Question = ({ auctionId }: Props) => {
   return (
     <StQuestionWrapper>
-      <Title title={"Q&A"} titleAlign={"flex-start"} />
+      <QuestionForm auctionId={auctionId} />
     </StQuestionWrapper>
   );
 };
 
-const StQuestionWrapper = styled.div``;
+const StQuestionWrapper = styled.div`
+  padding: 0 30px;
+`;
+
 export default Question;
