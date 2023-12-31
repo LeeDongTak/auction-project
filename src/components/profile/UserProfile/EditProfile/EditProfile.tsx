@@ -3,12 +3,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { Avatar } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
-import ProfileAvatar from "../../../common/avatar";
+import { QUERY_KEYS } from "../../../../query/keys.constant";
+import { useUserUpdateMutation } from "../../../../query/useUsersQuery";
+import { supabase } from "../../../../supabase";
+import { User_info } from "../../../../types/databaseRetrunTypes";
+import ProfileAvatar from "../../../common/Avatar";
 import Button from "../../../common/Button";
-import { QUERY_KEYS } from "../../../query/keys.constant";
-import { useUserUpdateMutation } from "../../../query/useUsersQuery";
-import { supabase } from "../../../supabase";
-import { User_info } from "../../../types/databaseRetrunTypes";
 
 interface EditProfileProps {
   user: User_info;

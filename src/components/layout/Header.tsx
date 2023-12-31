@@ -1,19 +1,26 @@
+import { SearchOutlined } from "@ant-design/icons";
 import { QueryClient, useQuery } from "@tanstack/react-query";
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo, getUsersInfo } from "../../api/auth";
-import Button from "../../common/Button";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
+import { useAppDispatch } from "../../redux/config/configStore";
+import { toggleViewSearchModal } from "../../redux/modules/searchSlice";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
 import { Auth } from "../../types/userType";
+import DefaultButton from "../common/Button";
+import Search from "../search/Search";
 import Nav from "./Nav";
 
 function Header() {
   const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
+
   const [isLogin, setIsLogin] = useState(false);
 
   const queryClient = new QueryClient();
@@ -91,6 +98,12 @@ function Header() {
     <StHeaderContainer>
       <StHeaderWrapper>
         <h1 onClick={() => navigate("/")}>ELETE</h1>
+        <Button
+          onClick={() => dispatch(toggleViewSearchModal(true))}
+          icon={<SearchOutlined />}
+        >
+          Search
+        </Button>
         {isLoading ? (
           <Spin />
         ) : (
@@ -100,11 +113,12 @@ function Header() {
                 <Nav signOut={signOut} userId={userData?.user.id} />
               </>
             ) : (
-              <Button onClickHandler={signIn} text="로그인" />
+              <DefaultButton onClickHandler={signIn} text="로그인" />
             )}
           </div>
         )}
       </StHeaderWrapper>
+      <Search />
     </StHeaderContainer>
   );
 }

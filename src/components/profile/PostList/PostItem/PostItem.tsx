@@ -3,8 +3,8 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import Button from "../../../../common/Button";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
+import Button from "../../../common/Button";
 
 interface PostItemProps {
   post: Auction_post;

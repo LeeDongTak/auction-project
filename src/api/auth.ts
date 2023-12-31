@@ -24,7 +24,7 @@ const getUsersInfo = async () => {
 };
 
 // 현재 로그인한 유저 데이터 불러오기
-const getUserInfo = async (id: string) => {
+const getUserInfo = async (id: string): Promise<User_info[]> => {
   const { data: user_info, error } = await supabase
     .from("user_info")
     .select("*")
