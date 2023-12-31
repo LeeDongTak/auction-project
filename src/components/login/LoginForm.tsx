@@ -3,6 +3,7 @@ import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../../api/auth";
+import { QUERY_KEYS } from "../../query/keys.constant";
 import { useAppDispatch } from "../../redux/config/configStore";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
@@ -36,7 +37,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   const insertMutation = useMutation({
     mutationFn: addUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS] });
     },
   });
 

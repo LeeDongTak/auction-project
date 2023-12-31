@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
 import { QUERY_KEYS } from "../../../query/keys.constant";
@@ -20,12 +20,6 @@ const PostList = ({ title, userId }: PostListProps) => {
   const [pageSize, setPageSize] = useState<number>(5);
   const [limit, setLimit] = useState<number>(5);
 
-  useEffect(() => {
-    // console.log("limit", pageSize + (page - 1) * pageSize);
-    // console.log("offset", (page - 1) * pageSize);
-    // console.log("page", page);
-  }, [page, pageSize]);
-
   const queryOption: Auction_option = {
     // user_id: userId,
     limit: pageSize + (page - 1) * pageSize,
@@ -39,9 +33,10 @@ const PostList = ({ title, userId }: PostListProps) => {
     error,
     isFetching,
   } = useQuery<Auction_post[]>({
-    queryKey: [QUERY_KEYS.POSTS],
+    queryKey: [QUERY_KEYS.POSTS, userId, page],
     queryFn: () => fetchGetAuctions(queryOption),
     enabled: !!userId,
+    staleTime: 0,
     // keepPreviousData: true,
   });
 
@@ -63,7 +58,6 @@ const PostList = ({ title, userId }: PostListProps) => {
   //   getPreviousPageParam: (firstPage) => firstPage.prevCursor,
   // });
 
-  // TODO: 페이지네이션 바로 refetch 안되는 오류 수정
   const onClickPage = (selected: number) => {
     console.log(selected);
     setPage(selected);
@@ -77,7 +71,9 @@ const PostList = ({ title, userId }: PostListProps) => {
           <div>포스트가 없습니다.</div>
         ) : (
           <>
-            {posts?.map((post, index) => <PostItem post={post} key={index} />)}
+            {posts?.map((post) => (
+              <PostItem post={post} key={post.auction_id} type={title} />
+            ))}
           </>
         )}
         {/* <button onClick={() => setLimit((prev) => prev + 5)}>더보기</button> */}

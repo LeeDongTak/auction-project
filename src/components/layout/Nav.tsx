@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../api/auth";
+import { QUERY_KEYS } from "../../query/keys.constant";
 import ProfileAvatar from "../common/Avatar";
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
 
 const Nav: React.FC<Props> = ({ signOut, userId }) => {
   const { data: user, isLoading } = useQuery({
-    queryKey: ["user", userId],
+    queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId as string),
   });
 

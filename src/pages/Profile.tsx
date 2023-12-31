@@ -30,6 +30,7 @@ const Profile = () => {
     queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId),
     enabled: !!userId,
+    staleTime: 0,
     select: (user) => user[0],
   });
 
@@ -50,7 +51,11 @@ const Profile = () => {
               <PostList title={activeTitle} userId={userId} />
             )}
             {activeTitle === "프로필 수정" && (
-              <EditProfile title={activeTitle} user={user as User_info} />
+              <EditProfile
+                title={activeTitle}
+                user={user as User_info}
+                userId={userId}
+              />
             )}
           </StListWrapper>
         </StPostsWrapper>

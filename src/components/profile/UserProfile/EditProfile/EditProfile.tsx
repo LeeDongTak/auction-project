@@ -13,9 +13,10 @@ import Button from "../../../common/Button";
 interface EditProfileProps {
   user: User_info;
   title: string;
+  userId: string;
 }
 
-const EditProfile = ({ user, title }: EditProfileProps) => {
+const EditProfile = ({ user, title, userId }: EditProfileProps) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [inputNickname, setInputNickname] = useState("");
   const [inputAddress1, setInputAddress1] = useState("");
@@ -49,7 +50,9 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
 
     updateMutate(updateProfile, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.USER, userId],
+        });
       },
     });
 

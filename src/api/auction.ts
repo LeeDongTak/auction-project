@@ -16,7 +16,7 @@ import connectSupabase from "./connectSupabase";
 export async function fetchGetAuctions({
   searchKeyword = "",
   categories = [],
-  limit = 10,
+  limit = 0,
   offset = 0,
   orderBy = "created_at",
   order = false,
@@ -33,8 +33,8 @@ export async function fetchGetAuctions({
     .select(
       "*, category(category_name), user_info(user_email),auction_images(image_id, image_path)"
     )
-    .order(`${orderBy}`, { ascending: order })
-    .range(offset, limit);
+    .order(`${orderBy}`, { ascending: order });
+  // .range(offset, limit);
 
   searchKeyword?.trim() !== "" &&
     query
@@ -42,6 +42,8 @@ export async function fetchGetAuctions({
       .like("content", `%${searchKeyword}%`);
 
   user_id?.trim() !== "" && query.eq("user_id", user_id);
+
+  limit !== 0 && query.range(offset, limit);
 
   if ((categories?.length as number) > 0) {
     query.in("category_id", categoryIds);

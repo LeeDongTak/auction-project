@@ -15,8 +15,11 @@ export const StModalContainer = styled.div`
 `;
 
 export const StModalBox = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 1200px;
   background-color: #fff;
   height: 100vh;
   z-index: 333;
+  padding: 2rem;
 `;
