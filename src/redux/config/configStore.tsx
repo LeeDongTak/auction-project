@@ -18,6 +18,10 @@ const store = configureStore({
     search,
     bidList,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 type RootState = ReturnType<typeof store.getState>;

@@ -3,9 +3,9 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { useAppDispatch } from "../../../../redux/config/configStore";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 import Button from "../../../common/Button";
-
 interface PostItemProps {
   post: Auction_post;
   type?: string;
@@ -13,7 +13,7 @@ interface PostItemProps {
 
 const PostItem = ({ post, type }: PostItemProps) => {
   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
 
   const {
@@ -21,13 +21,17 @@ const PostItem = ({ post, type }: PostItemProps) => {
     title,
     content,
     auction_images,
+    lower_limit,
     upper_limit,
+    shipping_type,
+    product_status,
     auction_start_date,
     auction_end_date,
     created_at,
     category,
+    category_id,
   } = post;
-
+  console.log(post);
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
   const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
   const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
@@ -51,7 +55,10 @@ const PostItem = ({ post, type }: PostItemProps) => {
     navigate(`/detail/${auction_id}`);
   };
 
-  const editHandler = () => {};
+  console.log(auction_images?.length);
+  const editHandler = () => {
+    navigate(`/setAuction/${auction_id}`);
+  };
 
   const deleteHandler = () => {};
 

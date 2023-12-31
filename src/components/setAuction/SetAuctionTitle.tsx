@@ -1,9 +1,10 @@
 import { styled } from "styled-components";
-import { useAppDispatch } from "../../redux/config/configStore";
+import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setAuctionTitle } from "../../redux/modules/setAuctionSlice";
 
 function SetAuctionTitle() {
   const dispatch = useAppDispatch();
+  const { auctionTitle } = useAppSelector((state) => state.setAuction)
 
   const titleOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setAuctionTitle(e.target.value))
@@ -11,7 +12,7 @@ function SetAuctionTitle() {
   return (
     <StTitleWrapper>
       <StAuctionTitleTitle>경매품 이름</StAuctionTitleTitle>
-      <StActionTitleInput type="text" placeholder="경매품을 입력해 주세요" onChange={(e) => { titleOnChangeHandler(e) }} />
+      <StActionTitleInput type="text" value={auctionTitle} placeholder="경매품을 입력해 주세요" onChange={(e) => { titleOnChangeHandler(e) }} />
     </StTitleWrapper>
   )
 }

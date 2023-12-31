@@ -5,12 +5,13 @@ import { fetchGetCategories } from "../../api/auction";
 import { useCustomQuery } from "../../hooks/useCustomQuery";
 import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setAuctionCategoryList } from "../../redux/modules/setAuctionSlice";
+import { Category } from "../../types/databaseRetrunTypes";
 
 function SetAuctionCategory() {
   const { auctionId } = useParams();
   const dispatch = useAppDispatch();
   const { categoryList } = useAppSelector((state) => state.setAuction);
-  const [existingCategory, setExistingCategory] = useState("");
+  const [existingCategory, setExistingCategory] = useState<string>("");
   const queryOptions = {
     queryKey: ["category"],
     queryFn: fetchGetCategories,
@@ -44,8 +45,12 @@ function SetAuctionCategory() {
   // }, [categoryList])
 
   useEffect(() => {
-    setExistingCategory(categoryList);
-  }, [])
+    if (data) {
+      const categoryName: Category[] = data?.filter((x) => categoryList?.includes(x.category_id))
+      setExistingCategory(categoryName?.[0]?.category_name);
+      dispatch(setAuctionCategoryList(""));
+    }
+  }, [isLoading])
 
   return (
     <StCategoryWrapper>

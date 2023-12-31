@@ -1,17 +1,21 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { useAppDispatch } from "../../redux/config/configStore";
-import { setImageFileList } from "../../redux/modules/setAuctionSlice";
-
+import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
+import { setCloseImageFileList, setImageFileList, setImageUrlList } from "../../redux/modules/setAuctionSlice";
+interface imgType {
+  imgFile: File;
+  imgUrl?: string;
+}
 
 function SetAuctionImage() {
   const { auctionId } = useParams();
   const dispatch = useAppDispatch()
-  const [imgArray, setImgArray] = useState<string[]>([])
+  const [imgArray, setImgArray] = useState<imgType[]>([])
   const imgRef = useRef<HTMLInputElement>(null);
-
+  const { imgFileList, imgUrlList } = useAppSelector((state) => state.setAuction)
+  // console.log(imgFileList)
   const handleClick = () => {
     imgRef?.current?.click();
   };
@@ -20,25 +24,34 @@ function SetAuctionImage() {
     const target = event.currentTarget;
     const files = (target.files as FileList)[0];
 
-    dispatch(setImageFileList(files));
     let reader = new FileReader();
     reader.onload = (event) => {
-      const result = event?.target?.result as string;
-      setImgArray([...imgArray, result])
+      const imgUrl = event?.target?.result as string;
+      dispatch(setImageFileList(files));
+      dispatch(setImageUrlList(imgUrl));
     };
     reader.readAsDataURL(files);
   };
 
-  const onClickImgUrlCloseHandler = (imgUrl: string) => {
-    setImgArray([...imgArray.filter((x) => x !== imgUrl)])
+  const onClickImgUrlCloseHandler = (img: imgType) => {
+    dispatch(setCloseImageFileList({ files: img.imgFile, imgUrl: img.imgUrl }));
   }
 
+  useEffect(() => {
+    let imgData = [];
+    for (let i = 0; i < imgUrlList.length; i++) {
+      imgData.push({ imgFile: imgFileList[i], imgUrl: imgUrlList?.[i] } as imgType)
+    }
+    setImgArray([...imgData])
+  }, [imgFileList, imgUrlList])
+  console.log(imgArray)
+  console.log(imgUrlList);
   return (
     <StImageWrapper>
       <StImageTitle>{!auctionId ? "이미지 등록" : "이미지 수정"}</StImageTitle>
       <StImageUl>
         {
-          imgArray.map((item, index) => <StImageLi onClick={() => { onClickImgUrlCloseHandler(item) }} key={index} $imgUrl={item} />)
+          imgArray.map((item, index) => <StImageLi onClick={() => { onClickImgUrlCloseHandler(item) }} key={index} $imgUrl={item.imgUrl} />)
         }
         <input style={{ display: "none" }} type="file" ref={imgRef} onChange={(event) => { onchangeImgUrlHandler(event) }} />
         {imgArray.length < 4 &&

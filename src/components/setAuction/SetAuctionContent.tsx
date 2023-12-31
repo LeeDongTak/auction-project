@@ -1,9 +1,10 @@
 import { styled } from "styled-components";
-import { useAppDispatch } from "../../redux/config/configStore";
+import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setAuctionContent } from "../../redux/modules/setAuctionSlice";
 
 function SetAuctionContent() {
   const dispatch = useAppDispatch();
+  const { auctionContent } = useAppSelector((state) => state.setAuction)
 
   const contentOnChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(setAuctionContent(e.target.value))
@@ -12,7 +13,7 @@ function SetAuctionContent() {
   return (
     <StContentWrapper>
       <StAuctionContentTitle>경매품 소개</StAuctionContentTitle>
-      <StActionContentInput type="text" placeholder="내용을 입력해 주세요" cols="30" rows="10" onChange={(e) => { contentOnChangeHandler(e) }} >
+      <StActionContentInput type="text" value={auctionContent} placeholder="내용을 입력해 주세요" cols="30" rows="10" onChange={(e) => { contentOnChangeHandler(e) }} >
       </StActionContentInput>
 
     </StContentWrapper>

@@ -1,9 +1,10 @@
 import { styled } from "styled-components";
-import { useAppDispatch } from "../../redux/config/configStore";
+import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setAuctionLowerPrice, setAuctionUpperPrice } from "../../redux/modules/setAuctionSlice";
 
 function SetAuctionPrice() {
   const dispatch = useAppDispatch();
+  const { auctionUpperPrice, auctionLowerPrice } = useAppSelector((state) => state.setAuction)
 
   const lowerPriceOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setAuctionLowerPrice(+e.target.value))
@@ -15,11 +16,11 @@ function SetAuctionPrice() {
     <StPriceWrapper>
       <StPriceLimitBox>
         <StAuctionPriceTitle>최소금액</StAuctionPriceTitle>
-        <StActionPriceInput type="number" placeholder="최소금액을 입력해 주세요" onChange={(e) => { lowerPriceOnChangeHandler(e) }} />
+        <StActionPriceInput type="number" value={auctionLowerPrice} placeholder="최소금액을 입력해 주세요" onChange={(e) => { lowerPriceOnChangeHandler(e) }} />
       </StPriceLimitBox>
       <StPriceLimitBox>
         <StAuctionPriceTitle>최대금액</StAuctionPriceTitle>
-        <StActionPriceInput type="number" placeholder="최대금액을 입력해 주세요" onChange={(e) => { upperPriceOnChangeHandler(e) }} />
+        <StActionPriceInput type="number" value={auctionUpperPrice} placeholder="최대금액을 입력해 주세요" onChange={(e) => { upperPriceOnChangeHandler(e) }} />
       </StPriceLimitBox>
     </StPriceWrapper>
   )

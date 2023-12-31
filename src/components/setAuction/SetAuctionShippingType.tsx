@@ -1,10 +1,11 @@
 import { styled } from 'styled-components';
-import { useAppDispatch } from '../../redux/config/configStore';
+import { useAppDispatch, useAppSelector } from '../../redux/config/configStore';
 import { setAuctionShippingType } from '../../redux/modules/setAuctionSlice';
 
 function SetAuctionShippingType() {
   const statusArray = ["직거래", "택배"]
   const dispatch = useAppDispatch();
+  const { auctionShippingType } = useAppSelector((state) => state.setAuction);
 
   const shippingTypeOnchangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setAuctionShippingType(e.target.value))
@@ -22,8 +23,13 @@ function SetAuctionShippingType() {
                   value={index}
                   type="radio"
                   onChange={(e) => { shippingTypeOnchangeHandler(e) }}
+                  checked={
+                    auctionShippingType === String(index)
+                      ? true
+                      : false
+                  }
                 />
-                <StShippingTypeLabel htmlFor="">{item}</StShippingTypeLabel>
+                <StShippingTypeLabel>{item}</StShippingTypeLabel>
               </StShippingTypeButtonBox>
             )
           })
