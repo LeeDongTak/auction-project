@@ -24,6 +24,11 @@ function SetAuctionProductStatus() {
                   value={index}
                   type="radio"
                   onChange={(e) => { productStatusOnchangeHandler(e) }}
+                  checked={
+                    auctionProductStatus === String(index)
+                      ? true
+                      : false
+                  }
                 />
                 <StProductStatusLabel htmlFor="">{item}</StProductStatusLabel>
               </StProductStatusButtonBox>
