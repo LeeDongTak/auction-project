@@ -13,7 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import { selectorAuctionTimeStamp } from "../../../redux/modules/auctionTimestampSlice";
 import DetailTimeStamp from "../../detail/DetailTimeStamp";
-import CloseButton from "../CloseButton";
+import CloseButton from "../../modalCloseButton/CloseButton";
 import BidForm from "./bidForm/BidForm";
 
 export type BidCondition = 0 | 1;
