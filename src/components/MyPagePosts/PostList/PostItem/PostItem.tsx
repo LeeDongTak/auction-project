@@ -1,7 +1,9 @@
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import Button from "../../../../common/Button";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 
 interface PostItemProps {
@@ -9,9 +11,12 @@ interface PostItemProps {
 }
 
 const PostItem = ({ post }: PostItemProps) => {
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(true);
 
   const {
+    auction_id,
     title,
     content,
     auction_images,
@@ -41,6 +46,14 @@ const PostItem = ({ post }: PostItemProps) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const goToDetailHandler = () => {
+    navigate(`/detail/${auction_id}`);
+  };
+
+  const editHandler = () => {};
+
+  const deleteHandler = () => {};
+
   return (
     <StPostItemWrapper>
       {isLoading ? (
@@ -64,6 +77,10 @@ const PostItem = ({ post }: PostItemProps) => {
             <p>종료일: {endDate}</p>
           </div>
           <p>카테고리: {category?.category_name}</p>
+          <StButtonSection>
+            <Button text="수정" onClickHandler={editHandler} />
+            <Button text="삭제" onClickHandler={deleteHandler} />
+          </StButtonSection>
         </StPostInfoSection>
       </Skeleton>
     </StPostItemWrapper>
@@ -140,14 +157,29 @@ const StPostInfoSection = styled.section`
 `;
 
 const StImageSkeleton = styled(Skeleton.Image)`
-  width: 300px;
-  height: 200px;
+  width: 300px !important;
+  height: 200px !important;
 
   svg {
-    width: 300px;
-    height: 200px;
+    width: inherit;
+    height: inherit;
     object-fit: cover;
   }
+
+  @media (max-width: 650px) {
+    width: 250px !important;
+    margin-right: 1rem;
+  }
+
+  @media (max-width: 500px) {
+    width: 150px !important;
+    margin-right: 1rem;
+  }
+`;
+
+const StButtonSection = styled.section`
+  display: flex;
+  gap: 0.5rem;
 `;
 
 export default PostItem;

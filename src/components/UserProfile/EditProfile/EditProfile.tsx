@@ -1,9 +1,10 @@
 import { UserOutlined } from "@ant-design/icons";
 import { QueryClient } from "@tanstack/react-query";
-import { Avatar, Button } from "antd";
+import { Avatar } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
 import ProfileAvatar from "../../../common/avatar";
+import Button from "../../../common/Button";
 import { QUERY_KEYS } from "../../../query/keys.constant";
 import { useUserUpdateMutation } from "../../../query/useUsersQuery";
 import { supabase } from "../../../supabase";
@@ -27,6 +28,11 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
 
   // 수정사항 저장
   const submitHandler = async () => {
+    // if (!inputNickname && !inputAddress1 && !inputAddress2) {
+    //   alert("정보가 변경되지 않았습니다.");
+    //   return;
+    // }
+
     const answer = window.confirm("저장하시겠습니까?");
 
     if (!answer) return;
@@ -129,7 +135,7 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
                 onChange={(e) => setInputNickname(e.target.value)}
               />
             </StTopSection>
-            {/* <p>{fileImage?.name}</p> */}
+            <p>{fileImage?.name}</p>
 
             <StInfoSection>
               <div>
@@ -182,15 +188,15 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
         <ButtonSection>
           {isEdit ? (
             <div>
-              <Button onClick={cancelHandler}>취소</Button>
-              <Button type="primary" onClick={submitHandler}>
-                완료
-              </Button>
+              <Button text="취소" onClickHandler={cancelHandler} />
+              <Button text="완료" onClickHandler={submitHandler} />
             </div>
           ) : (
-            <Button type="primary" onClick={() => setIsEdit(true)}>
-              프로필 수정
-            </Button>
+            <Button
+              text="프로필 수정"
+              mode="dark"
+              onClickHandler={() => setIsEdit(true)}
+            />
           )}
         </ButtonSection>
       </StProfileWrapper>

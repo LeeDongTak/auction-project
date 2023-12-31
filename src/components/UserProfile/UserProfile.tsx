@@ -1,5 +1,4 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
@@ -30,32 +29,34 @@ const UserProfile: React.FC<ProfileProps> = ({ user }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading)
-    return (
-      <StSkeleton>
-        <Skeleton.Avatar active shape={avatarShape} size={120} />
-        <Skeleton active paragraph={{ rows: 2 }} />
-      </StSkeleton>
-    );
+  // if (isLoading)
+  //   return (
+  //     <StSkeleton>
+  //       <Skeleton.Avatar active shape={avatarShape} size={120} />
+  //       <Skeleton active paragraph={{ rows: 2 }} />
+  //     </StSkeleton>
+  //   );
 
   return (
     <StProfileContainer>
       <StProfileWrapper key={user?.user_id}>
-        {user?.profile_image ? (
+        {isLoading ? (
+          <Skeleton.Avatar active shape={avatarShape} size={120} />
+        ) : (
           <ProfileAvatar
-            src={user?.profile_image}
+            src={user?.profile_image as string}
             alt="user-image"
             size="10rem"
           />
-        ) : (
-          <Avatar shape="circle" size={64} icon={<UserOutlined />} />
         )}
-        <StInfoBox>
-          <h3>{user?.nickname || "new user"}</h3>
-          <p>
-            <span>가입일: {createAt}</span> <span>작성글 수: 00</span>
-          </p>
-        </StInfoBox>
+        <Skeleton loading={isLoading} active title paragraph={{ rows: 2 }}>
+          <StInfoBox>
+            <h3>{user?.nickname || "new user"}</h3>
+            <p>
+              <span>가입일: {createAt}</span> <span>작성글 수: 00</span>
+            </p>
+          </StInfoBox>
+        </Skeleton>
       </StProfileWrapper>
     </StProfileContainer>
   );

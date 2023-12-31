@@ -71,6 +71,14 @@ const StProfileContainer = styled.div`
   width: 100%;
   height: 100vh;
 `;
+const StUserProfile = styled.div`
+  display: flex;
+  width: 100%;
+  background-color: #333;
+  height: 200px;
+  min-height: 200px;
+  align-items: center;
+`;
 
 const StPostContainer = styled.div`
   display: flex;
