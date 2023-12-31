@@ -14,5 +14,8 @@ const StWrapper = styled.section`
   font-size: 1.6rem;
   line-height: 1.5;
   padding: 20px;
+  p {
+    white-space: pre-wrap;
+  }
 `;
 export default DetailWrapper;

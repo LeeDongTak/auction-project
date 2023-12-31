@@ -71,7 +71,6 @@ export interface Auction_images {
 export interface Auction_question {
   auction_question_id: string /* primary key */;
   created_at: string;
-  title: string;
   question: string;
   user_id: string /* foreign key to user_info.user_id */;
   auction_id: string /* foreign key to auction_post.auction_id */;

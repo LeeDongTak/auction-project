@@ -4,6 +4,7 @@ type returnTypes<T> = [
   string,
   React.RefObject<T>,
   (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  React.Dispatch<React.SetStateAction<string>>,
 ];
 
 const useFormInput = <T>(): returnTypes<T> => {
@@ -16,7 +17,7 @@ const useFormInput = <T>(): returnTypes<T> => {
   ) => {
     setState(e.target.value);
   };
-  return [state, forwardRef, handleChange];
+  return [state, forwardRef, handleChange, setState];
 };
 
 export default useFormInput;

@@ -2,15 +2,35 @@ import { styled } from "styled-components";
 import { useCustomModal } from "../../../hooks/useCustomModal";
 import useFormInput from "../../../hooks/useFormInput";
 import { Spacer } from "../../ui/Spacer";
+import { fetchPostQuestion } from "../../../api/qna";
+import React from "react";
+import { useCustomMutation } from "../../../hooks/useCustomMutation";
+import { Auction_question } from "../../../types/databaseRetrunTypes";
+import { useQueryClient } from "@tanstack/react-query";
+import useGetUserInfo from "../../../hooks/useGetUserInfo";
 
 interface Props {
   auctionId: string;
 }
 
 const QuestionForm = ({ auctionId }: Props) => {
-  const [questionText, questionTextRef, questionTextHandler] =
+  const queryClient = useQueryClient();
+  const [questionText, questionTextRef, questionTextHandler, questionSetText] =
     useFormInput<HTMLTextAreaElement>();
   const { handleOpenCustomModal } = useCustomModal();
+  const userData = useGetUserInfo();
+
+  const QuestionMutationOptions = {
+    mutationFn: fetchPostQuestion,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["questions", auctionId],
+      });
+      await handleOpenCustomModal("질문이 등록되었습니다.", "alert");
+      questionSetText("");
+    },
+  };
+  const mutation = useCustomMutation(QuestionMutationOptions);
 
   const onSubmitQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,16 +41,15 @@ const QuestionForm = ({ auctionId }: Props) => {
       return;
     }
 
-    const { user: userData } = JSON.parse(
-      localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-    );
-    // 유저id 가져왔음.
-    // 경매 id 가져왔음
-    // 질문 게시글 생성
-    const newQuestion = {
+    const newQuestion: Pick<
+      Auction_question,
+      "user_id" | "auction_id" | "question"
+    > = {
       user_id: userData.id,
       auction_id: auctionId,
+      question: questionText,
     };
+    mutation(newQuestion);
   };
   return (
     <StQuestionForm onSubmit={onSubmitQuestion}>

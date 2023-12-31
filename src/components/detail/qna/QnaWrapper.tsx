@@ -11,6 +11,7 @@ export const QnaWrapper = ({ auctionId }: Props) => {
       <Title title={"Q&A"} titleAlign={"flex-start"} />
       <Spacer y={20} />
       <Question auctionId={auctionId!} />
+      <Spacer y={20} />
     </>
   );
 };
