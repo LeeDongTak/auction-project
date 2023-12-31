@@ -33,30 +33,28 @@ const Profile = () => {
     select: (user) => user[0],
   });
 
-  console.log("현재 유저 데이터", user);
-
-  // const user = user?.[0] as User_info;
-
   return (
     <StProfileContainer>
-      <UserProfile user={user as User_info} isLoading={isLoading} />
-      <StPostWrapper>
-        <ProfileMenu
-          activeTitle={activeTitle}
-          setActiveTitle={setActiveTitle}
-        />
-        <StListWrapper>
-          {activeTitle === "내 게시물" && (
-            <PostList title={activeTitle} userId={userId} />
-          )}
-          {activeTitle === "찜한 목록" && (
-            <PostList title={activeTitle} userId={userId} />
-          )}
-          {activeTitle === "프로필 수정" && (
-            <EditProfile title={activeTitle} user={user as User_info} />
-          )}
-        </StListWrapper>
-      </StPostWrapper>
+      <UserProfile user={user as User_info} />
+      <StPostContainer>
+        <StPostsWrapper>
+          <ProfileMenu
+            activeTitle={activeTitle}
+            setActiveTitle={setActiveTitle}
+          />
+          <StListWrapper>
+            {activeTitle === "내 게시물" && (
+              <PostList title={activeTitle} userId={userId} />
+            )}
+            {activeTitle === "찜한 목록" && (
+              <PostList title={activeTitle} userId={userId} />
+            )}
+            {activeTitle === "프로필 수정" && (
+              <EditProfile title={activeTitle} user={user as User_info} />
+            )}
+          </StListWrapper>
+        </StPostsWrapper>
+      </StPostContainer>
       <FloatButton
         shape="circle"
         type="primary"
@@ -73,13 +71,32 @@ const StProfileContainer = styled.div`
   width: 100%;
   height: 100vh;
 `;
+const StUserProfile = styled.div`
+  display: flex;
+  width: 100%;
+  background-color: #333;
+  height: 200px;
+  min-height: 200px;
+  align-items: center;
+`;
 
-const StPostWrapper = styled.div`
+const StPostContainer = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 4rem;
+  padding: 2rem;
+  color: #222;
+`;
+
+const StPostsWrapper = styled.div`
   display: flex;
   width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
-  gap: 1rem;
+  transition: all 0.5s ease-in-out;
+
+  @media (max-width: 650px) {
+    flex-direction: column;
+  }
 `;
 
 export default Profile;

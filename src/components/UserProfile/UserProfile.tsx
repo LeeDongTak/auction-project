@@ -1,48 +1,62 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
+import ProfileAvatar from "../../common/avatar";
 import { User_info } from "../../types/databaseRetrunTypes";
 
 type AvatarShapeType = "circle" | "square";
 
 interface ProfileProps {
   user: User_info;
-  isLoading: boolean;
 }
 
-const UserProfile: React.FC<ProfileProps> = ({ user, isLoading }) => {
+const UserProfile: React.FC<ProfileProps> = ({ user }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const [avatarShape, setAvatarShape] = useState<AvatarShapeType>("circle");
 
   const createAt = dayjs(user?.created_at).format("YY-MM-DD");
 
   console.log(createAt);
 
-  if (isLoading)
-    return (
-      <StSkeleton>
-        <Skeleton.Avatar active shape={avatarShape} size={80} />
-        <Skeleton.Input active />
-      </StSkeleton>
-    );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    console.log(isLoading);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // if (isLoading)
+  //   return (
+  //     <StSkeleton>
+  //       <Skeleton.Avatar active shape={avatarShape} size={120} />
+  //       <Skeleton active paragraph={{ rows: 2 }} />
+  //     </StSkeleton>
+  //   );
 
   return (
     <StProfileContainer>
-      <StProfileWrapper key={user.user_id}>
-        {user.profile_image ? (
-          <StImgBox>
-            <img src={user.profile_image} alt="user-image" />
-          </StImgBox>
+      <StProfileWrapper key={user?.user_id}>
+        {isLoading ? (
+          <Skeleton.Avatar active shape={avatarShape} size={120} />
         ) : (
-          <Avatar shape="circle" size={64} icon={<UserOutlined />} />
+          <ProfileAvatar
+            src={user?.profile_image as string}
+            alt="user-image"
+            size="10rem"
+          />
         )}
-        <StInfoBox>
-          <h3>{user.nickname || "new user"}</h3>
-          <p>
-            <span>가입일: {createAt}</span> <span>작성글 수: 00</span>
-          </p>
-        </StInfoBox>
+        <Skeleton loading={isLoading} active title paragraph={{ rows: 2 }}>
+          <StInfoBox>
+            <h3>{user?.nickname || "new user"}</h3>
+            <p>
+              <span>가입일: {createAt}</span> <span>작성글 수: 00</span>
+            </p>
+          </StInfoBox>
+        </Skeleton>
       </StProfileWrapper>
     </StProfileContainer>
   );
@@ -51,8 +65,9 @@ const UserProfile: React.FC<ProfileProps> = ({ user, isLoading }) => {
 const StProfileContainer = styled.div`
   display: flex;
   width: 100%;
-  background-color: #222;
+  background-color: #333;
   height: 200px;
+  min-height: 200px;
   align-items: center;
 `;
 
@@ -64,20 +79,6 @@ const StProfileWrapper = styled.div`
   gap: 4rem;
   padding: 2rem;
   color: #fff;
-`;
-
-const StImgBox = styled.div`
-  background-color: gray;
-  width: 10rem;
-  height: 10rem;
-  border-radius: 50%;
-  overflow: hidden;
-
-  img {
-    width: inherit;
-    height: inherit;
-    object-fit: cover;
-  }
 `;
 
 const StInfoBox = styled.div`
@@ -98,6 +99,9 @@ const StSkeleton = styled.div`
   align-items: center;
   padding: 2rem;
   gap: 1.5rem;
+  height: 200px;
+  min-height: 200px;
+  background-color: #333;
 `;
 
 export default UserProfile;
