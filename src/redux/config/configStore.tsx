@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import auctionTimestamp from "../modules/auctionTimestampSlice";
 import bidCustomModal from "../modules/bidCustomModalSlice";
+import bidList from "../modules/bidListSlice";
 import customModal from "../modules/customModalSlice";
 import profile from "../modules/profileSlice";
 import search from "../modules/searchSlice";
@@ -15,6 +16,7 @@ const store = configureStore({
     bidCustomModal,
     customModal,
     search,
+    bidList,
   },
 });
 

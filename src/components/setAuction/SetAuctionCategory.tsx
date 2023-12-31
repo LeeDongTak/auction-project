@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { keyframes, styled } from "styled-components";
 import { fetchGetCategories } from "../../api/auction";
 import { useCustomQuery } from "../../hooks/useCustomQuery";
@@ -6,8 +7,10 @@ import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setAuctionCategoryList } from "../../redux/modules/setAuctionSlice";
 
 function SetAuctionCategory() {
+  const { auctionId } = useParams();
   const dispatch = useAppDispatch();
   const { categoryList } = useAppSelector((state) => state.setAuction);
+  const [existingCategory, setExistingCategory] = useState("");
   const queryOptions = {
     queryKey: ["category"],
     queryFn: fetchGetCategories,
@@ -39,6 +42,10 @@ function SetAuctionCategory() {
   //     dispatch(setIsAlert({ isAlert: true, ErrorMsg: "카테고리는 5개까지 선택 가능합니다" }))
   //   }
   // }, [categoryList])
+
+  useEffect(() => {
+    setExistingCategory(categoryList);
+  }, [])
 
   return (
     <StCategoryWrapper>
@@ -80,18 +87,41 @@ function SetAuctionCategory() {
           })}
         </StCategoryListUl>
         <StCategoryListUl $ulType="resultCategory">
-          <StChoiceCategory $listType="choiceCategoryTitle">
-            선택한 카테고리
-          </StChoiceCategory>
-          {data
-            ?.filter((x) => categoryList.includes(x.category_id))
-            .map((item) => {
-              return (
-                <StChoiceCategory key={item.category_id}>
-                  {item.category_name}
+          {
+            !auctionId
+              ? <>
+                <StChoiceCategory $listType="choiceCategoryTitle">
+                  선택한 카테고리
                 </StChoiceCategory>
-              );
-            })}
+                {data?.filter((x) => categoryList.includes(x.category_id))
+                  .map((item) => {
+                    return (
+                      <StChoiceCategory key={item.category_id}>
+                        {item.category_name}
+                      </StChoiceCategory>
+                    );
+                  })}
+              </>
+              : <>
+                <StChoiceCategory $typeIsSet="update" $listType="choiceCategoryTitle">
+                  선택한 카테고리
+                </StChoiceCategory>
+                <StChoiceCategory $typeIsSet="update">
+                  {existingCategory}
+                </StChoiceCategory>
+                <StChoiceCategory $typeIsSet="update" $listType="choiceCategoryTitle">
+                  수정한 카테고리
+                </StChoiceCategory>
+                {data?.filter((x) => categoryList.includes(x.category_id))
+                  .map((item) => {
+                    return (
+                      <StChoiceCategory $typeIsSet="update" key={item.category_id}>
+                        {item.category_name}
+                      </StChoiceCategory>
+                    );
+                  })}
+              </>
+          }
         </StCategoryListUl>
       </StCategoryContentBox>
     </StCategoryWrapper>
@@ -121,7 +151,7 @@ const StCategoryContentBox = styled.div`
 
 const StCategoryListUl = styled.ul<{ $ulType?: string }>`
   width: ${({ $ulType }) => ($ulType === "resultCategory" ? "50%" : "40%")};
-  height: 15em;
+  height: ${({ $ulType }) => ($ulType === "resultCategory" ? "auto" : "15em")};;
   border-radius: 0.5em;
   font-size: 2.2em;
   box-shadow: ${({ $ulType }) =>
@@ -133,6 +163,10 @@ const StCategoryListUl = styled.ul<{ $ulType?: string }>`
   ${({ $ulType }) =>
     $ulType === "resultCategory" &&
     `padding: 2%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
   `}
   &::-webkit-scrollbar {
     display: none;
@@ -268,25 +302,31 @@ const StCategoryLabel = styled.label`
 //   border-radius: 0.5em;
 // `
 
-const StChoiceCategory = styled.div<{ $listType?: string }>`
+const StChoiceCategory = styled.span<{ $typeIsSet?: string, $listType?: string }>`
   background-color: #023E7D;
-  width: 80%;
-  height: 2.8em;
+  width: auto;
+  height: auto;
   color: #FFFACD;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: 1px solid #023E7D;
   font-size: 1.2em;
-  font-weight: bold;
-  margin: 3% auto;
+  /* font-weight: bold;
+  margin: 3% auto; */
+  margin-bottom: ${({ $listType }) => $listType === "choiceCategoryTitle" ? '5%' : '13%'};
   border-radius: 0.5em;
+  padding: 2% 8%;
   ${({ $listType }) =>
     $listType === "choiceCategoryTitle" &&
     `
+      padding-top: 0;
       border: none;
       background-color: #FFFACD;
       color: #023E7D;
-      align-items: flex-start;
     `}
+  ${({ $typeIsSet }) =>
+    $typeIsSet === "update" &&
+    `
+      font-size: 1em;
+      // margin: 0 auto;
+    `}
+  
 `;

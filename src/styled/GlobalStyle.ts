@@ -138,6 +138,7 @@ const GlobalStyle = styled.createGlobalStyle`
   body {
     width: 100vw;
     min-height: 100vh;
+    overflow-x: hidden;
   }
   #root {
     width: 100vw;
@@ -146,6 +147,10 @@ const GlobalStyle = styled.createGlobalStyle`
     position: relative;
     --main-color: #023e7d;
     --sub-color: #fffacd;
+  }
+
+  button {
+    cursor: pointer;
   }
 `;
 

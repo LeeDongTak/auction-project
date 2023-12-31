@@ -39,7 +39,7 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
   if (isLoading) return <Spin />;
 
   return (
-    <StDropdown menu={{ items }} trigger={["click"]}>
+    <StDropdown menu={{ items }} trigger={["click"]} placement="topRight" arrow>
       <a onClick={(e) => e.preventDefault()}>
         <ProfileAvatar
           size="4rem"
@@ -54,7 +54,9 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
 const StDropdown = styled(Dropdown)`
   display: flex;
   justify-content: flex-end;
-  width: 200px;
+  width: 50px;
+  gap: 5rem;
+  cursor: pointer;
 `;
 
 const StSignOutButton = styled.span`

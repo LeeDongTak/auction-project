@@ -1,5 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useCustomModal } from "./useCustomModal";
 
 export function useCustomQuery<T, TError extends Error = Error>(
   queryOptions: UseQueryOptions<T, TError>
@@ -10,6 +11,8 @@ export function useCustomQuery<T, TError extends Error = Error>(
 
   const [isLoadingSkeleton, setIsLoadingSkeleton] = useState(true);
 
+  const { handleOpenCustomModal } = useCustomModal();
+
   useEffect(() => {
     if (!isLoading) {
       setTimeout(() => {
@@ -19,9 +22,10 @@ export function useCustomQuery<T, TError extends Error = Error>(
   }, [isLoading]);
 
   useEffect(() => {
-    // error 처리
     if (isError) {
-      console.log("isError ", error);
+      (async () => {
+        await handleOpenCustomModal(`오류 발생\n ${error?.message}`, "alert");
+      })();
     }
   }, [isError, error]);
 

@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { useParams } from "react-router-dom"
 import { styled } from "styled-components"
 import SetAuctionAlert from "../components/setAuction/SetAuctionAlert"
 import SetAuctionButton from "../components/setAuction/SetAuctionBtn"
@@ -15,6 +16,7 @@ import { setIsAlert } from "../redux/modules/setAuctionSlice"
 
 
 function SetAuction() {
+  const { auctionId } = useParams();
   const { isAlert, alertMsg } = useAppSelector((state) => state.setAuction)
   const dispatch = useAppDispatch()
   useEffect(() => {
@@ -23,8 +25,6 @@ function SetAuction() {
         setTimeout(() => {
           dispatch(setIsAlert({ isAlert: false, ErrorMsg: "" }))
         }, 3000)
-      } else if (!isAlert) {
-        console.log("asdf")
       }
     }
   }, [isAlert])
@@ -32,7 +32,7 @@ function SetAuction() {
   return (<>
     <StWrapper>
       {isAlert && <SetAuctionAlert />}
-      <StTitle>경매품 등록</StTitle>
+      <StTitle>{!auctionId ? "경매품 등록" : "경매품 수정"}</StTitle>
       <SetAuctionImage />
       <SetAuctionTitle />
       <SetAuctionContent />

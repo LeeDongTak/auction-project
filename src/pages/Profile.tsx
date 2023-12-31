@@ -11,13 +11,12 @@ import EditProfile from "../components/profile/UserProfile/EditProfile/EditProfi
 import UserProfile from "../components/profile/UserProfile/UserProfile";
 import { QUERY_KEYS } from "../query/keys.constant";
 import { User_info } from "../types/databaseRetrunTypes";
+import useGetAuthInfo from "../hooks/useGetAuthInfo";
 
 const Profile = () => {
   const [activeTitle, setActiveTitle] = useState("내 게시물");
 
-  const { user: userData } = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
+  const { user: userData } = useGetAuthInfo();
 
   const userId = userData.id;
 

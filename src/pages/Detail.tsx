@@ -10,13 +10,19 @@ import placeholder from "../images/placeholder.svg";
 import { Skeleton } from "antd";
 import useDetailAuctionPost from "../hooks/useDetailAuctionPost";
 import useSubscribeBidTable from "../hooks/useSubscribeBidTable";
+import BidPopUpLayout from "../components/detail/bidPopup/BidPopUpLayout";
+import useCloseButtonState from "../hooks/useCloseButtonState";
+import PopupToggleButton from "../components/detail/bidPopup/PopupToggleButton";
+import DetailWrapper from "../components/ui/detailWrapper/DetailWrapper";
+import { QnaWrapper } from "../components/detail/qna/QnaWrapper";
 
 const Detail = () => {
   const { auctionId } = useParams();
   const [data, isLoading] = useDetailAuctionPost(auctionId!);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
-  useSubscribeBidTable(auctionId!);
 
+  const [isPopupState, onClickHandler] = useCloseButtonState();
+  useSubscribeBidTable(auctionId!);
   useAuctionStatus(data);
 
   return (
@@ -56,14 +62,37 @@ const Detail = () => {
 
       <Spacer y={20} />
 
-      <Skeleton
-        loading={isLoading}
-        active
-        paragraph={{ rows: 10 }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <DetailContent auctionContent={data?.content} />
-      </Skeleton>
+      <DetailWrapper>
+        <Skeleton
+          loading={isLoading}
+          active
+          paragraph={{ rows: 10 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <DetailContent auctionContent={data?.content} />
+        </Skeleton>
+      </DetailWrapper>
+
+      <DetailWrapper>
+        <Skeleton
+          loading={isLoading}
+          active
+          paragraph={{ rows: 10 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <QnaWrapper auctionId={auctionId!} />
+        </Skeleton>
+      </DetailWrapper>
+
+      <PopupToggleButton forwardHandler={onClickHandler} />
+
+      {isPopupState && (
+        <BidPopUpLayout
+          auctionId={auctionId!}
+          forwardHandler={onClickHandler}
+          auctionStatus={Number(data.auction_status)}
+        />
+      )}
     </StDetailWrapper>
   );
 };
@@ -72,6 +101,7 @@ const StDetailWrapper = styled.main`
   max-width: 1200px;
   width: 100%;
   margin: 100px auto 0;
+  position: relative;
 `;
 
 const StDetailInfo = styled.section`

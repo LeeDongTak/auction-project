@@ -22,4 +22,5 @@ export const StModalBox = styled.div`
   height: 100vh;
   z-index: 333;
   padding: 2rem;
+  overflow: auto;
 `;

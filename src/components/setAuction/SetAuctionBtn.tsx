@@ -1,15 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { FaPlus } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { AddAuctionPost } from "../../api/setAuction";
 import { useAddAuctionMutation } from "../../hooks/useAddAuctionMutation";
 import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { setIsAlert } from "../../redux/modules/setAuctionSlice";
-import { Auction_post, insert_Auction_post } from "../../types/databaseRetrunTypes";
+import { insert_Auction_post } from "../../types/databaseRetrunTypes";
 
 function SetAuctionButton() {
+  const { auctionId } = useParams();
   const {
     imgFileList,
     auctionTitle,
@@ -28,6 +26,7 @@ function SetAuctionButton() {
   const navigate = useNavigate();
   const accessTokenJson: string | null = localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token")
   const accessToken = accessTokenJson && JSON.parse(accessTokenJson)
+  const isParams = !auctionId ? "등록하기" : "수정하기";
 
   const newAuctionData: insert_Auction_post = {
     title: auctionTitle,
@@ -48,102 +47,8 @@ function SetAuctionButton() {
   } = { newAuctionData, imgFileList }
 
 
-  const addAuctionMutation = (addAuctionData: {
-    newAuctionData: Auction_post;
-    imgFileList: File[];
-  }) => {
-    //경매품 추가하기 유효성 검사
-    if (accessTokenJson === null) {
-      alert("로그인 후 등록 가능합니다.")
-      navigate('/login')
-      return false;
-    } else if (imgFileList.length === 0) {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "이미지를 등록해 주세요" })
-      );
-      return false;
-    } else if (auctionTitle === "") {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "경매품 이름을 입력해 주세요" })
-      );
-      return false;
-    } else if (auctionTitle.length > 10) {
-      dispatch(
-        setIsAlert({
-          isAlert: true,
-          ErrorMsg: "경매품 이름은 10글자 이하로 작성해 주세요",
-        })
-      );
-      return false;
-    } else if (auctionContent === "") {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "경매품 소개를 작성해 주세요" })
-      );
-      return false;
-    } else if (auctionContent.length > 100) {
-      dispatch(
-        setIsAlert({
-          isAlert: true,
-          ErrorMsg: "경매품 소개는 100글자 이하로 작성해 주세요",
-        })
-      );
-      return false;
-    } else if (auctionUpperPrice === 0) {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "최대금액을 입력해 주세요" })
-      );
-      return false;
-    } else if (auctionLowerPrice > auctionUpperPrice) {
-      dispatch(
-        setIsAlert({
-          isAlert: true,
-          ErrorMsg: "최소금액은 최대금액보다 작아야 합니다",
-        })
-      );
-      return false;
-    } else if (isNaN(auctionLowerPrice) || isNaN(auctionUpperPrice)) {
-      dispatch(setIsAlert({ isAlert: true, ErrorMsg: "숫자만 입력해 주세요" }));
-      return false;
-    } else if (auctionShippingType === "") {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "배송유형을 선택해 주세요" })
-      );
-      return false;
-    } else if (auctionProductStatus === "") {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "상품상태를 선택해 주세요" })
-      );
-      return false;
-    } else if (categoryList.length === 0) {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "카테고리를 등록해 주세요" })
-      );
-      return false;
-    } else {
-      const { isPending, isError, error, mutate } = useMutation({
-        mutationFn: AddAuctionPost,
-        // onSuccess: () => {
-        //   queryClient.invalidateQueries({queryKey:})
-        // }
-      });
-
-      useEffect(() => { }, [isPending]);
-
-      useEffect(() => {
-        if (isError) {
-          (async () => { })();
-        }
-      }, [isError, error]);
-
-      mutate(addAuctionData);
-    }
-  };
-
-
-
-  // const { addAuctionMutation } = useAddAuctionMutation(addAuctionData)
   const { mutate } = useAddAuctionMutation()
-  const isValidAddAuction = () => {
+  const onclickAddAuctionHandler = () => {
     if (imgFileList.length === 0) {
       dispatch(setIsAlert({ isAlert: true, ErrorMsg: "이미지를 등록해 주세요" }));
       return false;
@@ -210,8 +115,8 @@ function SetAuctionButton() {
   }
   return (
     <StButtonWrapper>
-      <StButton onClick={() => {
-        isValidAddAuction()
+      <StButton $isParams={isParams} onClick={() => {
+        onclickAddAuctionHandler()
       }}>
         <StPlus className="plus" />
       </StButton>
@@ -233,7 +138,7 @@ const StButtonWrapper = styled.div`
   height: 100vh;
 `
 
-const StButton = styled.button`
+const StButton = styled.button<{ $isParams?: string }>`
   position: absolute;
   right: 0%;
   bottom: 5%;
@@ -256,7 +161,7 @@ const StButton = styled.button`
       width: 5em;
       font-size: 2em;
       transform: translateX(-50%);
-      content: "등록하기";
+      content: "${({ $isParams }) => $isParams}";
     }
   }
   &:hover > .plus{

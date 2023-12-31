@@ -20,6 +20,9 @@ const useSubscribeBidTable = (auctionId: string) => {
           await queryClient.invalidateQueries({
             queryKey: ["getBidMaxPrice", auctionId],
           });
+          await queryClient.invalidateQueries({
+            queryKey: ["getBidList", auctionId],
+          });
         }
       }
     };

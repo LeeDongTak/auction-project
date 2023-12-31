@@ -21,7 +21,7 @@ export async function fetchGetAuctions({
   orderBy = "created_at",
   order = false,
   user_id = "",
-  pageParam = 1,
+  // pageParam = 1,
 }: Auction_option) {
   console.log(categories);
   const categoryIds = categories?.map((category) => {
@@ -34,7 +34,6 @@ export async function fetchGetAuctions({
       "*, category(category_name), user_info(user_email),auction_images(image_id, image_path)"
     )
     .order(`${orderBy}`, { ascending: order });
-  // .range(offset, limit);
 
   searchKeyword?.trim() !== "" &&
     query

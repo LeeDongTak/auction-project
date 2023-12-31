@@ -3,24 +3,25 @@ import React from "react";
 
 type Props = {
   handler: (e: React.MouseEvent<HTMLElement>) => void;
+  styleRight?: number;
 };
 
-const CloseButton = ({ handler }: Props) => {
+const CloseButton = ({ handler, styleRight = 15 }: Props) => {
   return (
-    <StCloseButton>
+    <StCloseButton $right={styleRight}>
       <div>
         <button onClick={handler}></button>
       </div>
     </StCloseButton>
   );
 };
-const StCloseButton = styled.div`
+const StCloseButton = styled.div<{ $right: number }>`
   position: absolute;
   cursor: pointer;
   background-color: unset;
   border: unset;
   top: 15px;
-  right: 15px;
+  right: ${({ $right }) => $right}px;
   height: 20px;
   > div {
     position: relative;

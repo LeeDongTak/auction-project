@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import { useAppDispatch } from "../../redux/config/configStore";
 import { setImageFileList } from "../../redux/modules/setAuctionSlice";
 
 
 function SetAuctionImage() {
+  const { auctionId } = useParams();
   const dispatch = useAppDispatch()
   const [imgArray, setImgArray] = useState<string[]>([])
   const imgRef = useRef<HTMLInputElement>(null);
@@ -33,7 +35,7 @@ function SetAuctionImage() {
 
   return (
     <StImageWrapper>
-      <StImageTitle>이미지 등록</StImageTitle>
+      <StImageTitle>{!auctionId ? "이미지 등록" : "이미지 수정"}</StImageTitle>
       <StImageUl>
         {
           imgArray.map((item, index) => <StImageLi onClick={() => { onClickImgUrlCloseHandler(item) }} key={index} $imgUrl={item} />)

@@ -1,10 +1,12 @@
-import { SearchOutlined } from "@ant-design/icons";
 import { QueryClient, useQuery } from "@tanstack/react-query";
-import { Button, Spin } from "antd";
+import { Spin } from "antd";
 import { useEffect, useState } from "react";
+import { MdOutlineSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo, getUsersInfo } from "../../api/auth";
+import { useCustomModal } from "../../hooks/useCustomModal";
+import useGetAuthInfo from "../../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
 import { useAppDispatch } from "../../redux/config/configStore";
@@ -22,16 +24,15 @@ function Header() {
   const dispatch = useAppDispatch();
 
   const [isLogin, setIsLogin] = useState(false);
+  const { handleOpenCustomModal } = useCustomModal();
 
   const queryClient = new QueryClient();
 
-  const userData: Auth = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
+  const userData: Auth = useGetAuthInfo();
 
   const userId = userData?.user?.id;
 
-  const socialData = userData?.user.user_metadata;
+  const socialData = userData?.user?.user_metadata;
 
   const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
 
@@ -86,28 +87,28 @@ function Header() {
   };
 
   const signOut = async () => {
-    console.log("실행");
     const { error } = await supabase.auth.signOut();
     setIsLogin(false);
-    alert("로그아웃 되었습니다.");
+    await handleOpenCustomModal("로그아웃 되었습니다.", "alert");
     navigate("/");
-    console.log(error);
+
+    if (error) await handleOpenCustomModal(error.message, "alert");
   };
 
   return (
     <StHeaderContainer>
       <StHeaderWrapper>
         <h1 onClick={() => navigate("/")}>ELETE</h1>
-        <Button
-          onClick={() => dispatch(toggleViewSearchModal(true))}
-          icon={<SearchOutlined />}
-        >
-          Search
-        </Button>
+
         {isLoading ? (
           <Spin />
         ) : (
           <div>
+            <StSearchButton
+              onClick={() => dispatch(toggleViewSearchModal(true))}
+            >
+              <MdOutlineSearch />
+            </StSearchButton>
             {isLogin ? (
               <>
                 <Nav signOut={signOut} userId={userData?.user.id} />
@@ -146,17 +147,33 @@ const StHeaderWrapper = styled.header`
 
   div {
     display: flex;
+    gap: 2rem;
 
     img > {
       width: 10px;
       cursor: pointer;
     }
   }
+
   h1 {
     font-size: xx-large;
   }
 
   p {
     cursor: pointer;
+  }
+`;
+
+const StSearchButton = styled.button`
+  display: flex;
+  align-items: center;
+  font-size: xx-large;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
   }
 `;
