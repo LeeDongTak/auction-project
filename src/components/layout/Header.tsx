@@ -12,10 +12,12 @@ import { User_info } from "../../types/databaseRetrunTypes";
 import { Auth } from "../../types/userType";
 import Nav from "./Nav";
 import useGetAuthInfo from "../../hooks/useGetAuthInfo";
+import { useCustomModal } from "../../hooks/useCustomModal";
 
 function Header() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
+  const { handleOpenCustomModal } = useCustomModal();
 
   const queryClient = new QueryClient();
 
@@ -78,12 +80,12 @@ function Header() {
   };
 
   const signOut = async () => {
-    console.log("실행");
     const { error } = await supabase.auth.signOut();
     setIsLogin(false);
-    alert("로그아웃 되었습니다.");
+    await handleOpenCustomModal("로그아웃 되었습니다.", "alert");
     navigate("/");
-    console.log(error);
+
+    if (error) await handleOpenCustomModal(error.message, "alert");
   };
 
   return (

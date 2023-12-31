@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { styled } from "styled-components";
 import { supabase } from "../supabase";
+import { useCustomModal } from "../hooks/useCustomModal";
 
 const AuthLayout = () => {
+  const { handleOpenCustomModal } = useCustomModal();
   const [loading, setLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
 
@@ -37,7 +39,12 @@ const AuthLayout = () => {
     );
 
   if (!isLogin) {
-    alert("로그인이 필요한 페이지입니다. 로그인 페이지로 이동합니다!");
+    (async () => {
+      await handleOpenCustomModal(
+        "로그인이 필요한 페이지입니다.\n 로그인 페이지로 이동합니다!",
+        "alert"
+      );
+    })();
     return <Navigate to={"/login"} replace />;
   }
 
