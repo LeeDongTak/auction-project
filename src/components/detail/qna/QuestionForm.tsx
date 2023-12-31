@@ -8,6 +8,7 @@ import { useCustomMutation } from "../../../hooks/useCustomMutation";
 import { Auction_question } from "../../../types/databaseRetrunTypes";
 import { useQueryClient } from "@tanstack/react-query";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import QnaTextArea from "./QnaTextArea";
 
 interface Props {
   auctionId: string;
@@ -55,11 +56,11 @@ const QuestionForm = ({ auctionId }: Props) => {
     <StQuestionForm onSubmit={onSubmitQuestion}>
       <Spacer y={30} />
       <StQuestionContentWrapper>
-        <textarea
-          value={questionText}
-          onChange={questionTextHandler}
-          ref={questionTextRef}
-        ></textarea>
+        <QnaTextArea
+          textState={questionText}
+          textHandler={questionTextHandler}
+          forwardRef={questionTextRef}
+        />
         <div>
           <button>문의하기</button>
         </div>
@@ -67,25 +68,20 @@ const QuestionForm = ({ auctionId }: Props) => {
     </StQuestionForm>
   );
 };
-const StQuestionForm = styled.form`
-  input,
-  textarea {
+const StQuestionForm = styled.form``;
+
+const StQuestionContentWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  > textarea {
     border: 2px solid rgba(0, 0, 0, 0.2);
     outline: none;
     border-radius: 5px;
     padding: 10px;
     font-size: 16px;
     transition: border-color 0.2s ease-in;
-  }
-`;
-
-const StQuestionContentWrapper = styled.div`
-  display: flex;
-  gap: 10px;
-  > textarea {
     width: 70%;
     height: 60px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
     &:focus {
       border-color: var(--main-color);
     }

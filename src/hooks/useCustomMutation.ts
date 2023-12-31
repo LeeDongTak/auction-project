@@ -1,5 +1,6 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useCustomModal } from "./useCustomModal";
 
 export type TMutationOptions<T> = UseMutationOptions<
   unknown,
@@ -9,6 +10,7 @@ export type TMutationOptions<T> = UseMutationOptions<
 >;
 
 export const useCustomMutation = <T>(mutationOptions: TMutationOptions<T>) => {
+  const { handleOpenCustomModal } = useCustomModal();
   const { isPending, isError, error, mutate } = useMutation<
     unknown,
     Error,
@@ -20,7 +22,9 @@ export const useCustomMutation = <T>(mutationOptions: TMutationOptions<T>) => {
 
   useEffect(() => {
     if (isError) {
-      (async () => {})();
+      (async () => {
+        await handleOpenCustomModal(error.message, "alert");
+      })();
     }
   }, [isError, error]);
 
