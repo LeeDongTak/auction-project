@@ -7,7 +7,7 @@ import React from "react";
 import { useCustomMutation } from "../../../hooks/useCustomMutation";
 import { Auction_question } from "../../../types/databaseRetrunTypes";
 import { useQueryClient } from "@tanstack/react-query";
-import useGetUserInfo from "../../../hooks/useGetUserInfo";
+import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 
 interface Props {
   auctionId: string;
@@ -18,7 +18,7 @@ const QuestionForm = ({ auctionId }: Props) => {
   const [questionText, questionTextRef, questionTextHandler, questionSetText] =
     useFormInput<HTMLTextAreaElement>();
   const { handleOpenCustomModal } = useCustomModal();
-  const userData = useGetUserInfo();
+  const { user: userData } = useGetAuthInfo();
 
   const QuestionMutationOptions = {
     mutationFn: fetchPostQuestion,

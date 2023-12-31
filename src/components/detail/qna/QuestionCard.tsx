@@ -2,14 +2,14 @@ import { Auction_question } from "../../../types/databaseRetrunTypes";
 import ProfileAvatar from "../../../common/avatar";
 import { styled } from "styled-components";
 import { transDate } from "../../../common/dayjs";
-import useGetUserInfo from "../../../hooks/useGetUserInfo";
+import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 
 interface Props {
   question: Auction_question;
 }
 
 const QuestionCard = ({ question }: Props) => {
-  const userData = useGetUserInfo();
+  const { user: userData } = useGetAuthInfo();
 
   return (
     <>
