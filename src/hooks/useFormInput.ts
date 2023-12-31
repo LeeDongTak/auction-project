@@ -7,8 +7,8 @@ type returnTypes<T> = [
   React.Dispatch<React.SetStateAction<string>>,
 ];
 
-const useFormInput = <T>(): returnTypes<T> => {
-  const [state, setState] = useState<string>("");
+const useFormInput = <T>(initialState: string = ""): returnTypes<T> => {
+  const [state, setState] = useState<string>(initialState);
 
   const forwardRef = useRef<T>(null);
 
