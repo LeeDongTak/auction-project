@@ -2,10 +2,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import auctionTimestamp from "../modules/auctionTimestampSlice";
 import bidCustomModal from "../modules/bidCustomModalSlice";
+import bidList from "../modules/bidListSlice";
 import customModal from "../modules/customModalSlice";
 import profile from "../modules/profileSlice";
 import setAuction from "../modules/setAuctionSlice";
-import bidList from "../modules/bidListSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +16,10 @@ const store = configureStore({
     customModal,
     bidList,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 type RootState = ReturnType<typeof store.getState>;
