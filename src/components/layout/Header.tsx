@@ -11,6 +11,7 @@ import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
 import { Auth } from "../../types/userType";
 import Nav from "./Nav";
+import useGetAuthInfo from "../../hooks/useGetAuthInfo";
 
 function Header() {
   const navigate = useNavigate();
@@ -18,9 +19,7 @@ function Header() {
 
   const queryClient = new QueryClient();
 
-  const userData: Auth = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
+  const userData: Auth = useGetAuthInfo();
 
   const userId = userData?.user?.id;
 

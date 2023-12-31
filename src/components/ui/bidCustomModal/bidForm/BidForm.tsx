@@ -14,6 +14,7 @@ import {
 import { AuctionStatus } from "../../../../types/detailTyps";
 import { Spacer } from "../../Spacer";
 import { BidCondition } from "../BidCustomModal";
+import useGetAuthInfo from "../../../../hooks/useGetAuthInfo";
 
 const BidForm = (props: {
   $isOver: any;
@@ -36,6 +37,8 @@ const BidForm = (props: {
 
   const dispatch = useAppDispatch();
   const { handleOpenCustomModal } = useCustomModal();
+
+  const { user: userData } = useGetAuthInfo();
 
   const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const postBidMutationOptions = {
@@ -77,10 +80,6 @@ const BidForm = (props: {
 
       const modalMessage = `₩ ${value}에 \n 입찰하시겠습니까?`;
       if (await handleOpenCustomModal(modalMessage, "confirm")) {
-        const { user: userData } = JSON.parse(
-          localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-        );
-
         const user_id = userData.id;
 
         if (auction_id) {

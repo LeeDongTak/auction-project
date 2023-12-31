@@ -22,8 +22,10 @@ const StPopupToggleButtonWrapper = styled.button`
   background-color: unset;
   border: unset;
   border-radius: 50%;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in;
   &:hover {
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    transform: scale(1.2);
   }
 `;
 
