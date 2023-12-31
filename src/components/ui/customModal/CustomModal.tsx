@@ -5,7 +5,7 @@ import {
   selectorCustomModal,
   setCustomModalResult,
 } from "../../../redux/modules/customModalSlice";
-import CloseButton from "../CloseButton";
+import CloseButton from "../../modalCloseButton/CloseButton";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "../../../redux/config/configStore";
 import { Spacer } from "../Spacer";

@@ -7,12 +7,14 @@ import { BidCard } from "./BidCard";
 import { Skeleton } from "antd";
 import { Spacer } from "../../ui/Spacer";
 import Title from "./Title";
+import { AuctionStatus } from "../../../types/detailTyps";
 
 interface Props {
   auctionId: string;
+  auctionStatus: AuctionStatus;
 }
 
-const BidList = ({ auctionId }: Props) => {
+const BidList = ({ auctionId, auctionStatus }: Props) => {
   const bidListQueryOptions = {
     queryKey: ["getBidList", auctionId],
     queryFn: () => fetchGetAuctionBidList(auctionId),
@@ -29,21 +31,35 @@ const BidList = ({ auctionId }: Props) => {
         title
         style={{ width: "100%", height: "5px" }}
       >
-        <Title title={"입찰 현황"} />
+        <Title
+          title={`${
+            auctionStatus === AuctionStatus.END ? "경매 종료" : "입찰 현황"
+          }`}
+        />
       </Skeleton>
       <Spacer y={30} />
-      {data?.map((bid: Bids, index) => (
-        <>
+      {data?.length === 0 && (
+        <StNonBidWrapper>
           <Skeleton
-            key={bid.bid_id}
             loading={isLoading}
             active
             style={{ width: "100%", height: "10px" }}
           >
-            <BidCard bidData={bid} cardIndex={index} />
+            <h1>입찰자가 없습니다.</h1>
+          </Skeleton>
+        </StNonBidWrapper>
+      )}
+      {data?.map((bid: Bids, index) => (
+        <div key={bid.bid_id}>
+          <Skeleton
+            loading={isLoading}
+            active
+            style={{ width: "100%", height: "10px" }}
+          >
+            <BidCard key={bid.bid_id} bidData={bid} cardIndex={index} />
           </Skeleton>
           <Spacer y={10} />
-        </>
+        </div>
       ))}
     </StBidListWrapper>
   );
@@ -53,5 +69,17 @@ const StBidListWrapper = styled.section`
   display: flex;
   flex-direction: column;
   margin: 40px 20px;
+`;
+
+const StNonBidWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  > h1 {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin: auto;
+  }
 `;
 export default React.memo(BidList);

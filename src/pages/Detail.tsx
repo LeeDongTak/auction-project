@@ -11,12 +11,16 @@ import { Skeleton } from "antd";
 import useDetailAuctionPost from "../hooks/useDetailAuctionPost";
 import useSubscribeBidTable from "../hooks/useSubscribeBidTable";
 import BidPopUpLayout from "../components/detail/bidPopup/BidPopUpLayout";
+import useCloseButtonState from "../hooks/useCloseButtonState";
+import PopupToggleButton from "../components/detail/bidPopup/PopupToggleButton";
+import Question from "../components/detail/qna/Question";
 
 const Detail = () => {
   const { auctionId } = useParams();
   const [data, isLoading] = useDetailAuctionPost(auctionId!);
   const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
 
+  const [isPopupState, onClickHandler] = useCloseButtonState();
   useSubscribeBidTable(auctionId!);
   useAuctionStatus(data);
 
@@ -66,7 +70,24 @@ const Detail = () => {
         <DetailContent auctionContent={data?.content} />
       </Skeleton>
 
-      <BidPopUpLayout auctionId={auctionId!} />
+      <Skeleton
+        loading={isLoading}
+        active
+        paragraph={{ rows: 10 }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        <Question auctionId={auctionId!} />
+      </Skeleton>
+
+      <PopupToggleButton forwardHandler={onClickHandler} />
+
+      {isPopupState && (
+        <BidPopUpLayout
+          auctionId={auctionId!}
+          forwardHandler={onClickHandler}
+          auctionStatus={Number(data.auction_status)}
+        />
+      )}
     </StDetailWrapper>
   );
 };
