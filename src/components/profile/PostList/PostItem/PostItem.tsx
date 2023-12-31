@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { useAppDispatch } from "../../../../redux/config/configStore";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 import Button from "../../../common/Button";
+
 interface PostItemProps {
   post: Auction_post;
   type?: string;
