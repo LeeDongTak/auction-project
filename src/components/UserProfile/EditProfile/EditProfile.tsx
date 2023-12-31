@@ -1,8 +1,10 @@
 import { UserOutlined } from "@ant-design/icons";
 import { QueryClient } from "@tanstack/react-query";
-import { Avatar, Button } from "antd";
+import { Avatar } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
+import ProfileAvatar from "../../../common/avatar";
+import Button from "../../../common/Button";
 import { QUERY_KEYS } from "../../../query/keys.constant";
 import { useUserUpdateMutation } from "../../../query/useUsersQuery";
 import { supabase } from "../../../supabase";
@@ -26,6 +28,11 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
 
   // 수정사항 저장
   const submitHandler = async () => {
+    // if (!inputNickname && !inputAddress1 && !inputAddress2) {
+    //   alert("정보가 변경되지 않았습니다.");
+    //   return;
+    // }
+
     const answer = window.confirm("저장하시겠습니까?");
 
     if (!answer) return;
@@ -101,16 +108,15 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
             <StTopSection>
               <div>
                 {user?.profile_image ? (
-                  <StImgBox>
-                    <img
-                      src={
-                        fileImage
-                          ? URL.createObjectURL(fileImage)
-                          : user?.profile_image
-                      }
-                      alt="user-image"
-                    />
-                  </StImgBox>
+                  <ProfileAvatar
+                    src={
+                      fileImage
+                        ? URL.createObjectURL(fileImage)
+                        : user?.profile_image
+                    }
+                    alt="user-image"
+                    size="7rem"
+                  />
                 ) : (
                   <Avatar shape="circle" size={64} icon={<UserOutlined />} />
                 )}
@@ -129,7 +135,7 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
                 onChange={(e) => setInputNickname(e.target.value)}
               />
             </StTopSection>
-            {/* <p>{fileImage?.name}</p> */}
+            <p>{fileImage?.name}</p>
 
             <StInfoSection>
               <div>
@@ -156,9 +162,11 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
           <>
             <StTopSection>
               {user?.profile_image ? (
-                <StImgBox>
-                  <img src={user?.profile_image} alt="user-image" />
-                </StImgBox>
+                <ProfileAvatar
+                  src={user?.profile_image}
+                  alt="user-image"
+                  size="7rem"
+                />
               ) : (
                 <Avatar shape="circle" size={64} icon={<UserOutlined />} />
               )}
@@ -180,15 +188,15 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
         <ButtonSection>
           {isEdit ? (
             <div>
-              <Button onClick={cancelHandler}>취소</Button>
-              <Button type="primary" onClick={submitHandler}>
-                완료
-              </Button>
+              <Button text="취소" onClickHandler={cancelHandler} />
+              <Button text="완료" onClickHandler={submitHandler} />
             </div>
           ) : (
-            <Button type="primary" onClick={() => setIsEdit(true)}>
-              프로필 수정
-            </Button>
+            <Button
+              text="프로필 수정"
+              mode="dark"
+              onClickHandler={() => setIsEdit(true)}
+            />
           )}
         </ButtonSection>
       </StProfileWrapper>
@@ -200,6 +208,9 @@ const StProfileWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 7px #d9d9d9;
 `;
 
 const StTopSection = styled.section`
@@ -219,12 +230,17 @@ const StTopSection = styled.section`
     gap: 1rem;
 
     label {
-      background-color: gray;
+      background-color: var(--main-color);
       width: 7rem;
       text-align: center;
       padding: 1rem;
       border-radius: 0.5rem;
       color: #fff;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #666;
+      }
     }
   }
 
@@ -252,6 +268,7 @@ const StInfoSection = styled.section`
   align-items: center;
   gap: 2rem;
   margin-top: 1.5rem;
+  padding-left: 1rem;
 
   span,
   p {
@@ -272,12 +289,16 @@ const StInfoSection = styled.section`
 const ButtonSection = styled.section`
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 5rem;
 
   > div {
     display: flex;
     gap: 1rem;
   }
+`;
+
+const StInputLabel = styled.label`
+  background-color: var(--main-color);
 `;
 
 const StInputFile = styled.input`
