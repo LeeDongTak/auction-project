@@ -5,6 +5,7 @@ import bidCustomModal from "../modules/bidCustomModalSlice";
 import bidList from "../modules/bidListSlice";
 import customModal from "../modules/customModalSlice";
 import profile from "../modules/profileSlice";
+import search from "../modules/searchSlice";
 import setAuction from "../modules/setAuctionSlice";
 
 const store = configureStore({
@@ -14,6 +15,7 @@ const store = configureStore({
     profile,
     bidCustomModal,
     customModal,
+    search,
     bidList,
   },
   middleware: (getDefaultMiddleware) =>

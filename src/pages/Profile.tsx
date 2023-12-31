@@ -4,11 +4,11 @@ import { FloatButton } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { getUserInfo } from "../api/auth";
-import { StListWrapper } from "../components/MyPagePosts/MyPagePosts.styles";
-import PostList from "../components/MyPagePosts/PostList/PostList";
-import ProfileMenu from "../components/MyPagePosts/ProfileMenu/ProfileMenu";
-import EditProfile from "../components/UserProfile/EditProfile/EditProfile";
-import UserProfile from "../components/UserProfile/UserProfile";
+import { StListWrapper } from "../components/profile/MyPagePosts.styles";
+import PostList from "../components/profile/PostList/PostList";
+import ProfileMenu from "../components/profile/ProfileMenu/ProfileMenu";
+import EditProfile from "../components/profile/UserProfile/EditProfile/EditProfile";
+import UserProfile from "../components/profile/UserProfile/UserProfile";
 import { QUERY_KEYS } from "../query/keys.constant";
 import { User_info } from "../types/databaseRetrunTypes";
 import useGetAuthInfo from "../hooks/useGetAuthInfo";
@@ -29,6 +29,7 @@ const Profile = () => {
     queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId),
     enabled: !!userId,
+    staleTime: 0,
     select: (user) => user[0],
   });
 
@@ -49,7 +50,11 @@ const Profile = () => {
               <PostList title={activeTitle} userId={userId} />
             )}
             {activeTitle === "프로필 수정" && (
-              <EditProfile title={activeTitle} user={user as User_info} />
+              <EditProfile
+                title={activeTitle}
+                user={user as User_info}
+                userId={userId}
+              />
             )}
           </StListWrapper>
         </StPostsWrapper>

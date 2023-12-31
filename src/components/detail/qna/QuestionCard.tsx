@@ -1,17 +1,17 @@
-import { Auction_question } from "../../../types/databaseRetrunTypes";
-import ProfileAvatar from "../../../common/avatar";
-import { styled } from "styled-components";
-import { transDate } from "../../../common/dayjs";
-import React from "react";
-import { useCustomModal } from "../../../hooks/useCustomModal";
-import { fetchDeleteQuestion, fetchUpdateQuestion } from "../../../api/qna";
 import { useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { styled } from "styled-components";
+import { fetchDeleteQuestion, fetchUpdateQuestion } from "../../../api/qna";
+import { transDate } from "../../../common/dayjs";
+import { useCustomModal } from "../../../hooks/useCustomModal";
 import { useCustomMutation } from "../../../hooks/useCustomMutation";
-import useIsUpdateState from "../../../hooks/useIsUpdateState";
-import QnaTextArea from "./QnaTextArea";
 import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import useIsUpdateState from "../../../hooks/useIsUpdateState";
+import { Auction_question } from "../../../types/databaseRetrunTypes";
+import ProfileAvatar from "../../common/Avatar";
 import QnaButtonGroup from "./QnaButtonGroup";
+import QnaTextArea from "./QnaTextArea";
 
 interface Props {
   question: Auction_question;

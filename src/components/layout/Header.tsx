@@ -1,21 +1,28 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 import { useEffect, useState } from "react";
+import { MdOutlineSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo, getUsersInfo } from "../../api/auth";
-import Button from "../../common/Button";
+import { useCustomModal } from "../../hooks/useCustomModal";
+import useGetAuthInfo from "../../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
+import { useAppDispatch } from "../../redux/config/configStore";
+import { toggleViewSearchModal } from "../../redux/modules/searchSlice";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
 import { Auth } from "../../types/userType";
+import DefaultButton from "../common/Button";
+import Search from "../search/Search";
 import Nav from "./Nav";
-import useGetAuthInfo from "../../hooks/useGetAuthInfo";
-import { useCustomModal } from "../../hooks/useCustomModal";
 
 function Header() {
   const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
+
   const [isLogin, setIsLogin] = useState(false);
   const { handleOpenCustomModal } = useCustomModal();
 
@@ -25,7 +32,7 @@ function Header() {
 
   const userId = userData?.user?.id;
 
-  const socialData = userData?.user.user_metadata;
+  const socialData = userData?.user?.user_metadata;
 
   const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
 
@@ -92,20 +99,27 @@ function Header() {
     <StHeaderContainer>
       <StHeaderWrapper>
         <h1 onClick={() => navigate("/")}>ELETE</h1>
+
         {isLoading ? (
           <Spin />
         ) : (
           <div>
+            <StSearchButton
+              onClick={() => dispatch(toggleViewSearchModal(true))}
+            >
+              <MdOutlineSearch />
+            </StSearchButton>
             {isLogin ? (
               <>
                 <Nav signOut={signOut} userId={userData?.user.id} />
               </>
             ) : (
-              <Button onClickHandler={signIn} text="로그인" />
+              <DefaultButton onClickHandler={signIn} text="로그인" />
             )}
           </div>
         )}
       </StHeaderWrapper>
+      <Search />
     </StHeaderContainer>
   );
 }
@@ -133,17 +147,33 @@ const StHeaderWrapper = styled.header`
 
   div {
     display: flex;
+    gap: 2rem;
 
     img > {
       width: 10px;
       cursor: pointer;
     }
   }
+
   h1 {
     font-size: xx-large;
   }
 
   p {
     cursor: pointer;
+  }
+`;
+
+const StSearchButton = styled.button`
+  display: flex;
+  align-items: center;
+  font-size: xx-large;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
   }
 `;

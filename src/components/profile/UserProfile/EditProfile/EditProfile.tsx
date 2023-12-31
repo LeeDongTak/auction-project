@@ -3,20 +3,21 @@ import { QueryClient } from "@tanstack/react-query";
 import { Avatar } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
-import ProfileAvatar from "../../../common/avatar";
+import { useCustomModal } from "../../../../hooks/useCustomModal";
+import { QUERY_KEYS } from "../../../../query/keys.constant";
+import { useUserUpdateMutation } from "../../../../query/useUsersQuery";
+import { supabase } from "../../../../supabase";
+import { User_info } from "../../../../types/databaseRetrunTypes";
+import ProfileAvatar from "../../../common/Avatar";
 import Button from "../../../common/Button";
-import { QUERY_KEYS } from "../../../query/keys.constant";
-import { useUserUpdateMutation } from "../../../query/useUsersQuery";
-import { supabase } from "../../../supabase";
-import { User_info } from "../../../types/databaseRetrunTypes";
-import { useCustomModal } from "../../../hooks/useCustomModal";
 
 interface EditProfileProps {
   user: User_info;
   title: string;
+  userId: string;
 }
 
-const EditProfile = ({ user, title }: EditProfileProps) => {
+const EditProfile = ({ user, title, userId }: EditProfileProps) => {
   const { handleOpenCustomModal } = useCustomModal();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [inputNickname, setInputNickname] = useState("");
@@ -49,7 +50,9 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
 
     updateMutate(updateProfile, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.USER, userId],
+        });
       },
     });
 

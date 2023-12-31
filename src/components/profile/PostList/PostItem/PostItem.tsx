@@ -3,14 +3,15 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import Button from "../../../../common/Button";
 import { useAppDispatch } from "../../../../redux/config/configStore";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
+import Button from "../../../common/Button";
 interface PostItemProps {
   post: Auction_post;
+  type?: string;
 }
 
-const PostItem = ({ post }: PostItemProps) => {
+const PostItem = ({ post, type }: PostItemProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -28,9 +29,9 @@ const PostItem = ({ post }: PostItemProps) => {
     auction_end_date,
     created_at,
     category,
-    category_id
+    category_id,
   } = post;
-  console.log(post)
+  console.log(post);
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
   const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
   const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
@@ -54,12 +55,12 @@ const PostItem = ({ post }: PostItemProps) => {
     navigate(`/detail/${auction_id}`);
   };
 
-  console.log(auction_images?.length)
+  console.log(auction_images?.length);
   const editHandler = () => {
-    navigate(`/setAuction/${auction_id}`)
+    navigate(`/setAuction/${auction_id}`);
   };
 
-  const deleteHandler = () => { };
+  const deleteHandler = () => {};
 
   return (
     <StPostItemWrapper>
@@ -67,7 +68,7 @@ const PostItem = ({ post }: PostItemProps) => {
         <StImageSkeleton active></StImageSkeleton>
       ) : (
         <StImage>
-          <img src={auction_images?.[0].image_path} alt="" />
+          <img src={auction_images?.[0]?.image_path} alt="" />
         </StImage>
       )}
 
@@ -86,10 +87,12 @@ const PostItem = ({ post }: PostItemProps) => {
             </div>
             <p>카테고리: {category?.category_name}</p>
           </StPostInfoSection>
-          <StButtonSection>
-            <Button text="수정" onClickHandler={editHandler} />
-            <Button text="삭제" onClickHandler={deleteHandler} />
-          </StButtonSection>
+          {type === "내 게시물" && (
+            <StButtonSection>
+              <Button text="수정" onClickHandler={editHandler} />
+              <Button text="삭제" onClickHandler={deleteHandler} />
+            </StButtonSection>
+          )}
         </div>
       </Skeleton>
     </StPostItemWrapper>

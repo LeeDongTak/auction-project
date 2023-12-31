@@ -8,7 +8,11 @@ interface ButtonProps {
   mode?: string;
 }
 
-const Button = ({ text, onClickHandler, mode = "default" }: ButtonProps) => {
+const DefaultButton = ({
+  text,
+  onClickHandler,
+  mode = "default",
+}: ButtonProps) => {
   return (
     <StButton onClick={onClickHandler} mode={mode}>
       {text}
@@ -34,4 +38,4 @@ const StButton = styled.button<{ mode: string }>`
   }
 `;
 
-export default Button;
+export default DefaultButton;
