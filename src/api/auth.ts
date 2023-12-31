@@ -52,7 +52,7 @@ const addUser = async (payload: User_info) => {
 };
 
 // 소셜 로그인 유저 추가
-const addSocialUser = async (payload: User_info) => {
+const addSocialUser = async (payload: User_info): Promise<void> => {
   const { data, error } = await supabase.from("user_info").upsert(payload);
 
   if (error) {
