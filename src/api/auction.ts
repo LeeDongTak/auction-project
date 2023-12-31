@@ -16,7 +16,7 @@ import connectSupabase from "./connectSupabase";
 export async function fetchGetAuctions({
   searchKeyword = "",
   categories = [],
-  limit = 8,
+  limit = 10,
   offset = 0,
   orderBy = "created_at",
   order = false,

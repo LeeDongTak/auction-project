@@ -8,17 +8,20 @@ import Button from "../../common/Button";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
 import { supabase } from "../../supabase";
+import { User_info } from "../../types/databaseRetrunTypes";
+import { Auth } from "../../types/userType";
 import Nav from "./Nav";
+import useGetAuthInfo from "../../hooks/useGetAuthInfo";
+import { useCustomModal } from "../../hooks/useCustomModal";
 
 function Header() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
+  const { handleOpenCustomModal } = useCustomModal();
 
   const queryClient = new QueryClient();
 
-  const userData = JSON.parse(
-    localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
-  );
+  const userData: Auth = useGetAuthInfo();
 
   const userId = userData?.user?.id;
 
@@ -54,7 +57,7 @@ function Header() {
   // 최초 소셜 로그인시 회원가입
   const socialSignUp = async () => {
     try {
-      const newUser = {
+      const newUser: User_info = {
         user_id: userData?.user.id,
         nickname: socialData?.name,
         created_at: userData?.user.created_at,
@@ -77,12 +80,12 @@ function Header() {
   };
 
   const signOut = async () => {
-    console.log("실행");
     const { error } = await supabase.auth.signOut();
     setIsLogin(false);
-    alert("로그아웃 되었습니다.");
+    await handleOpenCustomModal("로그아웃 되었습니다.", "alert");
     navigate("/");
-    console.log(error);
+
+    if (error) await handleOpenCustomModal(error.message, "alert");
   };
 
   return (
