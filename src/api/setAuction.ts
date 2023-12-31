@@ -18,7 +18,7 @@ export const AddAuctionPost = async (addAuctionData: {
         .from("auction_images")
         .upload(
           `${insertData?.data?.[0]?.auction_id}/${moment().format(
-            "YYYY-MM-DD-HH-MM-SS"
+            "YYYY-MM-DD-HH:mm:ss"
           )}/${imgFileList[i].name}`,
           imgFileList[i]
         );

@@ -4,7 +4,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../api/auth";
-import ProfileAvatar from "../../common/avatar";
+import { QUERY_KEYS } from "../../query/keys.constant";
+import ProfileAvatar from "../common/Avatar";
 
 interface Props {
   signOut: () => Promise<void>;
@@ -13,7 +14,7 @@ interface Props {
 
 const Nav: React.FC<Props> = ({ signOut, userId }) => {
   const { data: user, isLoading } = useQuery({
-    queryKey: ["user", userId],
+    queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId as string),
   });
 
@@ -38,7 +39,7 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
   if (isLoading) return <Spin />;
 
   return (
-    <StDropdown menu={{ items }} trigger={["click"]}>
+    <StDropdown menu={{ items }} trigger={["click"]} placement="topRight" arrow>
       <a onClick={(e) => e.preventDefault()}>
         <ProfileAvatar
           size="4rem"
@@ -53,7 +54,9 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
 const StDropdown = styled(Dropdown)`
   display: flex;
   justify-content: flex-end;
-  width: 200px;
+  width: 50px;
+  gap: 5rem;
+  cursor: pointer;
 `;
 
 const StSignOutButton = styled.span`

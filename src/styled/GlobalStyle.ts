@@ -148,6 +148,10 @@ const GlobalStyle = styled.createGlobalStyle`
     --main-color: #023e7d;
     --sub-color: #fffacd;
   }
+
+  button {
+    cursor: pointer;
+  }
 `;
 
 export default GlobalStyle;

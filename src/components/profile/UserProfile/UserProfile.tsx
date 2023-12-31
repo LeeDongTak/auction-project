@@ -2,8 +2,8 @@ import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import ProfileAvatar from "../../common/avatar";
-import { User_info } from "../../types/databaseRetrunTypes";
+import { User_info } from "../../../types/databaseRetrunTypes";
+import ProfileAvatar from "../../common/Avatar";
 
 type AvatarShapeType = "circle" | "square";
 

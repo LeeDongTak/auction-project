@@ -1,17 +1,17 @@
 import { Auction_question } from "../../../types/databaseRetrunTypes";
-import ProfileAvatar from "../../../common/avatar";
 import { styled } from "styled-components";
 import { transDate } from "../../../common/dayjs";
 import React from "react";
 import { useCustomModal } from "../../../hooks/useCustomModal";
-import useIsUpdateState from "../../../hooks/useIsUpdateState";
-import QnaTextArea from "./QnaTextArea";
 import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import useIsUpdateState from "../../../hooks/useIsUpdateState";
+import ProfileAvatar from "../../common/Avatar";
 import QnaButtonGroup from "./QnaButtonGroup";
-import QuestionAnswerWrapper from "./QuestionAnswerWrapper";
+import QnaTextArea from "./QnaTextArea";
 import { useQuestionAnswerContext } from "../../../context/AnswerContext";
 import useQnaTanstackQuery from "../../../hooks/useQnaTanstackQuery";
+import QuestionAnswerWrapper from "./QuestionAnswerWrapper";
 
 interface Props {
   question: Auction_question;
