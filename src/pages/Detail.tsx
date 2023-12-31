@@ -14,6 +14,7 @@ import BidPopUpLayout from "../components/detail/bidPopup/BidPopUpLayout";
 import useCloseButtonState from "../hooks/useCloseButtonState";
 import PopupToggleButton from "../components/detail/bidPopup/PopupToggleButton";
 import Question from "../components/detail/qna/Question";
+import DetailWrapper from "../components/ui/detailWrapper/DetailWrapper";
 
 const Detail = () => {
   const { auctionId } = useParams();
@@ -61,23 +62,27 @@ const Detail = () => {
 
       <Spacer y={20} />
 
-      <Skeleton
-        loading={isLoading}
-        active
-        paragraph={{ rows: 10 }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <DetailContent auctionContent={data?.content} />
-      </Skeleton>
+      <DetailWrapper>
+        <Skeleton
+          loading={isLoading}
+          active
+          paragraph={{ rows: 10 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <DetailContent auctionContent={data?.content} />
+        </Skeleton>
+      </DetailWrapper>
 
-      <Skeleton
-        loading={isLoading}
-        active
-        paragraph={{ rows: 10 }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <Question auctionId={auctionId!} />
-      </Skeleton>
+      <DetailWrapper>
+        <Skeleton
+          loading={isLoading}
+          active
+          paragraph={{ rows: 10 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <Question auctionId={auctionId!} />
+        </Skeleton>
+      </DetailWrapper>
 
       <PopupToggleButton forwardHandler={onClickHandler} />
 

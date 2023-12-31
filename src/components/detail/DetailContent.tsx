@@ -6,9 +6,9 @@ type Props = {
 };
 const DetailContent = ({ auctionContent }: Props) => {
   return (
-    <StDetailContentWrapper>
+    <>
       <p>{auctionContent}</p>
-    </StDetailContentWrapper>
+    </>
   );
 };
 
