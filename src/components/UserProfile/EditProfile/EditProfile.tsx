@@ -9,6 +9,7 @@ import { QUERY_KEYS } from "../../../query/keys.constant";
 import { useUserUpdateMutation } from "../../../query/useUsersQuery";
 import { supabase } from "../../../supabase";
 import { User_info } from "../../../types/databaseRetrunTypes";
+import { useCustomModal } from "../../../hooks/useCustomModal";
 
 interface EditProfileProps {
   user: User_info;
@@ -16,6 +17,7 @@ interface EditProfileProps {
 }
 
 const EditProfile = ({ user, title }: EditProfileProps) => {
+  const { handleOpenCustomModal } = useCustomModal();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [inputNickname, setInputNickname] = useState("");
   const [inputAddress1, setInputAddress1] = useState("");
@@ -33,9 +35,7 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
     //   return;
     // }
 
-    const answer = window.confirm("저장하시겠습니까?");
-
-    if (!answer) return;
+    if (!(await handleOpenCustomModal("저장하시겠습니까?", "confirm"))) return;
 
     const profileURL = await getFileUrl(fileImage as File);
 
@@ -56,12 +56,14 @@ const EditProfile = ({ user, title }: EditProfileProps) => {
     setIsEdit(false);
   };
 
-  const cancelHandler = () => {
-    const answer = window.confirm(
-      "취소하시겠습니까? 수정 내용은 저장돠지 않습니다."
-    );
-
-    if (!answer) return;
+  const cancelHandler = async () => {
+    if (
+      !(await handleOpenCustomModal(
+        "취소하시겠습니까? \n수정 내용은 저장돠지 않습니다.",
+        "confirm"
+      ))
+    )
+      return;
 
     setFileImage(undefined);
     setIsEdit(false);

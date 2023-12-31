@@ -9,6 +9,7 @@ import { useAppDispatch } from "../../redux/config/configStore";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
 import SocialLogin from "./SocialLogin/SocialLogin";
+import { useCustomModal } from "../../hooks/useCustomModal";
 
 interface SignFormProps {
   mode: string;
@@ -25,6 +26,7 @@ type FormValues = {
 
 const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
   const dispatch = useAppDispatch();
+  const { handleOpenCustomModal } = useCustomModal();
 
   const queryClient = new QueryClient();
 
@@ -122,12 +124,13 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
         password,
       });
 
-      console.log(email, password);
-
       if (error) {
-        alert("아이디 또는 비밀번호를 확인해주세요");
+        await handleOpenCustomModal(
+          "아이디와 비밀번호를 확인해주세요",
+          "alert"
+        );
       } else {
-        alert("성공적으로 로그인 되었습니다!");
+        await handleOpenCustomModal("성공적으로 로그인 되었습니다!", "alert");
         navigate("/");
       }
 
@@ -154,9 +157,10 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
       });
 
       if (error) {
-        console.log(error);
-
-        alert("아이디와 비밀번호를 확인해주세요");
+        await handleOpenCustomModal(
+          "아이디와 비밀번호를 확인해주세요.",
+          "alert"
+        );
       } else {
         const newUserInfo: User_info = {
           user_id: user?.id as string,
@@ -170,8 +174,10 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
 
         insertMutation.mutate(newUserInfo);
 
-        alert("회원가입 되었습니다. 로그인 페이지로 이동합니다.");
-
+        await handleOpenCustomModal(
+          "회원가입 되었습니다. 로그인 페이지로 이동합니다.",
+          "alert"
+        );
         setMode("로그인");
         reset();
       }
