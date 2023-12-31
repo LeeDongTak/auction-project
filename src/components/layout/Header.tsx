@@ -8,6 +8,8 @@ import Button from "../../common/Button";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
 import { supabase } from "../../supabase";
+import { User_info } from "../../types/databaseRetrunTypes";
+import { Auth } from "../../types/userType";
 import Nav from "./Nav";
 
 function Header() {
@@ -16,7 +18,7 @@ function Header() {
 
   const queryClient = new QueryClient();
 
-  const userData = JSON.parse(
+  const userData: Auth = JSON.parse(
     localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token") as string
   );
 
@@ -54,7 +56,7 @@ function Header() {
   // 최초 소셜 로그인시 회원가입
   const socialSignUp = async () => {
     try {
-      const newUser = {
+      const newUser: User_info = {
         user_id: userData?.user.id,
         nickname: socialData?.name,
         created_at: userData?.user.created_at,
