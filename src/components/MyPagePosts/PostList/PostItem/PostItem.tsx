@@ -65,31 +65,40 @@ const PostItem = ({ post }: PostItemProps) => {
       )}
 
       <Skeleton loading={isLoading} active title paragraph={{ rows: 5 }}>
-        <StPostInfoSection>
-          <div>
-            <h3>{title}</h3>
-            <span>{createAt}</span>
-            <p>{viewContent}</p>
-          </div>
-          <div>
-            <p>최고 경매가: {upperLimit}원</p>
-            <p>시작일: {startDate}</p>
-            <p>종료일: {endDate}</p>
-          </div>
-          <p>카테고리: {category?.category_name}</p>
+        <div>
+          <StPostInfoSection>
+            <div>
+              <h3>{title}</h3>
+              <span>{createAt}</span>
+              <p>{viewContent}</p>
+            </div>
+            <div>
+              <p>최고 경매가: {upperLimit}원</p>
+              <p>시작일: {startDate}</p>
+              <p>종료일: {endDate}</p>
+            </div>
+            <p>카테고리: {category?.category_name}</p>
+          </StPostInfoSection>
           <StButtonSection>
             <Button text="수정" onClickHandler={editHandler} />
             <Button text="삭제" onClickHandler={deleteHandler} />
           </StButtonSection>
-        </StPostInfoSection>
+        </div>
       </Skeleton>
     </StPostItemWrapper>
   );
 };
 
+const StButtonSection = styled.section`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+`;
+
 const StPostItemWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 1rem;
   width: 100%;
@@ -103,12 +112,28 @@ const StPostItemWrapper = styled.div`
   &:hover {
     transform: scale(1.03);
     background-color: #eee;
+    ${StButtonSection} {
+      opacity: 100%;
+    }
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 220px;
+  }
+
+  ${StButtonSection} {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
   }
 `;
 
 const StImage = styled.div`
   width: 300px;
-  height: 200px;
+  height: 220px;
   background-color: transparent;
   transition: all 0.3s ease-in-out;
 
@@ -175,11 +200,6 @@ const StImageSkeleton = styled(Skeleton.Image)`
     width: 150px !important;
     margin-right: 1rem;
   }
-`;
-
-const StButtonSection = styled.section`
-  display: flex;
-  gap: 0.5rem;
 `;
 
 export default PostItem;
