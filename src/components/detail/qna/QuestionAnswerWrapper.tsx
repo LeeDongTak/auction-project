@@ -8,6 +8,8 @@ const QuestionAnswerWrapper = () => {
     useFormInput<HTMLTextAreaElement>();
   const { isAnimated, onAnswerCloseHandler } = useQuestionAnswerContext();
 
+  //TODO: 여기부터.
+
   return (
     <StQuestionAnswerWrapper
       $isAnimated={isAnimated}
