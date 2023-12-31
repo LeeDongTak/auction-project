@@ -80,7 +80,7 @@ const Detail = () => {
           paragraph={{ rows: 10 }}
           style={{ width: "100%", height: "100%" }}
         >
-          <QnaWrapper auctionId={auctionId!} />
+          <QnaWrapper auctionId={auctionId!} auctionUserId={data.user_id} />
         </Skeleton>
       </DetailWrapper>
 

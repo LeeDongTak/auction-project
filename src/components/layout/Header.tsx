@@ -81,8 +81,8 @@ function Header() {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    setIsLogin(false);
     await handleOpenCustomModal("로그아웃 되었습니다.", "alert");
+    setIsLogin(false);
     navigate("/");
 
     if (error) await handleOpenCustomModal(error.message, "alert");
