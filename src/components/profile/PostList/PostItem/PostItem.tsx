@@ -1,9 +1,11 @@
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { useAppDispatch } from "../../../../redux/config/configStore";
+import { resetImageList, setAuctionCategoryList, setAuctionContent, setAuctionEndDate, setAuctionEndTime, setAuctionLowerPrice, setAuctionProductStatus, setAuctionShippingType, setAuctionStartDate, setAuctionStartTime, setAuctionTitle, setAuctionUpperPrice } from "../../../../redux/modules/setAuctionSlice";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 import Button from "../../../common/Button";
 
@@ -22,15 +24,11 @@ const PostItem = ({ post, type }: PostItemProps) => {
     title,
     content,
     auction_images,
-    lower_limit,
     upper_limit,
-    shipping_type,
-    product_status,
     auction_start_date,
     auction_end_date,
     created_at,
     category,
-    category_id,
   } = post;
 
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
@@ -56,10 +54,25 @@ const PostItem = ({ post, type }: PostItemProps) => {
   };
 
   const editHandler = () => {
+    // 수정전 redux초기화
+    dispatch(resetImageList())
+    dispatch(setAuctionTitle(""))
+    dispatch(setAuctionContent(""))
+    dispatch(setAuctionLowerPrice(0))
+    dispatch(setAuctionUpperPrice(0))
+    dispatch(setAuctionShippingType(""))
+    dispatch(setAuctionProductStatus(""))
+    dispatch(setAuctionStartDate(moment().format("YYYY-MM-DD")))
+    dispatch(setAuctionEndDate(moment(moment().format("YYYY-MM-DD"))
+      .add(7, "days")
+      .format("YYYY-MM-DD")))
+    dispatch(setAuctionStartTime("00:00"))
+    dispatch(setAuctionEndTime("00:00"))
+    dispatch(setAuctionCategoryList(""))
     navigate(`/setAuction/${auction_id}`);
   };
 
-  const deleteHandler = () => {};
+  const deleteHandler = () => { };
 
   return (
     <StPostItemWrapper>

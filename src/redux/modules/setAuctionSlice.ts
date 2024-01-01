@@ -59,6 +59,11 @@ const setAuctionSlice = createSlice({
       state.isAlert = action.payload.isAlert;
       state.alertMsg = action.payload.ErrorMsg;
     },
+    // 수정전에 이미지state초기화
+    resetImageList: (state) => {
+      state.imgFileList = [];
+      state.imgUrlList = [];
+    },
     // 이미지 file을 저장하는 reducer
     setImageFileList: (state, action: PayloadAction<File>) => {
       state.imgFileList?.push(action.payload);
@@ -165,6 +170,7 @@ const setAuctionSlice = createSlice({
 
 export const {
   setIsAlert,
+  resetImageList,
   setImageFileList,
   setImageUrlList,
   setCloseImageFileList,
