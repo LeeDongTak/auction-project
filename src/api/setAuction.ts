@@ -85,7 +85,6 @@ export const updateAuctionPost = async (updateAuctionData: {
           throw new Error(updateAuctionImg.error.message);
       }
     }
-    console.log(deleteImgUrl);
     if (deleteImgUrl) {
       for (let i = 0; i < deleteImgUrl.length; i++) {
         const { image_path } = deleteImgUrl[i];
@@ -102,7 +101,40 @@ export const updateAuctionPost = async (updateAuctionData: {
           const { data, error } = await connectSupabase.storage
             .from("auction_image")
             .remove([deleteImgFile]);
-          console.log(data);
+        }
+      }
+    }
+  }
+};
+
+export const deleteAuctionPost = async (deleteAuctionData: {
+  auction_id?: string;
+  auction_images?: Auction_images[];
+}) => {
+  const { auction_id, auction_images } = deleteAuctionData;
+  if (auction_id) {
+    const { error: AuctionImageError } = await connectSupabase
+      .from("auction_images")
+      .delete()
+      .eq("auction_id", auction_id);
+    if (AuctionImageError) throw new Error(AuctionImageError.message);
+    const { error: AuctionPostError } = await connectSupabase
+      .from("auction_post")
+      .delete()
+      .eq("auction_id", auction_id);
+    if (AuctionPostError) throw new Error(AuctionPostError.message);
+    if (auction_images) {
+      for (let i = 0; i < auction_images.length; i++) {
+        const { image_path } = auction_images[i];
+        if (image_path) {
+          let deleteImgFile = image_path?.replace(
+            "https://fzdzmgqtadcebrhlgljh.supabase.co/storage/v1/object/public/",
+            ""
+          );
+          const { data, error } = await connectSupabase.storage
+            .from("auction_image")
+            .remove([deleteImgFile]);
+          if (error) throw new Error(error.message);
         }
       }
     }

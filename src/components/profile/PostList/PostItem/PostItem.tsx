@@ -4,9 +4,10 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { useDeleteAuctionMutation } from "../../../../hooks/useDeleteAuctionMutation";
 import { useAppDispatch } from "../../../../redux/config/configStore";
 import { resetImageList, setAuctionCategoryList, setAuctionContent, setAuctionEndDate, setAuctionEndTime, setAuctionLowerPrice, setAuctionProductStatus, setAuctionShippingType, setAuctionStartDate, setAuctionStartTime, setAuctionTitle, setAuctionUpperPrice } from "../../../../redux/modules/setAuctionSlice";
-import { Auction_post } from "../../../../types/databaseRetrunTypes";
+import { Auction_images, Auction_post } from "../../../../types/databaseRetrunTypes";
 import Button from "../../../common/Button";
 
 interface PostItemProps {
@@ -34,6 +35,7 @@ const PostItem = ({ post, type }: PostItemProps) => {
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
   const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
   const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
+  const { mutate } = useDeleteAuctionMutation()
   const upperLimit = upper_limit
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -72,8 +74,21 @@ const PostItem = ({ post, type }: PostItemProps) => {
     navigate(`/setAuction/${auction_id}`);
   };
 
-  const deleteHandler = () => { };
-
+  const deleteHandler = () => {
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
+      interface deleteDataType {
+        auction_id?: string
+        auction_images?: Auction_images[]
+      }
+      const deleteAuctionData: deleteDataType = {
+        auction_id,
+        auction_images
+      }
+      mutate(deleteAuctionData)
+    } else {
+      return
+    }
+  };
   return (
     <StPostItemWrapper>
       {isLoading ? (
