@@ -9,7 +9,7 @@ import { useCustomModal } from "../../hooks/useCustomModal";
 import useGetAuthInfo from "../../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useSocialUserAddMutation } from "../../query/useUsersQuery";
-import { useAppDispatch } from "../../redux/config/configStore";
+import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { toggleViewSearchModal } from "../../redux/modules/searchSlice";
 import { supabase } from "../../supabase";
 import { User_info } from "../../types/databaseRetrunTypes";
@@ -25,7 +25,12 @@ function Header() {
 
   const dispatch = useAppDispatch();
 
+  const { viewSearchModal } = useAppSelector((state) => state.search);
+
   const [isLogin, setIsLogin] = useState(false);
+
+  const [toggleSearch, setToggleSearch] = useState(false);
+
   const { handleOpenCustomModal } = useCustomModal();
 
   const queryClient = new QueryClient();
@@ -110,6 +115,11 @@ function Header() {
     }
   };
 
+  const toggleSearchModal = () => {
+    setToggleSearch((prev) => !prev);
+    dispatch(toggleViewSearchModal(toggleSearch));
+  };
+
   return (
     <StHeaderContainer>
       <StHeaderWrapper>
@@ -119,11 +129,11 @@ function Header() {
           <Spin />
         ) : (
           <div>
-            <StSearchButton
-              onClick={() => dispatch(toggleViewSearchModal(true))}
-            >
-              <MdOutlineSearch />
-            </StSearchButton>
+            {!viewSearchModal && (
+              <StSearchButton onClick={toggleSearchModal}>
+                <MdOutlineSearch />
+              </StSearchButton>
+            )}
             {isLogin ? (
               <>
                 <Nav signOut={signOut} userId={user?.user.id} />
