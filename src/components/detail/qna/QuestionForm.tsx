@@ -1,13 +1,13 @@
-import { styled } from "styled-components";
-import { useCustomModal } from "../../../hooks/useCustomModal";
-import useFormInput from "../../../hooks/useFormInput";
-import { Spacer } from "../../ui/Spacer";
-import { fetchPostQuestion } from "../../../api/qna";
-import React from "react";
-import { useCustomMutation } from "../../../hooks/useCustomMutation";
-import { Auction_question } from "../../../types/databaseRetrunTypes";
 import { useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { styled } from "styled-components";
+import { fetchPostQuestion } from "../../../api/qna";
+import { useCustomModal } from "../../../hooks/useCustomModal";
+import { useCustomMutation } from "../../../hooks/useCustomMutation";
+import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import { Auction_question } from "../../../types/databaseRetrunTypes";
+import { Spacer } from "../../ui/Spacer";
 import QnaTextArea from "./QnaTextArea";
 
 interface Props {
@@ -19,7 +19,7 @@ const QuestionForm = ({ auctionId }: Props) => {
   const [questionText, questionTextRef, questionTextHandler, questionSetText] =
     useFormInput<HTMLTextAreaElement>();
   const { handleOpenCustomModal } = useCustomModal();
-  const { user: userData } = useGetAuthInfo();
+  const user = useGetAuthInfo();
 
   const QuestionMutationOptions = {
     mutationFn: fetchPostQuestion,
@@ -46,7 +46,7 @@ const QuestionForm = ({ auctionId }: Props) => {
       Auction_question,
       "user_id" | "auction_id" | "question"
     > = {
-      user_id: userData.id,
+      user_id: user?.user.id as string,
       auction_id: auctionId,
       question: questionText,
     };

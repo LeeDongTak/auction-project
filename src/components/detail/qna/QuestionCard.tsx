@@ -20,8 +20,10 @@ interface Props {
 }
 export type Event = React.MouseEvent<HTMLButtonElement>;
 
+
 const QuestionCard = ({ question, auctionUserId }: Props) => {
-  const { user: userData } = useGetAuthInfo();
+  const queryClient = useQueryClient();
+  const user = useGetAuthInfo();
   const { handleOpenCustomModal } = useCustomModal();
   const [isUpdate, onClickIsUpdateHandler, setIsUpdate] = useIsUpdateState();
   const [questionUpdateText, questionUpdateRef, questionUpdateHandler] =
@@ -108,7 +110,7 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
         <StCreateAt>
           <span>{transDate(question.created_at)}</span>
         </StCreateAt>
-        {userData.id === question.user_id && (
+        {user?.user.id === question.user_id && (
           <QnaButtonGroup
             isUpdateState={isUpdate}
             isUpdateStateHandler={onClickIsUpdateHandler}

@@ -3,25 +3,26 @@ import { useQuery } from "@tanstack/react-query";
 import { FloatButton } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
+import { fetchGetAuctions } from "../api/auction";
 import { getUserInfo } from "../api/auth";
 import { StListWrapper } from "../components/profile/MyPagePosts.styles";
 import PostList from "../components/profile/PostList/PostList";
 import ProfileMenu from "../components/profile/ProfileMenu/ProfileMenu";
 import EditProfile from "../components/profile/UserProfile/EditProfile/EditProfile";
 import UserProfile from "../components/profile/UserProfile/UserProfile";
+import useGetAuthInfo from "../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../query/keys.constant";
 import { User_info } from "../types/databaseRetrunTypes";
-import useGetAuthInfo from "../hooks/useGetAuthInfo";
 
 const Profile = () => {
   const [activeTitle, setActiveTitle] = useState("내 게시물");
 
-  const { user: userData } = useGetAuthInfo();
+  const user = useGetAuthInfo();
 
-  const userId = userData.id;
+  const userId = user?.user.id as string;
 
   const {
-    data: user,
+    data: currentUser,
     isLoading,
     isError,
     error,
@@ -33,9 +34,19 @@ const Profile = () => {
     select: (user) => user[0],
   });
 
+  const { data: allUserPosts } = useQuery({
+    queryKey: [QUERY_KEYS.POSTS, userId],
+    queryFn: () => fetchGetAuctions({ user_id: userId }),
+    enabled: !!userId,
+  });
+
+  console.log("all", allUserPosts?.length);
+
+  const userAllPostsLength = allUserPosts?.length;
+
   return (
     <StProfileContainer>
-      <UserProfile user={user as User_info} />
+      <UserProfile user={currentUser as User_info} />
       <StPostContainer>
         <StPostsWrapper>
           <ProfileMenu
@@ -44,15 +55,23 @@ const Profile = () => {
           />
           <StListWrapper>
             {activeTitle === "내 게시물" && (
-              <PostList title={activeTitle} userId={userId} />
+              <PostList
+                title={activeTitle}
+                userId={userId}
+                userAllPostsLength={userAllPostsLength}
+              />
             )}
             {activeTitle === "찜한 목록" && (
-              <PostList title={activeTitle} userId={userId} />
+              <PostList
+                title={activeTitle}
+                userId={userId}
+                userAllPostsLength={userAllPostsLength}
+              />
             )}
             {activeTitle === "프로필 수정" && (
               <EditProfile
                 title={activeTitle}
-                user={user as User_info}
+                user={currentUser as User_info}
                 userId={userId}
               />
             )}

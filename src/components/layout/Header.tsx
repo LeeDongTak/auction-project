@@ -18,6 +18,8 @@ import DefaultButton from "../common/Button";
 import Search from "../search/Search";
 import Nav from "./Nav";
 
+const defaultProfileImg = "user_img.jpeg";
+
 function Header() {
   const navigate = useNavigate();
 
@@ -28,11 +30,11 @@ function Header() {
 
   const queryClient = new QueryClient();
 
-  const userData: Auth = useGetAuthInfo();
+  const user: Auth | null = useGetAuthInfo();
 
-  const userId = userData?.user?.id;
+  const userId = user?.user?.id;
 
-  const socialData = userData?.user?.user_metadata;
+  const socialData = user?.user?.user_metadata;
 
   const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
 
@@ -43,12 +45,12 @@ function Header() {
 
   const { data: currentUser, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER, userId],
-    queryFn: () => getUserInfo(userId),
+    queryFn: () => getUserInfo(userId as string),
     enabled: !!userId,
   });
 
   useEffect(() => {
-    if (userData?.access_token) {
+    if (user?.access_token) {
       setIsLogin(true);
     } else {
       setIsLogin(false);
@@ -64,19 +66,21 @@ function Header() {
   // 최초 소셜 로그인시 회원가입
   const socialSignUp = async () => {
     try {
-      const newUser: User_info = {
-        user_id: userData?.user.id,
-        nickname: socialData?.name,
-        created_at: userData?.user.created_at,
-        profile_image: socialData?.avatar_url,
-        user_email: socialData?.email,
-      };
+      if (user && user.user && socialData) {
+        const newUser: User_info = {
+          user_id: user.user.id,
+          nickname: socialData.name,
+          created_at: user.user.created_at,
+          profile_image: socialData.avatar_url,
+          user_email: socialData.email,
+        };
 
-      addSocialUserMutate(newUser, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
-        },
-      });
+        addSocialUserMutate(newUser, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
+          },
+        });
+      }
     } catch (error) {
       console.log("소셜 회원가입 중 오류 발생", error);
     }
@@ -87,12 +91,23 @@ function Header() {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    await handleOpenCustomModal("로그아웃 되었습니다.", "alert");
-    setIsLogin(false);
-    navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      setIsLogin(false);
+      await handleOpenCustomModal("로그아웃 되었습니다.", "alert");
+      navigate("/");
 
-    if (error) await handleOpenCustomModal(error.message, "alert");
+      if (error) {
+        console.error("Supabase signOut error:", error);
+        await handleOpenCustomModal(
+          "로그아웃 중 오류가 발생했습니다.",
+          "alert"
+        );
+      }
+    } catch (error) {
+      console.error("Sign out process error:", error);
+      await handleOpenCustomModal("로그아웃 중 오류가 발생했습니다.", "alert");
+    }
   };
 
   return (
@@ -111,7 +126,7 @@ function Header() {
             </StSearchButton>
             {isLogin ? (
               <>
-                <Nav signOut={signOut} userId={userData?.user.id} />
+                <Nav signOut={signOut} userId={user?.user.id} />
               </>
             ) : (
               <DefaultButton onClickHandler={signIn} text="로그인" />
@@ -157,6 +172,7 @@ const StHeaderWrapper = styled.header`
 
   h1 {
     font-size: xx-large;
+    cursor: pointer;
   }
 
   p {
@@ -166,8 +182,11 @@ const StHeaderWrapper = styled.header`
 
 const StSearchButton = styled.button`
   display: flex;
+  justify-content: center;
   align-items: center;
   font-size: xx-large;
+  height: 4rem;
+  width: 4rem;
   border-radius: 50%;
   background-color: transparent;
   border: none;
