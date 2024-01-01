@@ -15,6 +15,7 @@ import coin from "../../images/coin.svg";
 import end from "../../images/end.svg";
 import flag from "../../images/flag.svg";
 import placeholder from "../../images/placeholder.svg";
+import heart from "../../images/thin_heart.svg";
 import { supabase } from "../../supabase";
 import { Auction_post } from "../../types/databaseRetrunTypes";
 import LikeButton from "./LikeButton";
@@ -195,7 +196,10 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                       <img src={coin} /> &nbsp;시작 가격 ₩
                       {auction.lower_limit.toLocaleString()}
                     </h3>
-                    <h3>좋아요 {likesCount[auction.auction_id] || 0}</h3>
+                    <h3>
+                      <img src={heart} />
+                      &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
+                    </h3>
                   </div>
                   <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
                   {auction.category && (
