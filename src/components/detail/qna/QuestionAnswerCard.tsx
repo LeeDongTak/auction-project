@@ -1,34 +1,59 @@
-import {
-  Auction_answer,
-  Auction_question,
-} from "../../../types/databaseRetrunTypes";
+import { Auction_answer } from "../../../types/databaseRetrunTypes";
 import ProfileAvatar from "../../common/Avatar";
 import QnaTextArea from "./QnaTextArea";
 import { transDate } from "../../../common/dayjs";
 import QnaButtonGroup from "./QnaButtonGroup";
 import { Event } from "./QuestionCard";
 import { styled } from "styled-components";
-import { useState } from "react";
 import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import { useCustomModal } from "../../../hooks/useCustomModal";
+import { useCustomMutation } from "../../../hooks/useCustomMutation";
+import { fetchDeleteAnswer, fetchUpdateAnswer } from "../../../api/qna";
+import { useQueryClient } from "@tanstack/react-query";
+import useIsUpdateState from "../../../hooks/useIsUpdateState";
 
 interface Props {
   answerData: Auction_answer | undefined;
+  auctionId: string;
 }
-const QuestionAnswerCard = ({ answerData }: Props) => {
-  const [isUpdate, setIsUpdate] = useState(false);
+const QuestionAnswerCard = ({ answerData, auctionId }: Props) => {
+  const queryClient = useQueryClient();
   const [answerUpdateText, answerUpdateRef, answerUpdateHandler] =
-    useFormInput<HTMLTextAreaElement>();
+    useFormInput<HTMLTextAreaElement>(answerData?.answer);
+  const [isUpdate, onClickIsUpdateHandler, setUpdate] = useIsUpdateState();
   const { user: userData } = useGetAuthInfo();
   const { handleOpenCustomModal } = useCustomModal();
+
+  const updateMutationOptions = {
+    mutationFn: fetchUpdateAnswer,
+    onSuccess: async () => {
+      await handleOpenCustomModal("수정 되었습니다.", "alert");
+      await queryClient.invalidateQueries({
+        queryKey: ["questions", auctionId],
+      });
+      setUpdate(false);
+    },
+  };
+  const updateMutate = useCustomMutation(updateMutationOptions);
+
+  const deleteMutationOptions = {
+    mutationFn: fetchDeleteAnswer,
+    onSuccess: async () => {
+      await handleOpenCustomModal("삭제 되었습니다.", "alert");
+      await queryClient.invalidateQueries({
+        queryKey: ["questions", auctionId],
+      });
+    },
+  };
+  const deleteMutate = useCustomMutation(deleteMutationOptions);
 
   const onClickAnswerDeleteHandler = async (
     e: Event,
     auction_question_id: string
   ) => {
     if (await handleOpenCustomModal("정말 삭제하시겠습니까?", "confirm")) {
-      // deleteMutate(auction_question_id);
+      deleteMutate(answerData?.auction_answer_id!);
     }
   };
 
@@ -37,7 +62,7 @@ const QuestionAnswerCard = ({ answerData }: Props) => {
     auction_question_id: string
   ) => {
     if (answerUpdateText.trim() === "") {
-      await handleOpenCustomModal("질문 내용을 입력해주세요.", "alert");
+      await handleOpenCustomModal("답변 내용을 입력해주세요.", "alert");
       answerUpdateRef.current?.focus();
       return;
     }
@@ -47,16 +72,13 @@ const QuestionAnswerCard = ({ answerData }: Props) => {
       return;
     }
 
-    const newQuestion: Pick<
-      Auction_question,
-      "question" | "auction_question_id"
-    > = {
-      question: answerUpdateText,
-      auction_question_id,
+    const newAnswer: Pick<Auction_answer, "answer" | "auction_answer_id"> = {
+      answer: answerUpdateText,
+      auction_answer_id: answerData?.auction_answer_id!,
     };
 
     if (await handleOpenCustomModal("수정하시겠습니까?", "confirm")) {
-      // updateMutate(newQuestion);
+      updateMutate(newAnswer);
     }
   };
 
@@ -92,7 +114,7 @@ const QuestionAnswerCard = ({ answerData }: Props) => {
         {userData.id === answerData?.user_id && (
           <QnaButtonGroup
             isUpdateState={isUpdate}
-            isUpdateStateHandler={() => {}}
+            isUpdateStateHandler={onClickIsUpdateHandler}
             updateHandler={(e: Event) =>
               onClickQuestionUpdateHandler(e, answerData?.auction_question_id)
             }

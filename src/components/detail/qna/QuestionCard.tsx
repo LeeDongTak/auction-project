@@ -122,11 +122,15 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
         )}
       </StQuestionCardWrapper>
       {question.auction_answer?.length !== 0 ? (
-        <QuestionAnswerCard answerData={question.auction_answer?.[0]} />
+        <QuestionAnswerCard
+          answerData={question.auction_answer?.[0]}
+          auctionId={question.auction_id}
+        />
       ) : (
         isAnswerOpen && (
           <QuestionAnswerWrapper
             auctionQuestionId={question.auction_question_id}
+            auctionId={question.auction_id}
           />
         )
       )}
