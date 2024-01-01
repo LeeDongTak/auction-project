@@ -10,6 +10,7 @@ import PostList from "../components/profile/PostList/PostList";
 import ProfileMenu from "../components/profile/ProfileMenu/ProfileMenu";
 import EditProfile from "../components/profile/UserProfile/EditProfile/EditProfile";
 import UserProfile from "../components/profile/UserProfile/UserProfile";
+import WishList from "../components/profile/WishList/WishList";
 import useGetAuthInfo from "../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../query/keys.constant";
 import { User_info } from "../types/databaseRetrunTypes";
@@ -62,7 +63,7 @@ const Profile = () => {
               />
             )}
             {activeTitle === "찜한 목록" && (
-              <PostList
+              <WishList
                 title={activeTitle}
                 userId={userId}
                 userAllPostsLength={userAllPostsLength}

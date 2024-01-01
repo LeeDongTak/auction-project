@@ -79,6 +79,35 @@ export const fetchGetAuctionById = async (auction_id: string) => {
 
   return data;
 };
+
+export const fetchGetAuctionsByIds = async ({
+  auction_Ids,
+  limit = 0,
+  offset = 0,
+}: {
+  auction_Ids: string[];
+  limit: number;
+  offset: number;
+}) => {
+  const query = connectSupabase
+    .from("auction_post")
+    .select(
+      `
+      *, auction_images(image_id, image_path),
+      category(category_name)`
+    )
+    .in("auction_id", auction_Ids)
+    .returns<Auction_post[]>();
+
+  limit !== 0 && query.range(offset, limit);
+
+  const { data, error } = await query.returns<Promise<Auction_post[]>>();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const fetchPatchAuctionPost = async (
   auctionPost: Partial<Auction_post>
 ): Promise<number> => {

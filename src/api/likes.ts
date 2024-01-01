@@ -13,7 +13,21 @@ export async function fetchLikes(userId: string) {
   data.forEach(({ auction_id }) => {
     likes[auction_id] = true;
   });
+
   return likes;
+}
+
+export async function getAuctionIdByLikes(userId: string) {
+  const { data, error } = await connectSupabase
+    .from("auction_like")
+    .select("auction_id")
+    .eq("user_id", userId);
+
+  const auctionId = data?.map((item) => item.auction_id);
+
+  if (error) throw new Error(error.message);
+
+  return auctionId;
 }
 
 // 좋아요 상태를 업데이트하는 함수
