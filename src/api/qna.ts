@@ -56,3 +56,26 @@ export const fetchPostAnswer = async (
     .select();
   if (error) throw error;
 };
+
+export const fetchDeleteAnswer = async (auction_answer_id: string) => {
+  const { error } = await connectSupabase
+    .from("auction_answer")
+    .delete()
+    .eq("auction_answer_id", auction_answer_id);
+
+  if (error) throw error;
+};
+
+export const fetchUpdateAnswer = async (
+  answer: Pick<Auction_answer, "answer" | "auction_answer_id">
+) => {
+  const { data, error } = await connectSupabase
+    .from("auction_answer")
+    .update(answer)
+    .eq("auction_answer_id", answer.auction_answer_id)
+    .select();
+
+  if (error) throw error;
+
+  return data;
+};

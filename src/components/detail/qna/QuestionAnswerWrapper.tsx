@@ -8,12 +8,15 @@ import { fetchPostAnswer } from "../../../api/qna";
 import { useCustomMutation } from "../../../hooks/useCustomMutation";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import { Auction_answer } from "../../../types/databaseRetrunTypes";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   auctionQuestionId: string;
+  auctionId: string;
 }
 
-const QuestionAnswerWrapper = ({ auctionQuestionId }: Props) => {
+const QuestionAnswerWrapper = ({ auctionQuestionId, auctionId }: Props) => {
+  const queryClient = useQueryClient();
   const [answerText, answerRef, onChangeAnswer, setAnswerState] =
     useFormInput<HTMLTextAreaElement>();
   const { isAnimated, onAnswerCloseHandler } = useQuestionAnswerContext();
@@ -24,6 +27,10 @@ const QuestionAnswerWrapper = ({ auctionQuestionId }: Props) => {
     mutationFn: fetchPostAnswer,
     onSuccess: async () => {
       await handleOpenCustomModal("답변이 등록되었습니다.", "alert");
+      await queryClient.invalidateQueries({
+        queryKey: ["questions", auctionId],
+      });
+
       setAnswerState("");
     },
   };
