@@ -16,7 +16,7 @@ const Question = ({ auctionId, auctionUserId }: Props) => {
       {userData.id !== auctionUserId && (
         <>
           <QuestionForm auctionId={auctionId} />
-          <Spacer y={40} />
+          <Spacer y={30} />
         </>
       )}
       <QuestionList auctionId={auctionId} auctionUserId={auctionUserId} />

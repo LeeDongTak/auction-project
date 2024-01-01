@@ -9,10 +9,10 @@ interface Props {
 export const QnaWrapper = ({ auctionId, auctionUserId }: Props) => {
   return (
     <>
-      <Title title={"Q&A"} titleAlign={"flex-start"} />
-      <Spacer y={20} />
+      <Title title={"질문"} titleAlign={"flex-start"} />
+      <Spacer y={10} />
       <Question auctionId={auctionId!} auctionUserId={auctionUserId} />
-      <Spacer y={20} />
+      <Spacer y={100} />
     </>
   );
 };

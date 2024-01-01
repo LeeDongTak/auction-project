@@ -98,7 +98,7 @@ function Header() {
   return (
     <StHeaderContainer>
       <StHeaderWrapper>
-        <h1 onClick={() => navigate("/")}>ELETE</h1>
+        <h1 onClick={() => navigate("/")}>ELITE</h1>
 
         {isLoading ? (
           <Spin />
