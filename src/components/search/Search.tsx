@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { styled } from "styled-components";
 import {
@@ -9,6 +9,7 @@ import {
 } from "../../api/auction";
 import { useCustomQuery } from "../../hooks/useCustomQuery";
 import useDebounce from "../../hooks/useDebounce";
+import useOnClickOutSide from "../../hooks/useOnClickOutSide";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { toggleViewSearchModal } from "../../redux/modules/searchSlice";
@@ -17,10 +18,12 @@ import PostItem from "../profile/PostList/PostItem/PostItem";
 import { StModalBox, StModalContainer } from "./Search.styles";
 
 // TODO: 스타일 수정
-// TODO: 카테고리별 검색 구현
 
 const Search = () => {
+  const modalRef = useRef<HTMLInputElement>(null);
+
   const dispatch = useAppDispatch();
+
   const { viewSearchModal } = useAppSelector((state) => state.search);
 
   const [inputText, setInputText] = useState("");
@@ -28,6 +31,11 @@ const Search = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const debounceSearchInput = useDebounce({ value: inputText, delay: 500 });
+
+  useEffect(() => {
+    console.log(selectedCategory);
+    console.log(debounceSearchInput);
+  }, [selectedCategory, debounceSearchInput]);
 
   useEffect(() => {
     if (viewSearchModal) {
@@ -61,7 +69,7 @@ const Search = () => {
   const queryOptions = {
     queryKey: [
       "search",
-      { searchKeyword: debounceSearchInput, categories: selectedCategory },
+      { searchKeyword: debounceSearchInput, categories: category },
     ],
     queryFn: () =>
       fetchGetAuctions({
@@ -70,11 +78,13 @@ const Search = () => {
       }),
     queryOptions: {
       staleTime: 0,
-      enabled: !!debounceSearchInput && !!selectedCategory,
+      enabled: !!debounceSearchInput && !!category,
     },
   };
 
   const [data, isLoading] = useCustomQuery<Auction_post[]>(queryOptions);
+
+  // console.log("검색 결과", data);
 
   useEffect(() => {
     console.log(selectedCategory);
@@ -90,12 +100,14 @@ const Search = () => {
     setSelectedCategory("");
   };
 
+  useOnClickOutSide({ ref: modalRef, handler: closeHandler });
+
   return (
     <>
       {viewSearchModal && (
         <StModalContainer>
-          <StModalBox>
-            <div>
+          <StModalBox ref={modalRef}>
+            <StSearchSection>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
@@ -125,7 +137,7 @@ const Search = () => {
                   <MdOutlineSearch />
                 </button>
               </StSearchForm>
-            </div>
+            </StSearchSection>
 
             <StSearchPostList>
               {inputText && (
@@ -145,13 +157,29 @@ const Search = () => {
                 </>
               )}
             </StSearchPostList>
-            <button onClick={closeHandler}>닫기</button>
           </StModalBox>
         </StModalContainer>
       )}
     </>
   );
 };
+
+const StSearchSection = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0 auto;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  > select {
+    width: 10rem;
+    height: 100%;
+    font-size: large;
+    padding: 1rem;
+  }
+`;
 
 const StSearchForm = styled.form`
   display: flex;
@@ -161,7 +189,6 @@ const StSearchForm = styled.form`
   align-items: center;
   font-size: x-large;
   padding: 1rem 0.5rem 1rem 2rem;
-  margin-bottom: 2rem;
   border: 1px solid var(--main-color);
   border-radius: 3rem;
 
@@ -186,6 +213,7 @@ const StSearchPostList = styled.ul`
   flex-direction: column;
   gap: 2rem;
   color: #222;
+  padding-bottom: 5rem;
 
   > h3 {
     font-size: large;

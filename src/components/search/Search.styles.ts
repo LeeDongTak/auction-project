@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 
 export const StModalContainer = styled.div`
   position: fixed;
-  top: 0px;
+  top: 7rem;
   right: 0px;
   z-index: 5;
   width: 100%;
@@ -20,7 +20,7 @@ export const StModalBox = styled.div`
   width: 1200px;
   background-color: #fff;
   height: 100vh;
-  z-index: 333;
+  z-index: 100;
   padding: 2rem;
   overflow: auto;
 `;
