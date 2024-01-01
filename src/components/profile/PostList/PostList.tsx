@@ -32,6 +32,7 @@ const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
         : (page - 1) * pageSize + 1,
   };
 
+  // 내 게시물
   const {
     data: posts,
     isLoading,
@@ -45,24 +46,6 @@ const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
     staleTime: 0,
     // keepPreviousData: true,
   });
-
-  //TODO: 무한 스크롤 구현
-  // 옵션 import 오류
-  // const {
-  //   fetchNextPage,
-  //   fetchPreviousPage,
-  //   hasNextPage,
-  //   hasPreviousPage,
-  //   isFetchingNextPage,
-  //   isFetchingPreviousPage,
-  //   ...result
-  // } = useInfiniteQuery({
-  //   queryKey: ["posts"],
-  //   queryFn: ({ pageParam = 1 }) =>
-  //     fetchGetAuctions({ ...queryOption, pageParam }),
-  //   getNextPageParam: (lastPage) => lastPage.nextCursor,
-  //   getPreviousPageParam: (firstPage) => firstPage.prevCursor,
-  // });
 
   const onClickPage = (selected: number) => {
     console.log(selected);

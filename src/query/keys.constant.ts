@@ -3,4 +3,5 @@ export const QUERY_KEYS = {
   USERS: "users",
   USER: "user",
   CATEGORY: "category",
+  LIKES: "likes",
 };
