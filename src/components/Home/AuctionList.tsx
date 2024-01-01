@@ -8,13 +8,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
-import { fetchLikes, updateLike } from "../../api/likes";
+import { fetchLikes, fetchLikesCount, updateLike } from "../../api/likes";
 import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
 import end from "../../images/end.svg";
 import flag from "../../images/flag.svg";
 import placeholder from "../../images/placeholder.svg";
+import heart from "../../images/thin_heart.svg";
 import { supabase } from "../../supabase";
 import { Auction_post } from "../../types/databaseRetrunTypes";
 import LikeButton from "./LikeButton";
@@ -24,7 +25,7 @@ interface AuctionListProps {
 
 const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const navigate = useNavigate();
-
+  const [likesCount, setLikesCount] = useState<{ [key: string]: number }>({});
   const bidsQueries = useQueries({
     queries:
       auctions?.map((auction) => ({
@@ -102,9 +103,11 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
 
     // 좋아요 상태 토글
     const isLiked = !likes[auctionId];
+    const previousLikes = { ...likes };
+    const previousLikesCount = { ...likesCount }; // 이전 좋아요 수 상태를 저장
+
     // setLikes({ ...likes, [auctionId]: isLiked });
 
-    // 서버에 좋아요 상태 업데이트 요청
     // 서버에 좋아요 상태 업데이트 요청
     likeMutation.mutate(
       { auctionId, userId, isLiked: !likes[auctionId] },
@@ -112,16 +115,36 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
         onSuccess: () => {
           // 요청이 성공한 후에 로컬 상태 업데이트
           setLikes({ ...likes, [auctionId]: isLiked });
+          setLikesCount((prev) => ({
+            ...prev,
+            [auctionId]: isLiked
+              ? (prev[auctionId] || 0) + 1
+              : Math.max((prev[auctionId] || 1) - 1, 0),
+          }));
+        },
+        onError: () => {
+          // 오류가 발생한 경우 이전 상태로 되돌림
+          setLikes(previousLikes);
+          setLikesCount(previousLikesCount);
+          alert("좋아요 상태 업데이트에 실패했습니다");
         },
       }
     );
   };
-
+  //이건 쓸모없는듯
   // useEffect(() => {
   //   if (likeQuery.data) {
   //     setLikes(likeQuery.data as { [key: string]: boolean });
   //   }
   // }, [likeQuery.data]);
+
+  useEffect(() => {
+    auctions?.forEach((auction) => {
+      fetchLikesCount(auction.auction_id).then((count) => {
+        setLikesCount((prev) => ({ ...prev, [auction.auction_id]: count }));
+      });
+    });
+  }, [auctions]);
 
   return (
     <StListwrapper>
@@ -172,6 +195,10 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                     <h3>
                       <img src={coin} /> &nbsp;시작 가격 ₩
                       {auction.lower_limit.toLocaleString()}
+                    </h3>
+                    <h3>
+                      <img src={heart} />
+                      &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
                     </h3>
                   </div>
                   <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>

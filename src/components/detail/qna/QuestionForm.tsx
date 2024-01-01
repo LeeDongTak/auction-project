@@ -7,7 +7,6 @@ import { useCustomMutation } from "../../../hooks/useCustomMutation";
 import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import { Auction_question } from "../../../types/databaseRetrunTypes";
-import { Spacer } from "../../ui/Spacer";
 import QnaTextArea from "./QnaTextArea";
 
 interface Props {
@@ -54,7 +53,6 @@ const QuestionForm = ({ auctionId }: Props) => {
   };
   return (
     <StQuestionForm onSubmit={onSubmitQuestion}>
-      <Spacer y={30} />
       <StQuestionContentWrapper>
         <QnaTextArea
           textState={questionText}
@@ -62,7 +60,9 @@ const QuestionForm = ({ auctionId }: Props) => {
           forwardRef={questionTextRef}
         />
         <div>
-          <button>문의하기</button>
+          <StQuestionButton>
+            <span>문의하기</span>
+          </StQuestionButton>
         </div>
       </StQuestionContentWrapper>
     </StQuestionForm>
@@ -80,7 +80,7 @@ const StQuestionContentWrapper = styled.div`
     padding: 10px;
     font-size: 16px;
     transition: border-color 0.2s ease-in;
-    width: 70%;
+    width: 100%;
     height: 60px;
     &:focus {
       border-color: var(--main-color);
@@ -90,27 +90,23 @@ const StQuestionContentWrapper = styled.div`
   > div {
     top: 10px;
     right: 10px;
-    > button {
-      cursor: pointer;
-      width: 120px;
-      height: 100%;
-      font-size: 16px;
-      font-weight: bold;
-      background-color: unset;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      border-radius: 5px;
-      transition: all 0.2s ease-in;
-      &:hover {
-        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-        background-color: var(--main-color);
-        color: white;
-      }
-      > svg {
-        width: 100%;
-        height: 100%;
-      }
-    }
   }
 `;
+const StQuestionButton = styled.button`
+  cursor: pointer;
+  width: 120px;
+  height: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: unset;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  transition: all 0.2s ease-in;
 
+  &:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: var(--main-color);
+    color: white;
+  }
+`;
 export default React.memo(QuestionForm);

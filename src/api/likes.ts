@@ -1,4 +1,17 @@
 import connectSupabase from "./connectSupabase";
+
+//좋아요 수를 가져오는 함수
+export async function fetchLikesCount(auctionId: string) {
+  const { data, error } = await connectSupabase
+    .from("auction_like")
+    .select("*", { count: "exact" })
+    .eq("auction_id", auctionId);
+
+  if (error) throw new Error(error.message);
+
+  return data.length; // 좋아요 수 반환
+}
+
 // 좋아요 상태를 불러오는 함수
 export async function fetchLikes(userId: string) {
   const { data, error } = await connectSupabase
