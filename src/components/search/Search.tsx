@@ -69,7 +69,7 @@ const Search = () => {
   const queryOptions = {
     queryKey: [
       "search",
-      { searchKeyword: debounceSearchInput, categories: selectedCategory },
+      { searchKeyword: debounceSearchInput, categories: category },
     ],
     queryFn: () =>
       fetchGetAuctions({
@@ -78,7 +78,7 @@ const Search = () => {
       }),
     queryOptions: {
       staleTime: 0,
-      enabled: !!debounceSearchInput && !!selectedCategory,
+      enabled: !!debounceSearchInput && !!category,
     },
   };
 
@@ -213,6 +213,7 @@ const StSearchPostList = styled.ul`
   flex-direction: column;
   gap: 2rem;
   color: #222;
+  padding-bottom: 5rem;
 
   > h3 {
     font-size: large;
