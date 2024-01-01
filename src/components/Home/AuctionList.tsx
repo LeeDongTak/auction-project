@@ -145,6 +145,10 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                         : placeholder
                     }
                     alt="Auction"
+                  />{" "}
+                  <LikeButton
+                    isLiked={likes[auction.auction_id]}
+                    onLike={(e) => handleLike(e, auction.auction_id)}
                   />
                 </span>
                 <StInfoContainer>
@@ -174,10 +178,6 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                   {auction.category && (
                     <h5>{auction.category.category_name}</h5>
                   )}
-                  <LikeButton
-                    isLiked={likes[auction.auction_id]}
-                    onLike={(e) => handleLike(e, auction.auction_id)}
-                  />
                 </StInfoContainer>
               </li>
             );
@@ -267,6 +267,7 @@ const StListwrapper = styled.div`
         overflow: hidden;
         width: 150px;
         height: 150px;
+        position: relative;
         border: 2px solid #eee;
 
         border-radius: 10px;
