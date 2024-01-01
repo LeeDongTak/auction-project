@@ -10,8 +10,9 @@ import ProfileAvatar from "../../common/Avatar";
 import QnaButtonGroup from "./QnaButtonGroup";
 import QnaTextArea from "./QnaTextArea";
 import { useQuestionAnswerContext } from "../../../context/AnswerContext";
-import useQnaTanstackQuery from "../../../hooks/useQnaTanstackQuery";
+import useQuestionTanstackQuery from "../../../hooks/useQuestionTanstackQuery";
 import QuestionAnswerWrapper from "./QuestionAnswerWrapper";
+import QuestionAnswerCard from "./QuestionAnswerCard";
 
 interface Props {
   question: Auction_question;
@@ -27,7 +28,7 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
     useFormInput<HTMLTextAreaElement>(question.question);
 
   const { isAnswerOpen, onClickAnswerOpenHandler } = useQuestionAnswerContext();
-  const { deleteMutate, updateMutate } = useQnaTanstackQuery(
+  const { deleteMutate, updateMutate } = useQuestionTanstackQuery(
     question.auction_id,
     setIsUpdate
   );
@@ -77,6 +78,7 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
     <>
       <StQuestionCardWrapper
         $isAnswerOpen={isAnswerOpen}
+        $isAnswerLength={question.auction_answer?.length === 0}
         $isUser={userData.id === auctionUserId}
         onClick={onStQuestionCardWrapperClick}
       >
@@ -119,13 +121,22 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
           />
         )}
       </StQuestionCardWrapper>
-      {isAnswerOpen && <QuestionAnswerWrapper />}
+      {question.auction_answer?.length !== 0 ? (
+        <QuestionAnswerCard answerData={question.auction_answer?.[0]} />
+      ) : (
+        isAnswerOpen && (
+          <QuestionAnswerWrapper
+            auctionQuestionId={question.auction_question_id}
+          />
+        )
+      )}
     </>
   );
 };
 
 const StQuestionCardWrapper = styled.article<{
   $isAnswerOpen: boolean;
+  $isAnswerLength: boolean;
   $isUser: boolean;
 }>`
   display: flex;
@@ -136,7 +147,8 @@ const StQuestionCardWrapper = styled.article<{
   border-radius: 5px 5px
     ${({ $isAnswerOpen }) => ($isAnswerOpen ? "0 0" : "5px 5px")};
 
-  cursor: ${({ $isUser }) => ($isUser ? "pointer" : "auto")};
+  cursor: ${({ $isUser, $isAnswerLength }) =>
+    $isUser && $isAnswerLength ? "pointer" : "auto"};
   position: relative;
   &:hover {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);

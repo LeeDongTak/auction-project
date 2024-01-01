@@ -5,7 +5,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 type SetIsUpdate = React.Dispatch<React.SetStateAction<boolean>>;
-const useQnaTanstackQuery = (auctionId: string, setIsUpdate: SetIsUpdate) => {
+const useQuestionTanstackQuery = (
+  auctionId: string,
+  setIsUpdate: SetIsUpdate
+) => {
   const queryClient = useQueryClient();
   const { handleOpenCustomModal } = useCustomModal();
   const questionDeleteMutationOptions = {
@@ -35,4 +38,4 @@ const useQnaTanstackQuery = (auctionId: string, setIsUpdate: SetIsUpdate) => {
   return { deleteMutate, updateMutate };
 };
 
-export default useQnaTanstackQuery;
+export default useQuestionTanstackQuery;

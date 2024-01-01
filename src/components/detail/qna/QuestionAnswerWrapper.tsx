@@ -2,13 +2,55 @@ import { keyframes, styled } from "styled-components";
 import QnaTextArea from "./QnaTextArea";
 import useFormInput from "../../../hooks/useFormInput";
 import { useQuestionAnswerContext } from "../../../context/AnswerContext";
+import React from "react";
+import { useCustomModal } from "../../../hooks/useCustomModal";
+import { fetchPostAnswer } from "../../../api/qna";
+import { useCustomMutation } from "../../../hooks/useCustomMutation";
+import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import { Auction_answer } from "../../../types/databaseRetrunTypes";
 
-const QuestionAnswerWrapper = () => {
+interface Props {
+  auctionQuestionId: string;
+}
+
+const QuestionAnswerWrapper = ({ auctionQuestionId }: Props) => {
   const [answerText, answerRef, onChangeAnswer, setAnswerState] =
     useFormInput<HTMLTextAreaElement>();
   const { isAnimated, onAnswerCloseHandler } = useQuestionAnswerContext();
+  const { handleOpenCustomModal } = useCustomModal();
+  const { user: userData } = useGetAuthInfo();
 
+  const answerMutationOptions = {
+    mutationFn: fetchPostAnswer,
+    onSuccess: async () => {
+      await handleOpenCustomModal("답변이 등록되었습니다.", "alert");
+      setAnswerState("");
+    },
+  };
+
+  const answerPostMutation = useCustomMutation(answerMutationOptions);
   //TODO: 여기부터.
+  const onSubmitAnswerHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (answerText.trim() === "") {
+      await handleOpenCustomModal("답변 내용을 입력해주세요.", "alert");
+      answerRef.current?.focus();
+      return;
+    }
+
+    const answer: Pick<
+      Auction_answer,
+      "user_id" | "answer" | "auction_question_id"
+    > = {
+      answer: answerText,
+      user_id: userData.id,
+      auction_question_id: auctionQuestionId,
+    };
+
+    if (await handleOpenCustomModal("답변을 등록하시겠습니까?", "confirm")) {
+      answerPostMutation(answer);
+    }
+  };
 
   return (
     <StQuestionAnswerWrapper
@@ -16,16 +58,19 @@ const QuestionAnswerWrapper = () => {
       onAnimationEnd={onAnswerCloseHandler}
     >
       <h1>답변</h1>
-      <form>
+      <StQuestionAnswerForm
+        onSubmit={onSubmitAnswerHandler}
+        $isAnimated={isAnimated}
+      >
         <QnaTextArea
           textState={answerText}
           textHandler={onChangeAnswer}
           forwardRef={answerRef}
         />
-      </form>
-      <div>
-        <button>답변등록</button>
-      </div>
+        <div>
+          <button type={"submit"}>답변등록</button>
+        </div>
+      </StQuestionAnswerForm>
     </StQuestionAnswerWrapper>
   );
 };
@@ -65,6 +110,8 @@ const textareaSlideDown = keyframes`
 
 const StQuestionAnswerWrapper = styled.div<{ $isAnimated: boolean }>`
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   border-left: 1px solid rgba(0, 0, 0, 0.2);
   border-right: 1px solid rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -72,20 +119,22 @@ const StQuestionAnswerWrapper = styled.div<{ $isAnimated: boolean }>`
   transition: all 0.2s ease-in;
   animation: ${({ $isAnimated }) => ($isAnimated ? slideDown : slideUp)} 0.3s
     forwards;
-
   gap: 10px;
-  padding: 10px;
-  align-items: center;
+  padding: 20px 10px;
   > h1 {
-    flex: 1;
     font-size: 24px;
     font-weight: bold;
     text-align: center;
   }
-  > form {
-    flex: 5;
-  }
-  > form > textarea {
+`;
+
+const StQuestionAnswerForm = styled.form<{ $isAnimated: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 10px;
+  > textarea {
     width: 100%;
     height: 80px;
     font-size: 16px;
@@ -95,7 +144,6 @@ const StQuestionAnswerWrapper = styled.div<{ $isAnimated: boolean }>`
       0.2s forwards;
   }
   > div:last-child > button {
-    flex: 1;
     font-size: 16px;
     font-weight: bold;
     background-color: unset;
