@@ -72,7 +72,7 @@ const Detail = () => {
           paragraph={{ rows: 10 }}
           style={{ width: "100%", height: "100%" }}
         >
-          <Title title={"내용"} titleAlign={"flex-start"} />
+          <Title title={"상품설명"} titleAlign={"flex-start"} />
           <Spacer y={10} />
           <DetailContent auctionContent={data?.content} />
         </Skeleton>

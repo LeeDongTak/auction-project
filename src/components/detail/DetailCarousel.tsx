@@ -11,7 +11,7 @@ const DetailCarousel = ({ images, title }: Props) => {
   console.log(images);
   return (
     <>
-      <StCarousel effect={"fade"}>
+      <StCarousel effect={"fade"} autoplay autoplaySpeed={5000}>
         {images.map((image) => (
           <StImage key={image.image_id} src={image.image_path} alt={title} />
         ))}
