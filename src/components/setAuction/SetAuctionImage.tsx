@@ -44,7 +44,7 @@ function SetAuctionImage() {
     }
     setImgArray([...imgData])
   }, [imgFileList, imgUrlList])
-  console.log(imgArray)
+  console.log(imgFileList)
   console.log(imgUrlList);
   return (
     <StImageWrapper>

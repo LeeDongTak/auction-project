@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
+import { Category } from "../../types/databaseRetrunTypes";
 
 interface CounterState {
-  isAlert: boolean;
-  alertMsg: string;
+  isAlert?: boolean;
+  alertMsg?: string;
   imgFileList: File[];
   imgUrlList: string[];
   auctionTitle: string;
@@ -18,6 +19,7 @@ interface CounterState {
   endTime: string;
   // categoryList: string[];
   categoryList: string;
+  existingCategory: Category;
 }
 
 const initialState: CounterState = {
@@ -39,6 +41,11 @@ const initialState: CounterState = {
   endTime: "00:00",
   // categoryList: [],
   categoryList: "",
+  existingCategory: {
+    category_id: "",
+    created_at: "",
+    category_name: "",
+  },
 };
 const setAuctionSlice = createSlice({
   name: "setAuction",
@@ -47,19 +54,27 @@ const setAuctionSlice = createSlice({
     // alert창 을 보여주는 reducer
     setIsAlert: (
       state,
-      action: PayloadAction<{ isAlert: boolean; ErrorMsg: string }>
+      action: PayloadAction<{ isAlert?: boolean; ErrorMsg?: string }>
     ) => {
       state.isAlert = action.payload.isAlert;
       state.alertMsg = action.payload.ErrorMsg;
     },
     // 이미지 file을 저장하는 reducer
     setImageFileList: (state, action: PayloadAction<File>) => {
-      state.imgFileList.push(action.payload);
+      state.imgFileList?.push(action.payload);
+      const set = new Set<File>(state.imgFileList);
+      const array = Array.from(set);
+      const imgFile = [...array];
+      state.imgFileList = imgFile;
     },
     // 이미지 Url 저장하는 reducer
     setImageUrlList: (state, action: PayloadAction<string | undefined>) => {
       if (action.payload) {
         state.imgUrlList?.push(action.payload);
+        const set = new Set<string>(state.imgUrlList);
+        const array = Array.from(set);
+        const imgUrl = [...array];
+        state.imgUrlList = imgUrl;
       }
     },
     // 이미지 file을 삭제하는 reducer
@@ -141,6 +156,10 @@ const setAuctionSlice = createSlice({
     setAuctionCategoryList: (state, action: PayloadAction<string>) => {
       state.categoryList = action.payload;
     },
+    // 수정전 카테고리를 저장하는 reducer
+    setAuctionExistingCategory: (state, action: PayloadAction<Category>) => {
+      state.existingCategory = action.payload;
+    },
   },
 });
 
@@ -160,5 +179,6 @@ export const {
   setAuctionStartTime,
   setAuctionEndTime,
   setAuctionCategoryList,
+  setAuctionExistingCategory,
 } = setAuctionSlice.actions;
 export default setAuctionSlice.reducer;
