@@ -41,7 +41,7 @@ export interface Auction_post {
   category?: Category;
   auction_images?: Auction_images[];
 }
-export interface insert_Auction_post {
+export interface Insert_auction_post {
   auction_id?: string /* primary key */;
   created_at?: string;
   title: string;
@@ -58,6 +58,19 @@ export interface insert_Auction_post {
   user_info?: User_info;
   category?: Category;
   auction_images?: Auction_images[];
+}
+export interface Update_auction_post {
+  title: string;
+  auction_start_date: string;
+  auction_end_date: string;
+  product_status: string;
+  shipping_type: string;
+  upper_limit: number;
+  lower_limit: number;
+  content: string;
+  auction_status: string;
+  user_id: string /* foreign key to user_info.user_id */;
+  category_id?: string;
 }
 
 export interface Auction_images {

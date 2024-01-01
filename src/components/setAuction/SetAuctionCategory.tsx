@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { keyframes, styled } from "styled-components";
 import { fetchGetCategories } from "../../api/auction";
 import { useCustomQuery } from "../../hooks/useCustomQuery";
 import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
-import { setAuctionCategoryList } from "../../redux/modules/setAuctionSlice";
+import { setAuctionCategoryList, setAuctionExistingCategory } from "../../redux/modules/setAuctionSlice";
 import { Category } from "../../types/databaseRetrunTypes";
 
-function SetAuctionCategory() {
+function SetAuctionCategory({ UpdIsLoading }: { UpdIsLoading?: boolean }) {
   const { auctionId } = useParams();
   const dispatch = useAppDispatch();
-  const { categoryList } = useAppSelector((state) => state.setAuction);
-  const [existingCategory, setExistingCategory] = useState<string>("");
+  const { categoryList, existingCategory } = useAppSelector((state) => state.setAuction);
+  // const [existingCategory, setExistingCategory] = useState<string>("");
   const queryOptions = {
     queryKey: ["category"],
     queryFn: fetchGetCategories,
@@ -47,10 +47,10 @@ function SetAuctionCategory() {
   useEffect(() => {
     if (data) {
       const categoryName: Category[] = data?.filter((x) => categoryList?.includes(x.category_id))
-      setExistingCategory(categoryName?.[0]?.category_name);
+      dispatch(setAuctionExistingCategory(categoryName?.[0]));
       dispatch(setAuctionCategoryList(""));
     }
-  }, [isLoading])
+  }, [isLoading, UpdIsLoading])
 
   return (
     <StCategoryWrapper>
@@ -112,7 +112,7 @@ function SetAuctionCategory() {
                   선택한 카테고리
                 </StChoiceCategory>
                 <StChoiceCategory $typeIsSet="update">
-                  {existingCategory}
+                  {existingCategory?.category_name}
                 </StChoiceCategory>
                 <StChoiceCategory $typeIsSet="update" $listType="choiceCategoryTitle">
                   수정한 카테고리
