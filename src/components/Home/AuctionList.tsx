@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
-import { fetchLikes, updateLike } from "../../api/likes";
+import { fetchLikes, fetchLikesCount, updateLike } from "../../api/likes";
 import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
@@ -24,7 +24,7 @@ interface AuctionListProps {
 
 const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const navigate = useNavigate();
-
+  const [likesCount, setLikesCount] = useState<{ [key: string]: number }>({});
   const bidsQueries = useQueries({
     queries:
       auctions?.map((auction) => ({
@@ -128,6 +128,14 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   //   }
   // }, [likeQuery.data]);
 
+  useEffect(() => {
+    auctions?.forEach((auction) => {
+      fetchLikesCount(auction.auction_id).then((count) => {
+        setLikesCount((prev) => ({ ...prev, [auction.auction_id]: count }));
+      });
+    });
+  }, [auctions]);
+
   return (
     <StListwrapper>
       {auctions && auctions.length > 0 ? (
@@ -178,6 +186,7 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                       <img src={coin} /> &nbsp;시작 가격 ₩
                       {auction.lower_limit.toLocaleString()}
                     </h3>
+                    <h3>좋아요 {likesCount[auction.auction_id] || 0}</h3>
                   </div>
                   <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
                   {auction.category && (
