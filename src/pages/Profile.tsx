@@ -41,8 +41,6 @@ const Profile = () => {
     enabled: !!userId,
   });
 
-  console.log("all", allUserPosts?.length);
-
   const userAllPostsLength = allUserPosts?.length;
 
   return (
@@ -63,11 +61,7 @@ const Profile = () => {
               />
             )}
             {activeTitle === "찜한 목록" && (
-              <WishList
-                title={activeTitle}
-                userId={userId}
-                userAllPostsLength={userAllPostsLength}
-              />
+              <WishList title={activeTitle} userId={userId} />
             )}
             {activeTitle === "프로필 수정" && (
               <EditProfile

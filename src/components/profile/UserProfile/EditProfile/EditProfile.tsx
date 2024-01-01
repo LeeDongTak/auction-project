@@ -74,12 +74,10 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
 
     if (error) {
       console.log("이미지 업로드 에러", error.message);
-    } else {
-      console.log(data);
     }
   };
 
-  // storagy에 저장된 파일 URL 가져오기
+  // storage에 저장된 파일 URL 가져오기
   async function getFileUrl(fileImage: File) {
     uploadFile(fileImage);
 

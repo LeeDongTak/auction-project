@@ -11,10 +11,9 @@ import PostItem from "../PostList/PostItem/PostItem";
 interface PostListProps {
   title: string;
   userId: string;
-  userAllPostsLength?: number;
 }
 
-const WishList = ({ title, userId, userAllPostsLength }: PostListProps) => {
+const WishList = ({ title, userId }: PostListProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
   const [limit, setLimit] = useState<number>(5);
@@ -35,19 +34,19 @@ const WishList = ({ title, userId, userAllPostsLength }: PostListProps) => {
         : (page - 1) * pageSize + 1,
   };
 
-  // TODO: 전체 post 중 auction id에 해당되는 데이터 가져오기
+  // 전체 post 중 auction id에 해당되는 데이터 가져오기
   const { data: posts } = useQuery<Auction_post[]>({
     queryKey: [QUERY_KEYS.POSTS, userId, auctionIds?.[0], page],
     queryFn: () => fetchGetAuctionsByIds(queryOption),
     enabled: !!auctionIds,
   });
 
+  // TODO: 찜한 목록에서 삭제 버튼 구현 (좋아요 취소 시 목록에서 사라짐)
+
   const onClickPage = (selected: number) => {
     console.log(selected);
     setPage(selected);
   };
-
-  console.log(posts);
 
   return (
     <>

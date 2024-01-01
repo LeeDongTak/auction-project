@@ -84,10 +84,14 @@ export const fetchGetAuctionsByIds = async ({
   auction_Ids,
   limit = 0,
   offset = 0,
+  orderBy = "created_at",
+  order = false,
 }: {
   auction_Ids: string[];
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
+  orderBy?: string;
+  order?: boolean;
 }) => {
   const query = connectSupabase
     .from("auction_post")
@@ -97,6 +101,7 @@ export const fetchGetAuctionsByIds = async ({
       category(category_name)`
     )
     .in("auction_id", auction_Ids)
+    .order(`${orderBy}`, { ascending: order })
     .returns<Auction_post[]>();
 
   limit !== 0 && query.range(offset, limit);
