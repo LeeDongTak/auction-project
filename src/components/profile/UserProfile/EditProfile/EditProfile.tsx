@@ -60,13 +60,7 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
   };
 
   const cancelHandler = async () => {
-    if (
-      !(await handleOpenCustomModal(
-        "취소하시겠습니까? \n수정 내용은 저장돠지 않습니다.",
-        "confirm"
-      ))
-    )
-      return;
+    if (!(await handleOpenCustomModal("취소되었습니다.", "alert"))) return;
 
     setFileImage(undefined);
     setIsEdit(false);
