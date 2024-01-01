@@ -5,12 +5,14 @@ import { styled } from "styled-components";
 import { Skeleton } from "antd";
 import QuestionCard from "./QuestionCard";
 import { Spacer } from "../../ui/Spacer";
+import { QuestionAnswerProvider } from "../../../context/AnswerContext";
 
 interface Props {
   auctionId: string;
+  auctionUserId: string;
 }
 
-const QuestionList = ({ auctionId }: Props) => {
+const QuestionList = ({ auctionId, auctionUserId }: Props) => {
   // data fetch
   const questionsQueryOptions = {
     queryKey: ["questions", auctionId],
@@ -27,7 +29,9 @@ const QuestionList = ({ auctionId }: Props) => {
       {data?.map((question) => (
         <div key={question.auction_question_id}>
           <Skeleton loading={isLoading} active>
-            <QuestionCard question={question} />
+            <QuestionAnswerProvider>
+              <QuestionCard question={question} auctionUserId={auctionUserId} />
+            </QuestionAnswerProvider>
           </Skeleton>
           <Spacer y={30} />
         </div>

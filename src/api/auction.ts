@@ -23,7 +23,6 @@ export async function fetchGetAuctions({
   user_id = "",
   // pageParam = 1,
 }: Auction_option) {
-  console.log(categories);
   const categoryIds = categories?.map((category) => {
     return category.category_id;
   });
@@ -49,7 +48,6 @@ export async function fetchGetAuctions({
   }
 
   const { data, error } = await query.returns<Promise<Auction_post[]>>();
-  console.log(data);
   if (error) throw new Error(error.message);
 
   return data;
@@ -81,6 +79,40 @@ export const fetchGetAuctionById = async (auction_id: string) => {
 
   return data;
 };
+
+export const fetchGetAuctionsByIds = async ({
+  auction_Ids,
+  limit = 0,
+  offset = 0,
+  orderBy = "created_at",
+  order = false,
+}: {
+  auction_Ids: string[];
+  limit?: number;
+  offset?: number;
+  orderBy?: string;
+  order?: boolean;
+}) => {
+  const query = connectSupabase
+    .from("auction_post")
+    .select(
+      `
+      *, auction_images(image_id, image_path),
+      category(category_name)`
+    )
+    .in("auction_id", auction_Ids)
+    .order(`${orderBy}`, { ascending: order })
+    .returns<Auction_post[]>();
+
+  limit !== 0 && query.range(offset, limit);
+
+  const { data, error } = await query.returns<Promise<Auction_post[]>>();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const fetchPatchAuctionPost = async (
   auctionPost: Partial<Auction_post>
 ): Promise<number> => {

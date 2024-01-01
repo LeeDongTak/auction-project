@@ -15,11 +15,12 @@ import useCloseButtonState from "../hooks/useCloseButtonState";
 import PopupToggleButton from "../components/detail/bidPopup/PopupToggleButton";
 import DetailWrapper from "../components/ui/detailWrapper/DetailWrapper";
 import { QnaWrapper } from "../components/detail/qna/QnaWrapper";
+import DetailCarousel from "../components/detail/DetailCarousel";
+import Title from "../components/detail/bidPopup/Title";
 
 const Detail = () => {
   const { auctionId } = useParams();
   const [data, isLoading] = useDetailAuctionPost(auctionId!);
-  const thumbnailImg = data?.auction_images?.[0]?.image_path ?? placeholder;
 
   const [isPopupState, onClickHandler] = useCloseButtonState();
   useSubscribeBidTable(auctionId!);
@@ -34,8 +35,10 @@ const Detail = () => {
               active
               style={{ width: "100%", height: "100%" }}
             />
+          ) : data?.auction_images?.length ? (
+            <DetailCarousel images={data?.auction_images} title={data?.title} />
           ) : (
-            <img src={thumbnailImg} alt={data?.title} />
+            <img src={placeholder} alt={data?.title} />
           )}
         </StDetailImgWrapper>
 
@@ -69,6 +72,8 @@ const Detail = () => {
           paragraph={{ rows: 10 }}
           style={{ width: "100%", height: "100%" }}
         >
+          <Title title={"상품설명"} titleAlign={"flex-start"} />
+          <Spacer y={10} />
           <DetailContent auctionContent={data?.content} />
         </Skeleton>
       </DetailWrapper>
@@ -80,7 +85,7 @@ const Detail = () => {
           paragraph={{ rows: 10 }}
           style={{ width: "100%", height: "100%" }}
         >
-          <QnaWrapper auctionId={auctionId!} />
+          <QnaWrapper auctionId={auctionId!} auctionUserId={data.user_id} />
         </Skeleton>
       </DetailWrapper>
 

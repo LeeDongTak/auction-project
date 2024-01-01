@@ -22,7 +22,7 @@ export function useCustomQuery<T, TError extends Error = Error>(
   }, [isLoading]);
 
   useEffect(() => {
-    if (isError) {
+    if (isError && !error?.message.includes("getBidMaxPrice")) {
       (async () => {
         await handleOpenCustomModal(`오류 발생\n ${error?.message}`, "alert");
       })();

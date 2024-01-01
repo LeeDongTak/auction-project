@@ -60,13 +60,7 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
   };
 
   const cancelHandler = async () => {
-    if (
-      !(await handleOpenCustomModal(
-        "취소하시겠습니까? \n수정 내용은 저장돠지 않습니다.",
-        "confirm"
-      ))
-    )
-      return;
+    if (!(await handleOpenCustomModal("취소되었습니다.", "alert"))) return;
 
     setFileImage(undefined);
     setIsEdit(false);
@@ -80,12 +74,10 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
 
     if (error) {
       console.log("이미지 업로드 에러", error.message);
-    } else {
-      console.log(data);
     }
   };
 
-  // storagy에 저장된 파일 URL 가져오기
+  // storage에 저장된 파일 URL 가져오기
   async function getFileUrl(fileImage: File) {
     uploadFile(fileImage);
 
