@@ -102,9 +102,9 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
 
     // 좋아요 상태 토글
     const isLiked = !likes[auctionId];
+    const previousLikes = { ...likes };
     // setLikes({ ...likes, [auctionId]: isLiked });
 
-    // 서버에 좋아요 상태 업데이트 요청
     // 서버에 좋아요 상태 업데이트 요청
     likeMutation.mutate(
       { auctionId, userId, isLiked: !likes[auctionId] },
@@ -113,10 +113,15 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
           // 요청이 성공한 후에 로컬 상태 업데이트
           setLikes({ ...likes, [auctionId]: isLiked });
         },
+        onError: () => {
+          // 오류가 발생한 경우 이전 상태로 되돌림
+          setLikes(previousLikes);
+          alert("좋아요 상태 업데이트에 실패했습니다");
+        },
       }
     );
   };
-
+  //이건 쓸모없는듯
   // useEffect(() => {
   //   if (likeQuery.data) {
   //     setLikes(likeQuery.data as { [key: string]: boolean });
