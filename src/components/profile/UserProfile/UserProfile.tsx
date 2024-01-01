@@ -18,13 +18,10 @@ const UserProfile: React.FC<ProfileProps> = ({ user }) => {
 
   const createAt = dayjs(user?.created_at).format("YY-MM-DD");
 
-  console.log(createAt);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 500);
-    console.log(isLoading);
 
     return () => clearTimeout(timer);
   }, []);

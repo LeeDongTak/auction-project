@@ -1,17 +1,17 @@
-import { Auction_answer } from "../../../types/databaseRetrunTypes";
-import ProfileAvatar from "../../common/Avatar";
-import QnaTextArea from "./QnaTextArea";
-import { transDate } from "../../../common/dayjs";
-import QnaButtonGroup from "./QnaButtonGroup";
-import { Event } from "./QuestionCard";
+import { useQueryClient } from "@tanstack/react-query";
 import { styled } from "styled-components";
-import useFormInput from "../../../hooks/useFormInput";
-import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import { fetchDeleteAnswer, fetchUpdateAnswer } from "../../../api/qna";
+import { transDate } from "../../../common/dayjs";
 import { useCustomModal } from "../../../hooks/useCustomModal";
 import { useCustomMutation } from "../../../hooks/useCustomMutation";
-import { fetchDeleteAnswer, fetchUpdateAnswer } from "../../../api/qna";
-import { useQueryClient } from "@tanstack/react-query";
+import useFormInput from "../../../hooks/useFormInput";
+import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import useIsUpdateState from "../../../hooks/useIsUpdateState";
+import { Auction_answer } from "../../../types/databaseRetrunTypes";
+import ProfileAvatar from "../../common/Avatar";
+import QnaButtonGroup from "./QnaButtonGroup";
+import QnaTextArea from "./QnaTextArea";
+import { Event } from "./QuestionCard";
 
 interface Props {
   answerData: Auction_answer | undefined;
@@ -22,7 +22,7 @@ const QuestionAnswerCard = ({ answerData, auctionId }: Props) => {
   const [answerUpdateText, answerUpdateRef, answerUpdateHandler] =
     useFormInput<HTMLTextAreaElement>(answerData?.answer);
   const [isUpdate, onClickIsUpdateHandler, setUpdate] = useIsUpdateState();
-  const { user: userData } = useGetAuthInfo();
+  const user = useGetAuthInfo();
   const { handleOpenCustomModal } = useCustomModal();
 
   const updateMutationOptions = {
@@ -111,7 +111,7 @@ const QuestionAnswerCard = ({ answerData, auctionId }: Props) => {
         <StCreateAt>
           <span>{transDate(answerData?.created_at!)}</span>
         </StCreateAt>
-        {userData.id === answerData?.user_id && (
+        {(user?.user.id as string) === answerData?.user_id && (
           <QnaButtonGroup
             isUpdateState={isUpdate}
             isUpdateStateHandler={onClickIsUpdateHandler}
