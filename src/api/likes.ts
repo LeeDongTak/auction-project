@@ -20,15 +20,31 @@ export async function fetchLikes(userId: string) {
 export async function updateLike({
   auctionId,
   userId,
+  isLiked,
 }: {
   auctionId: string;
   userId: string;
+  isLiked: boolean;
 }) {
-  const { data, error } = await connectSupabase
-    .from("auction_like")
-    .upsert({ auction_id: auctionId, user_id: userId });
+  if (isLiked) {
+    // 좋아요 상태일 때는 데이터를 추가
+    const { data, error } = await connectSupabase
+      .from("auction_like")
+      .upsert({ auction_id: auctionId, user_id: userId });
 
-  if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
 
-  return data;
+    return data;
+  } else {
+    // 좋아요 해제 상태일 때는 데이터를 삭제
+    const { data, error } = await connectSupabase
+      .from("auction_like")
+      .delete()
+      .eq("auction_id", auctionId)
+      .eq("user_id", userId);
+
+    if (error) throw new Error(error.message);
+
+    return data;
+  }
 }

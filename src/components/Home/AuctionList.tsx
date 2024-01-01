@@ -1,4 +1,9 @@
-import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
@@ -57,10 +62,31 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
     queryFn: () => fetchLikes(userId!),
     enabled: !!userId,
   });
+
+  // 좋아요 상태 업데이트 useEffect
+  useEffect(() => {
+    if (likeQuery.isSuccess && likeQuery.data) {
+      // 타입 체크 또는 타입 캐스팅을 통해 오류 해결
+      setLikes(likeQuery.data as { [key: string]: boolean });
+    }
+  }, [likeQuery.isSuccess, likeQuery.data]);
+
   // 좋아요 업데이트를 위한 뮤테이션
+  const queryClient = useQueryClient();
   const likeMutation = useMutation({
-    mutationFn: (data: { auctionId: string; userId: string }) =>
-      updateLike(data),
+    mutationFn: (data: {
+      auctionId: string;
+      userId: string;
+      isLiked: boolean;
+    }) => updateLike(data),
+    onSuccess: () => {
+      // invalidateQueries 호출 시 객체 형태로 queryKey를 전달
+      if (userId) {
+        queryClient.invalidateQueries({
+          queryKey: ["likes", userId],
+        });
+      }
+    },
   });
   const handleLike = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -76,17 +102,26 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
 
     // 좋아요 상태 토글
     const isLiked = !likes[auctionId];
-    setLikes({ ...likes, [auctionId]: isLiked });
+    // setLikes({ ...likes, [auctionId]: isLiked });
 
     // 서버에 좋아요 상태 업데이트 요청
-    likeMutation.mutate({ auctionId, userId });
+    // 서버에 좋아요 상태 업데이트 요청
+    likeMutation.mutate(
+      { auctionId, userId, isLiked: !likes[auctionId] },
+      {
+        onSuccess: () => {
+          // 요청이 성공한 후에 로컬 상태 업데이트
+          setLikes({ ...likes, [auctionId]: isLiked });
+        },
+      }
+    );
   };
 
-  useEffect(() => {
-    if (likeQuery.data) {
-      setLikes(likeQuery.data as { [key: string]: boolean });
-    }
-  }, [likeQuery.data]);
+  // useEffect(() => {
+  //   if (likeQuery.data) {
+  //     setLikes(likeQuery.data as { [key: string]: boolean });
+  //   }
+  // }, [likeQuery.data]);
 
   return (
     <StListwrapper>
