@@ -1,5 +1,5 @@
 import connectSupabase from "./connectSupabase";
-import { Auction_question } from "../types/databaseRetrunTypes";
+import { Auction_answer, Auction_question } from "../types/databaseRetrunTypes";
 
 export const fetchPostQuestion = async (
   questionData: Pick<Auction_question, "user_id" | "auction_id" | "question">
@@ -14,7 +14,7 @@ export const fetchPostQuestion = async (
 export const fetchGetQuestions = async (auction_id: string) => {
   const { data, error } = await connectSupabase
     .from("auction_question")
-    .select("*, user_info(*), auction_answer(*)")
+    .select("*, user_info(*), auction_answer(*, user_info(*))")
     .eq("auction_id", auction_id)
     .order("created_at", { ascending: false })
     .returns<Auction_question[]>();
@@ -45,4 +45,14 @@ export const fetchUpdateQuestion = async (
   if (error) throw error;
 
   return data;
+};
+
+export const fetchPostAnswer = async (
+  answerData: Pick<Auction_answer, "user_id" | "auction_question_id" | "answer">
+) => {
+  const { error } = await connectSupabase
+    .from("auction_answer")
+    .insert(answerData)
+    .select();
+  if (error) throw error;
 };

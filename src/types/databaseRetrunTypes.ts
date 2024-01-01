@@ -76,6 +76,7 @@ export interface Auction_question {
   auction_id: string /* foreign key to auction_post.auction_id */;
   user_info?: User_info;
   auction_post?: Auction_post;
+  auction_answer?: Auction_answer[];
 }
 
 export interface Auction_like {
