@@ -1,4 +1,5 @@
 import React from "react";
+import { styled } from "styled-components";
 
 interface Props {
   textState: string;
@@ -9,12 +10,15 @@ interface Props {
 }
 const QnaTextArea = ({ textState, textHandler, forwardRef }: Props) => {
   return (
-    <textarea
+    <StTextarea
       value={textState}
       onChange={textHandler}
       ref={forwardRef}
-    ></textarea>
+    ></StTextarea>
   );
 };
 
+const StTextarea = styled.textarea`
+  resize: none;
+`;
 export default QnaTextArea;

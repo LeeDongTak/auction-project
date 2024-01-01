@@ -13,19 +13,26 @@ import PostItem from "./PostItem/PostItem";
 interface PostListProps {
   title: string;
   userId: string;
+  userAllPostsLength?: number;
 }
 
-const PostList = ({ title, userId }: PostListProps) => {
+const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
   const [limit, setLimit] = useState<number>(5);
 
+  console.log(userAllPostsLength);
+
   const queryOption: Auction_option = {
-    // user_id: userId,
+    user_id: userId,
     limit: pageSize + (page - 1) * pageSize,
-    offset: (page - 1) * pageSize,
+    offset:
+      (page - 1) * pageSize === 0
+        ? (page - 1) * pageSize
+        : (page - 1) * pageSize + 1,
   };
 
+  // 내 게시물
   const {
     data: posts,
     isLoading,
@@ -39,24 +46,6 @@ const PostList = ({ title, userId }: PostListProps) => {
     staleTime: 0,
     // keepPreviousData: true,
   });
-
-  //TODO: 무한 스크롤 구현
-  // 옵션 import 오류
-  // const {
-  //   fetchNextPage,
-  //   fetchPreviousPage,
-  //   hasNextPage,
-  //   hasPreviousPage,
-  //   isFetchingNextPage,
-  //   isFetchingPreviousPage,
-  //   ...result
-  // } = useInfiniteQuery({
-  //   queryKey: ["posts"],
-  //   queryFn: ({ pageParam = 1 }) =>
-  //     fetchGetAuctions({ ...queryOption, pageParam }),
-  //   getNextPageParam: (lastPage) => lastPage.nextCursor,
-  //   getPreviousPageParam: (firstPage) => firstPage.prevCursor,
-  // });
 
   const onClickPage = (selected: number) => {
     console.log(selected);
@@ -81,7 +70,7 @@ const PostList = ({ title, userId }: PostListProps) => {
           <Pagination
             current={page}
             pageSize={pageSize}
-            total={16}
+            total={userAllPostsLength}
             onChange={onClickPage}
           />
         </StPaginationSection>

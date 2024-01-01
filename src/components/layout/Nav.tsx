@@ -24,7 +24,7 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
       key: "0",
     },
     {
-      label: <StLink to="/addAuction">글 작성하기</StLink>,
+      label: <StLink to="/setAuction">글 작성하기</StLink>,
       key: "1",
     },
     {

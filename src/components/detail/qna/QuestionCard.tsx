@@ -1,18 +1,18 @@
-import { Auction_question } from "../../../types/databaseRetrunTypes";
+import React from "react";
 import { styled } from "styled-components";
 import { transDate } from "../../../common/dayjs";
-import React from "react";
+import { useQuestionAnswerContext } from "../../../context/AnswerContext";
 import { useCustomModal } from "../../../hooks/useCustomModal";
 import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import useIsUpdateState from "../../../hooks/useIsUpdateState";
+import useQuestionTanstackQuery from "../../../hooks/useQuestionTanstackQuery";
+import { Auction_question } from "../../../types/databaseRetrunTypes";
 import ProfileAvatar from "../../common/Avatar";
 import QnaButtonGroup from "./QnaButtonGroup";
 import QnaTextArea from "./QnaTextArea";
-import { useQuestionAnswerContext } from "../../../context/AnswerContext";
-import useQuestionTanstackQuery from "../../../hooks/useQuestionTanstackQuery";
-import QuestionAnswerWrapper from "./QuestionAnswerWrapper";
 import QuestionAnswerCard from "./QuestionAnswerCard";
+import QuestionAnswerWrapper from "./QuestionAnswerWrapper";
 
 interface Props {
   question: Auction_question;
@@ -21,7 +21,7 @@ interface Props {
 export type Event = React.MouseEvent<HTMLButtonElement>;
 
 const QuestionCard = ({ question, auctionUserId }: Props) => {
-  const { user: userData } = useGetAuthInfo();
+  const user = useGetAuthInfo();
   const { handleOpenCustomModal } = useCustomModal();
   const [isUpdate, onClickIsUpdateHandler, setIsUpdate] = useIsUpdateState();
   const [questionUpdateText, questionUpdateRef, questionUpdateHandler] =
@@ -71,7 +71,7 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
   };
 
   const onStQuestionCardWrapperClick = () => {
-    if (userData.id === auctionUserId) onClickAnswerOpenHandler();
+    if (user?.user.id === auctionUserId) onClickAnswerOpenHandler();
   };
 
   return (
@@ -79,7 +79,7 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
       <StQuestionCardWrapper
         $isAnswerOpen={isAnswerOpen}
         $isAnswerLength={question.auction_answer?.length === 0}
-        $isUser={userData.id === auctionUserId}
+        $isUser={user?.user.id === auctionUserId}
         onClick={onStQuestionCardWrapperClick}
       >
         <div>
@@ -108,7 +108,7 @@ const QuestionCard = ({ question, auctionUserId }: Props) => {
         <StCreateAt>
           <span>{transDate(question.created_at)}</span>
         </StCreateAt>
-        {userData.id === question.user_id && (
+        {user?.user.id === question.user_id && (
           <QnaButtonGroup
             isUpdateState={isUpdate}
             isUpdateStateHandler={onClickIsUpdateHandler}

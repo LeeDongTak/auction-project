@@ -1,8 +1,8 @@
 import { styled } from "styled-components";
+import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
+import { Spacer } from "../../ui/Spacer";
 import QuestionForm from "./QuestionForm";
 import QuestionList from "./QuestionList";
-import { Spacer } from "../../ui/Spacer";
-import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 
 interface Props {
   auctionId: string;
@@ -10,13 +10,13 @@ interface Props {
 }
 
 const Question = ({ auctionId, auctionUserId }: Props) => {
-  const { user: userData } = useGetAuthInfo();
+  const user = useGetAuthInfo();
   return (
     <StQuestionWrapper>
-      {userData.id !== auctionUserId && (
+      {user?.user.id !== auctionUserId && (
         <>
           <QuestionForm auctionId={auctionId} />
-          <Spacer y={40} />
+          <Spacer y={30} />
         </>
       )}
       <QuestionList auctionId={auctionId} auctionUserId={auctionUserId} />

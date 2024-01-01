@@ -60,6 +60,17 @@ export const fetchGetCategories = async () => {
   return data;
 };
 
+export const fetchGetCategoryById = async (category_id: string) => {
+  const { data, error } = await connectSupabase
+    .from("category")
+    .select("*")
+    .eq("category_id", category_id);
+
+  console.log(data);
+
+  return data;
+};
+
 /**
  * auction_id로 auction 데이터 호출
  * @param auction_id
@@ -79,6 +90,44 @@ export const fetchGetAuctionById = async (auction_id: string) => {
 
   return data;
 };
+
+/**
+ * auction_Ids로 auction 데이터 호출
+ * @param auction_Ids
+ */
+export const fetchGetAuctionsByIds = async ({
+  auction_Ids,
+  limit = 0,
+  offset = 0,
+  orderBy = "created_at",
+  order = false,
+}: {
+  auction_Ids: string[];
+  limit?: number;
+  offset?: number;
+  orderBy?: string;
+  order?: boolean;
+}) => {
+  const query = connectSupabase
+    .from("auction_post")
+    .select(
+      `
+      *, auction_images(image_id, image_path),
+      category(category_name)`
+    )
+    .in("auction_id", auction_Ids)
+    .order(`${orderBy}`, { ascending: order })
+    .returns<Auction_post[]>();
+
+  limit !== 0 && query.range(offset, limit);
+
+  const { data, error } = await query.returns<Promise<Auction_post[]>>();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const fetchPatchAuctionPost = async (
   auctionPost: Partial<Auction_post>
 ): Promise<number> => {

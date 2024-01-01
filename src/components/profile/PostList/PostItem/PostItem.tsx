@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { useAppDispatch } from "../../../../redux/config/configStore";
 import { Auction_post } from "../../../../types/databaseRetrunTypes";
 import Button from "../../../common/Button";
+
 interface PostItemProps {
   post: Auction_post;
   type?: string;
@@ -31,7 +32,7 @@ const PostItem = ({ post, type }: PostItemProps) => {
     category,
     category_id,
   } = post;
-  console.log(post);
+
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
   const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
   const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
@@ -46,7 +47,6 @@ const PostItem = ({ post, type }: PostItemProps) => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 500);
-    console.log(isLoading);
 
     return () => clearTimeout(timer);
   }, []);
@@ -55,7 +55,6 @@ const PostItem = ({ post, type }: PostItemProps) => {
     navigate(`/detail/${auction_id}`);
   };
 
-  console.log(auction_images?.length);
   const editHandler = () => {
     navigate(`/setAuction/${auction_id}`);
   };
