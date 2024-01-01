@@ -46,8 +46,6 @@ const addUser = async (payload: User_info) => {
 
   if (error) {
     console.error("사용자 등록 중 오류 발생!", error.message);
-  } else {
-    console.log("사용자 등록 성공", data);
   }
 };
 
@@ -57,8 +55,6 @@ const addSocialUser = async (payload: User_info): Promise<void> => {
 
   if (error) {
     console.error("사용자 등록 중 오류 발생!", error.message);
-  } else {
-    console.log("사용자 등록 성공", data);
   }
 };
 

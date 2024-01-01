@@ -13,17 +13,23 @@ import PostItem from "./PostItem/PostItem";
 interface PostListProps {
   title: string;
   userId: string;
+  userAllPostsLength?: number;
 }
 
-const PostList = ({ title, userId }: PostListProps) => {
+const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
   const [limit, setLimit] = useState<number>(5);
 
+  console.log(userAllPostsLength);
+
   const queryOption: Auction_option = {
-    // user_id: userId,
+    user_id: userId,
     limit: pageSize + (page - 1) * pageSize,
-    offset: (page - 1) * pageSize,
+    offset:
+      (page - 1) * pageSize === 0
+        ? (page - 1) * pageSize
+        : (page - 1) * pageSize + 1,
   };
 
   const {
@@ -81,7 +87,7 @@ const PostList = ({ title, userId }: PostListProps) => {
           <Pagination
             current={page}
             pageSize={pageSize}
-            total={16}
+            total={userAllPostsLength}
             onChange={onClickPage}
           />
         </StPaginationSection>

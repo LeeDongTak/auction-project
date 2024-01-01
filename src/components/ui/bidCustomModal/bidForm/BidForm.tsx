@@ -5,6 +5,7 @@ import { fetchPostAuctionBid } from "../../../../api/bid";
 import { formatAuctionStatusByButton } from "../../../../common/formatUtil";
 import { useCustomModal } from "../../../../hooks/useCustomModal";
 import { useCustomMutation } from "../../../../hooks/useCustomMutation";
+import useGetAuthInfo from "../../../../hooks/useGetAuthInfo";
 import { useAppDispatch } from "../../../../redux/config/configStore";
 import { selectorAuctionTimeStamp } from "../../../../redux/modules/auctionTimestampSlice";
 import {
@@ -14,7 +15,6 @@ import {
 import { AuctionStatus } from "../../../../types/detailTyps";
 import { Spacer } from "../../Spacer";
 import { BidCondition } from "../BidCustomModal";
-import useGetAuthInfo from "../../../../hooks/useGetAuthInfo";
 
 const BidForm = (props: {
   $isOver: any;
@@ -38,7 +38,7 @@ const BidForm = (props: {
   const dispatch = useAppDispatch();
   const { handleOpenCustomModal } = useCustomModal();
 
-  const { user: userData } = useGetAuthInfo();
+  const user = useGetAuthInfo();
 
   const { auctionOver } = useSelector(selectorAuctionTimeStamp);
   const postBidMutationOptions = {
@@ -80,7 +80,7 @@ const BidForm = (props: {
 
       const modalMessage = `₩ ${value}에 \n 입찰하시겠습니까?`;
       if (await handleOpenCustomModal(modalMessage, "confirm")) {
-        const user_id = userData.id;
+        const user_id = user?.user.id as string;
 
         if (auction_id) {
           const newBid = {
