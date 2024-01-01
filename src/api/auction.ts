@@ -60,6 +60,17 @@ export const fetchGetCategories = async () => {
   return data;
 };
 
+export const fetchGetCategoryById = async (category_id: string) => {
+  const { data, error } = await connectSupabase
+    .from("category")
+    .select("*")
+    .eq("category_id", category_id);
+
+  console.log(data);
+
+  return data;
+};
+
 /**
  * auction_id로 auction 데이터 호출
  * @param auction_id
@@ -80,6 +91,10 @@ export const fetchGetAuctionById = async (auction_id: string) => {
   return data;
 };
 
+/**
+ * auction_Ids로 auction 데이터 호출
+ * @param auction_Ids
+ */
 export const fetchGetAuctionsByIds = async ({
   auction_Ids,
   limit = 0,
