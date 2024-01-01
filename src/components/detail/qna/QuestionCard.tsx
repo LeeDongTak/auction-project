@@ -1,24 +1,27 @@
-import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import { Auction_question } from "../../../types/databaseRetrunTypes";
 import { styled } from "styled-components";
-import { fetchDeleteQuestion, fetchUpdateQuestion } from "../../../api/qna";
 import { transDate } from "../../../common/dayjs";
+import React from "react";
 import { useCustomModal } from "../../../hooks/useCustomModal";
-import { useCustomMutation } from "../../../hooks/useCustomMutation";
 import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import useIsUpdateState from "../../../hooks/useIsUpdateState";
-import { Auction_question } from "../../../types/databaseRetrunTypes";
 import ProfileAvatar from "../../common/Avatar";
 import QnaButtonGroup from "./QnaButtonGroup";
 import QnaTextArea from "./QnaTextArea";
+import { useQuestionAnswerContext } from "../../../context/AnswerContext";
+import useQuestionTanstackQuery from "../../../hooks/useQuestionTanstackQuery";
+import QuestionAnswerWrapper from "./QuestionAnswerWrapper";
+import QuestionAnswerCard from "./QuestionAnswerCard";
 
 interface Props {
   question: Auction_question;
+  auctionUserId: string;
 }
 export type Event = React.MouseEvent<HTMLButtonElement>;
 
-const QuestionCard = ({ question }: Props) => {
+
+const QuestionCard = ({ question, auctionUserId }: Props) => {
   const queryClient = useQueryClient();
   const user = useGetAuthInfo();
   const { handleOpenCustomModal } = useCustomModal();
@@ -26,29 +29,11 @@ const QuestionCard = ({ question }: Props) => {
   const [questionUpdateText, questionUpdateRef, questionUpdateHandler] =
     useFormInput<HTMLTextAreaElement>(question.question);
 
-  const questionDeleteMutationOptions = {
-    mutationFn: fetchDeleteQuestion,
-    onSuccess: async () => {
-      await handleOpenCustomModal("삭제 되었습니다.", "alert");
-      await queryClient.invalidateQueries({
-        queryKey: ["questions", question.auction_id],
-      });
-    },
-  };
-
-  const questionUpdateMutationOptions = {
-    mutationFn: fetchUpdateQuestion,
-    onSuccess: async () => {
-      await handleOpenCustomModal("수정 완료 되었습니다.", "alert");
-      await queryClient.invalidateQueries({
-        queryKey: ["questions", question.auction_id],
-      });
-      setIsUpdate(false);
-    },
-  };
-
-  const deleteMutate = useCustomMutation(questionDeleteMutationOptions);
-  const updateMutate = useCustomMutation(questionUpdateMutationOptions);
+  const { isAnswerOpen, onClickAnswerOpenHandler } = useQuestionAnswerContext();
+  const { deleteMutate, updateMutate } = useQuestionTanstackQuery(
+    question.auction_id,
+    setIsUpdate
+  );
 
   const onClickQuestionDeleteHandler = async (
     e: Event,
@@ -87,9 +72,18 @@ const QuestionCard = ({ question }: Props) => {
     }
   };
 
+  const onStQuestionCardWrapperClick = () => {
+    if (userData.id === auctionUserId) onClickAnswerOpenHandler();
+  };
+
   return (
     <>
-      <StQuestionCardWrapper>
+      <StQuestionCardWrapper
+        $isAnswerOpen={isAnswerOpen}
+        $isAnswerLength={question.auction_answer?.length === 0}
+        $isUser={userData.id === auctionUserId}
+        onClick={onStQuestionCardWrapperClick}
+      >
         <div>
           <ProfileAvatar
             size="4rem"
@@ -129,17 +123,38 @@ const QuestionCard = ({ question }: Props) => {
           />
         )}
       </StQuestionCardWrapper>
+      {question.auction_answer?.length !== 0 ? (
+        <QuestionAnswerCard
+          answerData={question.auction_answer?.[0]}
+          auctionId={question.auction_id}
+        />
+      ) : (
+        isAnswerOpen && (
+          <QuestionAnswerWrapper
+            auctionQuestionId={question.auction_question_id}
+            auctionId={question.auction_id}
+          />
+        )
+      )}
     </>
   );
 };
 
-const StQuestionCardWrapper = styled.article`
+const StQuestionCardWrapper = styled.article<{
+  $isAnswerOpen: boolean;
+  $isAnswerLength: boolean;
+  $isUser: boolean;
+}>`
   display: flex;
   gap: 10px;
   align-items: center;
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 5px 5px
+    ${({ $isAnswerOpen }) => ($isAnswerOpen ? "0 0" : "5px 5px")};
+
+  cursor: ${({ $isUser, $isAnswerLength }) =>
+    $isUser && $isAnswerLength ? "pointer" : "auto"};
   position: relative;
   &:hover {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
@@ -173,4 +188,4 @@ const StCreateAt = styled.div`
   align-self: flex-end;
 `;
 
-export default QuestionCard;
+export default React.memo(QuestionCard);

@@ -23,7 +23,6 @@ export async function fetchGetAuctions({
   user_id = "",
   // pageParam = 1,
 }: Auction_option) {
-  console.log(categories);
   const categoryIds = categories?.map((category) => {
     return category.category_id;
   });
@@ -49,7 +48,6 @@ export async function fetchGetAuctions({
   }
 
   const { data, error } = await query.returns<Promise<Auction_post[]>>();
-  console.log(data);
   if (error) throw new Error(error.message);
 
   return data;

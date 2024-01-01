@@ -113,4 +113,4 @@ const StQuestionContentWrapper = styled.div`
   }
 `;
 
-export default QuestionForm;
+export default React.memo(QuestionForm);
