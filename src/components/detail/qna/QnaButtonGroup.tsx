@@ -18,13 +18,21 @@ const QnaButtonGroup = ({
     <StButtonWrapper>
       {isUpdateState ? (
         <>
-          <StDeleteButton onClick={isUpdateStateHandler}>취소</StDeleteButton>
-          <StUpdateButton onClick={updateHandler}>완료</StUpdateButton>
+          <StDeleteButton onClick={isUpdateStateHandler}>
+            <span>취소</span>
+          </StDeleteButton>
+          <StUpdateButton onClick={updateHandler}>
+            <span>완료</span>
+          </StUpdateButton>
         </>
       ) : (
         <>
-          <StDeleteButton onClick={deleteHandler}>삭제</StDeleteButton>
-          <StUpdateButton onClick={isUpdateStateHandler}>수정</StUpdateButton>
+          <StDeleteButton onClick={deleteHandler}>
+            <span>삭제</span>
+          </StDeleteButton>
+          <StUpdateButton onClick={isUpdateStateHandler}>
+            <span>수정</span>
+          </StUpdateButton>
         </>
       )}
     </StButtonWrapper>
@@ -47,6 +55,12 @@ const StButtonWrapper = styled.div`
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 5px;
     transition: all 0.2s ease-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > span {
+      margin-top: 2px;
+    }
     &:hover {
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 
