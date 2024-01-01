@@ -1,15 +1,18 @@
-import { useQueries } from "@tanstack/react-query";
-import React from "react";
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
+import { fetchLikes, updateLike } from "../../api/likes";
 import { transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
 import end from "../../images/end.svg";
 import flag from "../../images/flag.svg";
 import placeholder from "../../images/placeholder.svg";
+import { supabase } from "../../supabase";
 import { Auction_post } from "../../types/databaseRetrunTypes";
+import LikeButton from "./LikeButton";
 interface AuctionListProps {
   auctions: Auction_post[] | null;
 }
@@ -27,6 +30,63 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
           ),
       })) || [],
   });
+
+  // 좋아요 상태 관리
+  const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
+  // 현재 로그인한 사용자의 정보를 가져오는 로직
+  const [userId, setUserId] = useState<string | null>(null);
+  // 좋아요를 했는지 안했는지 확인할수 있는 상태 관리
+  const [likedAuctions, setLikedAuctions] = useState<{
+    [key: string]: boolean;
+  }>({});
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserId(session?.user?.id || null);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // 좋아요 상태를 불러오는 쿼리
+  const likeQuery = useQuery({
+    queryKey: ["likes", userId],
+    queryFn: () => fetchLikes(userId!),
+    enabled: !!userId,
+  });
+  // 좋아요 업데이트를 위한 뮤테이션
+  const likeMutation = useMutation({
+    mutationFn: (data: { auctionId: string; userId: string }) =>
+      updateLike(data),
+  });
+  const handleLike = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    auctionId: string
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!userId) {
+      alert("로그인한 사용자만 찜 기능을 사용하실 수 있습니다");
+      return;
+    }
+
+    // 좋아요 상태 토글
+    const isLiked = !likes[auctionId];
+    setLikes({ ...likes, [auctionId]: isLiked });
+
+    // 서버에 좋아요 상태 업데이트 요청
+    likeMutation.mutate({ auctionId, userId });
+  };
+
+  useEffect(() => {
+    if (likeQuery.data) {
+      setLikes(likeQuery.data as { [key: string]: boolean });
+    }
+  }, [likeQuery.data]);
 
   return (
     <StListwrapper>
@@ -79,6 +139,10 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                   {auction.category && (
                     <h5>{auction.category.category_name}</h5>
                   )}
+                  <LikeButton
+                    isLiked={likes[auction.auction_id]}
+                    onLike={(e) => handleLike(e, auction.auction_id)}
+                  />
                 </StInfoContainer>
               </li>
             );
