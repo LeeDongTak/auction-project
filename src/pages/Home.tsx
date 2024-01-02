@@ -46,10 +46,12 @@ const Home = () => {
   }, [selectedCategories]);
 
   const { ref } = useInView({
-    threshold: 1,
+    threshold: 0,
     onChange: (inView) => {
+      console.log(!inView, !hasNextPage, isFetchingNextPage);
       if (!inView || !hasNextPage || isFetchingNextPage) return;
       fetchNextPage();
+      console.log("refetch");
     },
   });
 
@@ -97,8 +99,8 @@ const Home = () => {
           </button>
         </StSortButton>
         <AuctionList auctions={sortedAuctions} />
+        <div ref={ref} style={{ height: "20px" }}></div>
       </div>
-      <div ref={ref} style={{ height: "20px" }}></div>
     </>
   );
 };
