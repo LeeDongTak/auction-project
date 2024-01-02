@@ -24,6 +24,7 @@ export interface Category {
 }
 
 export interface Auction_post {
+  auction_like: any;
   auction_id: string /* primary key */;
   created_at: string;
   title: string;
