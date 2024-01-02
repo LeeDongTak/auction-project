@@ -72,7 +72,7 @@ const Detail = () => {
         >
           <Title title={"상품설명"} titleAlign={"flex-start"} />
           <Spacer y={10} />
-          <DetailContent auctionContent={data?.content} />
+          <DetailContent />
         </Skeleton>
       </DetailWrapper>
 

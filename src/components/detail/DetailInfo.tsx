@@ -17,7 +17,6 @@ const SPACER_LITERARY = 20;
 const DetailInfo = () => {
   const { auctionData } = useSelector(selectorAuctionSingleData);
   const { maxBid } = useSelector(selectorBidCustomModal);
-  // git commit -m '[refectoring] detail에서 상태관리 커스텀훅 분리 auction single data 전역상태관리';
   return (
     <StDetailInfoWrapper>
       <div>
