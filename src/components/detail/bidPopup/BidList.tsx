@@ -1,13 +1,13 @@
+import { Skeleton } from "antd";
+import React from "react";
+import { styled } from "styled-components";
 import { fetchGetAuctionBidList } from "../../../api/bid";
 import { useCustomQuery } from "../../../hooks/useCustomQuery";
 import { Bids } from "../../../types/databaseRetrunTypes";
-import React from "react";
-import { styled } from "styled-components";
-import { BidCard } from "./BidCard";
-import { Skeleton } from "antd";
-import { Spacer } from "../../ui/Spacer";
-import Title from "./Title";
 import { AuctionStatus } from "../../../types/detailTyps";
+import { Spacer } from "../../ui/Spacer";
+import { BidCard } from "./BidCard";
+import Title from "./Title";
 
 interface Props {
   auctionId: string;

@@ -34,10 +34,11 @@ export async function fetchGetAuctions({
     )
     .order(`${orderBy}`, { ascending: order });
 
-  searchKeyword?.trim() !== "" &&
+  if (searchKeyword?.trim() !== "") {
     query
-      .like("title", `%${searchKeyword}%`)
-      .like("content", `%${searchKeyword}%`);
+      .ilike("title", `%${searchKeyword}%`)
+      .ilike("content", `%${searchKeyword}%`);
+  }
 
   user_id?.trim() !== "" && query.eq("user_id", user_id);
 
