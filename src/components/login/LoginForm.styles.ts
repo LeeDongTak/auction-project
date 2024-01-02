@@ -96,6 +96,7 @@ const StError = styled.p`
   color: orange;
   padding: 0.5rem;
   font-size: 1.2rem;
+  margin-top: 0.5rem;
 `;
 
 export {

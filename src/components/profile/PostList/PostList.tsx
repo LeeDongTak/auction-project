@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "antd";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
+import { useCustomQuery } from "../../../hooks/useCustomQuery";
 import { QUERY_KEYS } from "../../../query/keys.constant";
 import {
   Auction_option,
@@ -36,20 +36,16 @@ const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
     offset: page === 1 ? 0 : (page - 1) * pageSize + 1,
   };
 
-  // 내 게시물
-  const {
-    data: posts,
-    isLoading,
-    isError,
-    error,
-    isFetching,
-  } = useQuery<Auction_post[]>({
+  const userPostsQueryOption = {
     queryKey: [QUERY_KEYS.POSTS, userId, page],
     queryFn: () => fetchGetAuctions(queryOption),
-    enabled: !!userId,
-    staleTime: 0,
-    // keepPreviousData: true,
-  });
+    queryOption: { enabled: !!userId, staleTime: 0 },
+  };
+
+  const [data, isLoading] =
+    useCustomQuery<Auction_post[]>(userPostsQueryOption);
+
+  const posts = data;
 
   const onClickPage = (selected: number) => {
     console.log(selected);
@@ -69,7 +65,6 @@ const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
             ))}
           </>
         )}
-        {/* <button onClick={() => setLimit((prev) => prev + 5)}>더보기</button> */}
         <StPaginationSection>
           <Pagination
             current={page}

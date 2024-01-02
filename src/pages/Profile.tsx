@@ -11,6 +11,7 @@ import ProfileMenu from "../components/profile/ProfileMenu/ProfileMenu";
 import EditProfile from "../components/profile/UserProfile/EditProfile/EditProfile";
 import UserProfile from "../components/profile/UserProfile/UserProfile";
 import WishList from "../components/profile/WishList/WishList";
+import { useCustomQuery } from "../hooks/useCustomQuery";
 import useGetAuthInfo from "../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../query/keys.constant";
 import { User_info } from "../types/databaseRetrunTypes";
@@ -24,7 +25,6 @@ const Profile = () => {
 
   const {
     data: currentUser,
-    isLoading,
     isError,
     error,
   } = useQuery({
@@ -35,11 +35,15 @@ const Profile = () => {
     select: (user) => user[0],
   });
 
-  const { data: allUserPosts } = useQuery({
+  const userPostsQueryOption = {
     queryKey: [QUERY_KEYS.POSTS, userId],
     queryFn: () => fetchGetAuctions({ user_id: userId }),
-    enabled: !!userId,
-  });
+    queryOptions: { enabled: !!userId },
+  };
+
+  const [data, isLoading] = useCustomQuery(userPostsQueryOption);
+
+  const allUserPosts = data;
 
   const userAllPostsLength = allUserPosts?.length as number;
 
@@ -48,6 +52,7 @@ const Profile = () => {
       <UserProfile
         user={currentUser as User_info}
         userAllPostsLength={userAllPostsLength}
+        isLoading={isLoading}
       />
       <StPostContainer>
         <StPostsWrapper>
