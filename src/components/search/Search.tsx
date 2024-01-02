@@ -1,21 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { styled } from "styled-components";
-import { fetchGetAuctions, fetchGetCategories } from "../../api/auction";
+import {
+  fetchGetAuctions,
+  fetchGetCategories,
+  fetchGetCategoryById,
+} from "../../api/auction";
 import { useCustomQuery } from "../../hooks/useCustomQuery";
 import useDebounce from "../../hooks/useDebounce";
+import useOnClickOutSide from "../../hooks/useOnClickOutSide";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useAppDispatch, useAppSelector } from "../../redux/config/configStore";
 import { toggleViewSearchModal } from "../../redux/modules/searchSlice";
-import { Auction_post } from "../../types/databaseRetrunTypes";
+import { Auction_post, Category } from "../../types/databaseRetrunTypes";
 import PostItem from "../profile/PostList/PostItem/PostItem";
 import { StModalBox, StModalContainer } from "./Search.styles";
 
 // TODO: 스타일 수정
 
 const Search = () => {
+  const modalRef = useRef<HTMLInputElement>(null);
+
   const dispatch = useAppDispatch();
+
   const { viewSearchModal } = useAppSelector((state) => state.search);
 
   const [inputText, setInputText] = useState("");
@@ -24,18 +32,10 @@ const Search = () => {
 
   const debounceSearchInput = useDebounce({ value: inputText, delay: 500 });
 
-  const queryOptions = {
-    queryKey: [QUERY_KEYS.POSTS, { searchKeyword: debounceSearchInput }],
-    queryFn: () => fetchGetAuctions({ searchKeyword: debounceSearchInput }),
-    queryOptions: { staleTime: 0, enabled: !!debounceSearchInput },
-  };
-
-  const [data, isLoading] = useCustomQuery<Auction_post[]>(queryOptions);
-
-  const { data: categories } = useQuery({
-    queryKey: [QUERY_KEYS.CATEGORY],
-    queryFn: fetchGetCategories,
-  });
+  useEffect(() => {
+    console.log(selectedCategory);
+    console.log(debounceSearchInput);
+  }, [selectedCategory, debounceSearchInput]);
 
   useEffect(() => {
     if (viewSearchModal) {
@@ -52,6 +52,40 @@ const Search = () => {
     }
   }, [viewSearchModal]);
 
+  // 전체 카테고리
+  const { data: categories } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORY],
+    queryFn: fetchGetCategories,
+  });
+
+  // 선택 카테고리
+  const { data: category } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORY, selectedCategory],
+    queryFn: () => fetchGetCategoryById(selectedCategory),
+    enabled: !!selectedCategory,
+  });
+
+  // 검색 결과 포스트 가져오기
+  const queryOptions = {
+    queryKey: [
+      "search",
+      { searchKeyword: debounceSearchInput, categories: category },
+    ],
+    queryFn: () =>
+      fetchGetAuctions({
+        searchKeyword: debounceSearchInput,
+        categories: category as Category[],
+      }),
+    queryOptions: {
+      staleTime: 0,
+      enabled: !!debounceSearchInput && !!category,
+    },
+  };
+
+  const [data, isLoading] = useCustomQuery<Auction_post[]>(queryOptions);
+
+  // console.log("검색 결과", data);
+
   useEffect(() => {
     console.log(selectedCategory);
   }, [selectedCategory]);
@@ -63,19 +97,22 @@ const Search = () => {
   const closeHandler = () => {
     dispatch(toggleViewSearchModal(false));
     setInputText("");
+    setSelectedCategory("");
   };
+
+  useOnClickOutSide({ ref: modalRef, handler: closeHandler });
 
   return (
     <>
       {viewSearchModal && (
         <StModalContainer>
-          <StModalBox>
-            <div>
+          <StModalBox ref={modalRef}>
+            <StSearchSection>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
-                <option value="all" selected>
+                <option value="" selected>
                   전체
                 </option>
                 {categories?.map((category) => (
@@ -100,16 +137,19 @@ const Search = () => {
                   <MdOutlineSearch />
                 </button>
               </StSearchForm>
-            </div>
+            </StSearchSection>
 
             <StSearchPostList>
               {inputText && (
                 <>
                   {(data?.length as number) > 0 ? (
                     <>
-                      {data?.map((post) => (
-                        <PostItem post={post} key={post?.auction_id} />
-                      ))}
+                      <h3>총 {data?.length}개의 검색 결과가 있습니다.</h3>
+                      <div>
+                        {data?.map((post) => (
+                          <PostItem post={post} key={post?.auction_id} />
+                        ))}
+                      </div>
                     </>
                   ) : (
                     <div>검색 결과가 존재하지 않습니다.</div>
@@ -117,13 +157,29 @@ const Search = () => {
                 </>
               )}
             </StSearchPostList>
-            <button onClick={closeHandler}>닫기</button>
           </StModalBox>
         </StModalContainer>
       )}
     </>
   );
 };
+
+const StSearchSection = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0 auto;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  > select {
+    width: 10rem;
+    height: 100%;
+    font-size: large;
+    padding: 1rem;
+  }
+`;
 
 const StSearchForm = styled.form`
   display: flex;
@@ -133,7 +189,6 @@ const StSearchForm = styled.form`
   align-items: center;
   font-size: x-large;
   padding: 1rem 0.5rem 1rem 2rem;
-  margin-bottom: 2rem;
   border: 1px solid var(--main-color);
   border-radius: 3rem;
 
@@ -156,8 +211,19 @@ const StSearchForm = styled.form`
 const StSearchPostList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
   color: #222;
+  padding-bottom: 5rem;
+
+  > h3 {
+    font-size: large;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 export default Search;

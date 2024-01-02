@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { styled } from "styled-components"
 import { fetchGetAuctionById } from "../api/auction"
@@ -23,6 +23,8 @@ function SetAuction() {
   const { auctionId } = useParams();
   const { isAlert, alertMsg } = useAppSelector((state) => state.setAuction)
   const dispatch = useAppDispatch()
+  const [updIsLoading, setUpdIsLoading] = useState(false)
+
   if (auctionId) {
     const queryOptions = {
       queryKey: ["getAuctionDataInUpdate"],
@@ -32,12 +34,12 @@ function SetAuction() {
     const [data, isLoading] = useCustomQuery<Auction_post>(queryOptions);
     useEffect(() => {
       if (auctionId) {
+        setUpdIsLoading(isLoading)
         const startDateState = dayjs(data?.auction_start_date).format("YYYY-MM-DD");
         const endDateState = dayjs(data?.auction_end_date).format("YYYY-MM-DD");
         const startTimeState = dayjs(data?.auction_start_date).format("HH:mm");
         const endTimeState = dayjs(data?.auction_end_date).format("HH:mm");
         if (!isLoading || data) {
-          console.log(data?.title)
           if (data?.auction_images) {
             data?.auction_images.forEach((imgPath) => {
               let img: string | undefined = imgPath?.image_path
@@ -92,7 +94,7 @@ function SetAuction() {
       <SetAuctionDate />
       <SetAuctionShippingType />
       <SetAuctionProductStatus />
-      <SetAuctionCategory />
+      <SetAuctionCategory UpdIsLoading={updIsLoading} />
       <SetAuctionButton />
     </StWrapper>
   </>
