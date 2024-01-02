@@ -87,7 +87,6 @@ function SetAuction() {
   if (auctionId) {
   }
   useEffect(() => {
-
     dispatch(resetState())
   }, [])
   return (<>
