@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
@@ -34,10 +35,18 @@ interface PostItemProps {
 
 const PostItem = ({ post, type }: PostItemProps) => {
   const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
+
+  const queryClient = new QueryClient();
+
   const [isLoading, setIsLoading] = useState(true);
 
+  //  좋아요 상태를 관리하는 state
+  const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
+
   const {
+    user_id,
     auction_id,
     title,
     content,
@@ -50,8 +59,11 @@ const PostItem = ({ post, type }: PostItemProps) => {
   } = post;
 
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
+
   const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
+
   const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
+
   const { mutate } = useDeleteAuctionMutation();
   const upperLimit = upper_limit
     .toString()
@@ -111,6 +123,14 @@ const PostItem = ({ post, type }: PostItemProps) => {
       return;
     }
   };
+
+  const removeWishPostHandler = () => {
+    console.log("click");
+    const isLiked = false;
+
+    console.log(auction_id);
+  };
+
   return (
     <StPostItemWrapper>
       {isLoading ? (
@@ -141,6 +161,14 @@ const PostItem = ({ post, type }: PostItemProps) => {
               <Button text="수정" onClickHandler={editHandler} />
               <Button text="삭제" onClickHandler={deleteHandler} />
             </StButtonSection>
+          )}
+          {type === "찜한 목록" && (
+            <StPostInfoSection>
+              <Button
+                text="찜한 목록 삭제"
+                onClickHandler={removeWishPostHandler}
+              />
+            </StPostInfoSection>
           )}
         </div>
       </Skeleton>

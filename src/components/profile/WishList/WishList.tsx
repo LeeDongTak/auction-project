@@ -24,6 +24,8 @@ const WishList = ({ title, userId }: PostListProps) => {
     enabled: !!userId,
   });
 
+  // user가 좋아요한 like_id 정보 가져오기
+
   const queryOption = {
     auction_Ids: auctionIds as string[],
     limit:
@@ -41,6 +43,7 @@ const WishList = ({ title, userId }: PostListProps) => {
   });
 
   // TODO: 찜한 목록에서 삭제 버튼 구현 (삭제 시 좋아요 취소)
+  // like id 가져오기
 
   const onClickPage = (selected: number) => {
     console.log(selected);

@@ -75,3 +75,15 @@ export async function updateLike({
     return data;
   }
 }
+
+// user가 좋아요한 like_id 가져오기
+
+// delete like
+export const deleteLikes = async (likeId: string) => {
+  const { error } = await connectSupabase
+    .from("auction_like")
+    .delete()
+    .eq("like_id", likeId);
+
+  if (error) throw new Error(error.message);
+};
