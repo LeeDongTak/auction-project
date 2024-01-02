@@ -31,9 +31,10 @@ import Button from "../../../common/Button";
 interface PostItemProps {
   post: Auction_post;
   type?: string;
+  likeDeleteHandler?: () => void;
 }
 
-const PostItem = ({ post, type }: PostItemProps) => {
+const PostItem = ({ post, type, likeDeleteHandler }: PostItemProps) => {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -124,13 +125,6 @@ const PostItem = ({ post, type }: PostItemProps) => {
     }
   };
 
-  const removeWishPostHandler = () => {
-    console.log("click");
-    const isLiked = false;
-
-    console.log(auction_id);
-  };
-
   return (
     <StPostItemWrapper>
       {isLoading ? (
@@ -166,7 +160,7 @@ const PostItem = ({ post, type }: PostItemProps) => {
             <StPostInfoSection>
               <Button
                 text="찜한 목록 삭제"
-                onClickHandler={removeWishPostHandler}
+                onClickHandler={likeDeleteHandler}
               />
             </StPostInfoSection>
           )}

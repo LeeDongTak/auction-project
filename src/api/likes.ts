@@ -30,17 +30,15 @@ export async function fetchLikes(userId: string) {
   return likes;
 }
 
-export async function getAuctionIdByLikes(userId: string) {
+export async function fetchLikesByUserId(userId: string) {
   const { data, error } = await connectSupabase
     .from("auction_like")
-    .select("auction_id")
+    .select("*")
     .eq("user_id", userId);
-
-  const auctionId = data?.map((item) => item.auction_id);
 
   if (error) throw new Error(error.message);
 
-  return auctionId;
+  return data;
 }
 
 // 좋아요 상태를 업데이트하는 함수
@@ -76,14 +74,15 @@ export async function updateLike({
   }
 }
 
-// user가 좋아요한 like_id 가져오기
-
 // delete like
-export const deleteLikes = async (likeId: string) => {
+export const deleteLikesById = async (likeId: string) => {
   const { error } = await connectSupabase
     .from("auction_like")
     .delete()
     .eq("like_id", likeId);
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
 };
