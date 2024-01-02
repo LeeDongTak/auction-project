@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
@@ -25,25 +26,6 @@ function AddAuctionBtn({ isParams }: { isParams: string }) {
   const navigate = useNavigate();
   const accessTokenJson: string | null = localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token")
   const accessToken = accessTokenJson && JSON.parse(accessTokenJson)
-
-  const newAuctionData: Insert_auction_post = {
-    title: auctionTitle,
-    auction_start_date: `${startDate} ${startTime}`,
-    auction_end_date: `${endDate} ${endTime}`,
-    product_status: auctionProductStatus,
-    shipping_type: auctionShippingType,
-    upper_limit: auctionUpperPrice,
-    lower_limit: auctionLowerPrice,
-    content: auctionContent,
-    auction_status: '0', // default상태는 0
-    user_id: accessToken.user.id,
-    category_id: categoryList
-  }
-  const addAuctionData: {
-    newAuctionData: Insert_auction_post;
-    imgFileList: File[];
-  } = { newAuctionData, imgFileList }
-
 
   const { mutate } = useAddAuctionMutation()
   const onclickAddAuctionHandler = () => {
@@ -110,6 +92,25 @@ function AddAuctionBtn({ isParams }: { isParams: string }) {
       );
       return false;
     } else {
+
+      const newAuctionData: Insert_auction_post = {
+        title: auctionTitle,
+        auction_start_date: `${startDate} ${startTime}`,
+        auction_end_date: `${endDate} ${endTime}`,
+        product_status: auctionProductStatus,
+        shipping_type: auctionShippingType,
+        upper_limit: auctionUpperPrice,
+        lower_limit: auctionLowerPrice,
+        content: auctionContent,
+        auction_status: dayjs().format("YYYY-MM-DD HH:mm") < `${startDate} ${startTime}` ? "0" : '1',
+        user_id: accessToken.user.id,
+        category_id: categoryList
+      }
+      const addAuctionData: {
+        newAuctionData: Insert_auction_post;
+        imgFileList: File[];
+      } = { newAuctionData, imgFileList }
+
       mutate(addAuctionData)
     }
   }
