@@ -2,22 +2,15 @@ import { styled } from "styled-components";
 import BidList from "./BidList";
 import React from "react";
 import CloseButton from "../../modalCloseButton/CloseButton";
-import { AuctionStatus } from "../../../types/detailTyps";
 
 interface Props {
-  auctionId: string;
   forwardHandler: (e: React.MouseEvent<HTMLElement>) => void;
-  auctionStatus: AuctionStatus;
 }
-const BidPopUpLayout = ({
-  auctionId,
-  forwardHandler,
-  auctionStatus,
-}: Props) => {
+const BidPopUpLayout = ({ forwardHandler }: Props) => {
   return (
     <StBidLayoutWrapper>
       <div>
-        <BidList auctionId={auctionId} auctionStatus={auctionStatus} />
+        <BidList />
         <CloseButton handler={forwardHandler} styleRight={5} />
       </div>
     </StBidLayoutWrapper>

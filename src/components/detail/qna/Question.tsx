@@ -3,23 +3,23 @@ import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import { Spacer } from "../../ui/Spacer";
 import QuestionForm from "./QuestionForm";
 import QuestionList from "./QuestionList";
+import { useSelector } from "react-redux";
+import { selectorAuctionSingleData } from "../../../redux/modules/auctionSingleDataSlice";
 
-interface Props {
-  auctionId: string;
-  auctionUserId: string;
-}
-
-const Question = ({ auctionId, auctionUserId }: Props) => {
+const Question = () => {
+  const {
+    auctionData: { user_id },
+  } = useSelector(selectorAuctionSingleData);
   const user = useGetAuthInfo();
   return (
     <StQuestionWrapper>
-      {user?.user.id !== auctionUserId && (
+      {user?.user.id !== user_id && (
         <>
-          <QuestionForm auctionId={auctionId} />
+          <QuestionForm />
           <Spacer y={30} />
         </>
       )}
-      <QuestionList auctionId={auctionId} auctionUserId={auctionUserId} />
+      <QuestionList />
     </StQuestionWrapper>
   );
 };

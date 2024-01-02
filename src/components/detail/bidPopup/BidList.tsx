@@ -5,19 +5,20 @@ import { fetchGetAuctionBidList } from "../../../api/bid";
 import { useCustomQuery } from "../../../hooks/useCustomQuery";
 import { Bids } from "../../../types/databaseRetrunTypes";
 import { AuctionStatus } from "../../../types/detailTyps";
+import { useSelector } from "react-redux";
+import { selectorAuctionSingleData } from "../../../redux/modules/auctionSingleDataSlice";
 import { Spacer } from "../../ui/Spacer";
 import { BidCard } from "./BidCard";
 import Title from "./Title";
 
-interface Props {
-  auctionId: string;
-  auctionStatus: AuctionStatus;
-}
+const BidList = () => {
+  const {
+    auctionData: { auction_id, auction_status },
+  } = useSelector(selectorAuctionSingleData);
 
-const BidList = ({ auctionId, auctionStatus }: Props) => {
   const bidListQueryOptions = {
-    queryKey: ["getBidList", auctionId],
-    queryFn: () => fetchGetAuctionBidList(auctionId),
+    queryKey: ["getBidList", auction_id],
+    queryFn: () => fetchGetAuctionBidList(auction_id),
     queryOptions: { stableTime: Infinity },
   };
 
@@ -33,7 +34,9 @@ const BidList = ({ auctionId, auctionStatus }: Props) => {
       >
         <Title
           title={`${
-            auctionStatus === AuctionStatus.END ? "경매 종료" : "입찰 현황"
+            Number(auction_status) === AuctionStatus.END
+              ? "경매 종료"
+              : "입찰 현황"
           }`}
         />
       </Skeleton>

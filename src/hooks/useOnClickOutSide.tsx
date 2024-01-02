@@ -13,7 +13,6 @@ const useOnClickOutSide = ({ ref, handler }: Props) => {
       if (!ref.current || ref.current.contains(e.target as Node)) {
         return;
       }
-
       // 모달 밖 클릭 시
       handler();
     };
