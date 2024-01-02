@@ -17,6 +17,7 @@ const WishList = ({ title, userId }: PostListProps) => {
   const queryClient = new QueryClient();
 
   const [page, setPage] = useState<number>(1);
+
   const [pageSize, setPageSize] = useState<number>(4);
 
   // 좋아요한 auction id 배열 가져오기

@@ -1,6 +1,6 @@
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { styled } from "styled-components";
 import { User_info } from "../../../types/databaseRetrunTypes";
 import ProfileAvatar from "../../common/Avatar";
@@ -10,22 +10,17 @@ type AvatarShapeType = "circle" | "square";
 interface ProfileProps {
   user: User_info;
   userAllPostsLength: number;
+  isLoading: boolean;
 }
 
-const UserProfile: React.FC<ProfileProps> = ({ user, userAllPostsLength }) => {
-  const [isLoading, setIsLoading] = useState(true);
-
+const UserProfile: React.FC<ProfileProps> = ({
+  user,
+  userAllPostsLength,
+  isLoading,
+}) => {
   const [avatarShape, setAvatarShape] = useState<AvatarShapeType>("circle");
 
-  const createAt = dayjs(user?.created_at).format("YY-MM-DD");
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const createAt = dayjs(user?.created_at).format("YYYY-MM-DD");
 
   return (
     <StProfileContainer>
@@ -81,7 +76,11 @@ const StInfoBox = styled.div`
     display: flex;
     gap: 1.5rem;
     margin: 1.5rem 0;
-    color: #777;
+    color: #888;
+
+    span {
+      font-size: large;
+    }
   }
 `;
 
