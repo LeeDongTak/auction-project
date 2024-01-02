@@ -84,8 +84,6 @@ const Search = () => {
 
   const [data, isLoading] = useCustomQuery<Auction_post[]>(queryOptions);
 
-  // console.log("검색 결과", data);
-
   useEffect(() => {
     console.log(selectedCategory);
   }, [selectedCategory]);
@@ -103,64 +101,57 @@ const Search = () => {
   useOnClickOutSide({ ref: modalRef, handler: closeHandler });
 
   return (
-    <>
-      {viewSearchModal && (
-        <StModalContainer>
-          <StModalBox ref={modalRef}>
-            <StSearchSection>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="" selected>
-                  전체
-                </option>
-                {categories?.map((category) => (
-                  <option
-                    key={category.category_id}
-                    value={category.category_id}
-                  >
-                    {category.category_name}
-                  </option>
-                ))}
-              </select>
+    <StModalContainer>
+      <StModalBox ref={modalRef}>
+        <StSearchSection>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="" selected>
+              전체
+            </option>
+            {categories?.map((category) => (
+              <option key={category.category_id} value={category.category_id}>
+                {category.category_name}
+              </option>
+            ))}
+          </select>
 
-              <StSearchForm onSubmit={searchHandler}>
-                <input
-                  type="text"
-                  placeholder="search"
-                  autoFocus
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                />
-                <button type="submit">
-                  <MdOutlineSearch />
-                </button>
-              </StSearchForm>
-            </StSearchSection>
+          <StSearchForm onSubmit={searchHandler}>
+            <input
+              type="text"
+              placeholder="search"
+              autoFocus
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+            />
+            <button type="submit">
+              <MdOutlineSearch />
+            </button>
+          </StSearchForm>
+        </StSearchSection>
 
-            <StSearchPostList>
-              {inputText && (
+        <StSearchPostList>
+          {inputText && (
+            <>
+              {(data?.length as number) > 0 ? (
                 <>
-                  {(data?.length as number) > 0 ? (
-                    <>
-                      <h3>총 {data?.length}개의 검색 결과가 있습니다.</h3>
-                      <div>
-                        {data?.map((post) => (
-                          <PostItem post={post} key={post?.auction_id} />
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div>검색 결과가 존재하지 않습니다.</div>
-                  )}
+                  <h3>총 {data?.length}개의 검색 결과가 있습니다.</h3>
+                  <div>
+                    {data?.map((post) => (
+                      <PostItem post={post} key={post?.auction_id} />
+                    ))}
+                  </div>
                 </>
+              ) : (
+                <p>검색 결과가 없습니다.</p>
               )}
-            </StSearchPostList>
-          </StModalBox>
-        </StModalContainer>
-      )}
-    </>
+            </>
+          )}
+        </StSearchPostList>
+      </StModalBox>
+    </StModalContainer>
   );
 };
 
@@ -174,7 +165,7 @@ const StSearchSection = styled.section`
   margin-bottom: 2rem;
 
   > select {
-    width: 10rem;
+    width: 13rem;
     height: 100%;
     font-size: large;
     padding: 1rem;
@@ -213,7 +204,7 @@ const StSearchPostList = styled.ul`
   flex-direction: column;
   gap: 2rem;
   color: #222;
-  padding-bottom: 5rem;
+  padding-bottom: 8rem;
 
   > h3 {
     font-size: large;
@@ -223,6 +214,12 @@ const StSearchPostList = styled.ul`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  > p {
+    text-align: center;
+    font-size: x-large;
+    padding: 3rem 1rem;
   }
 `;
 
