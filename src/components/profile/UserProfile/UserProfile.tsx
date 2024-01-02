@@ -9,9 +9,10 @@ type AvatarShapeType = "circle" | "square";
 
 interface ProfileProps {
   user: User_info;
+  userAllPostsLength: number;
 }
 
-const UserProfile: React.FC<ProfileProps> = ({ user }) => {
+const UserProfile: React.FC<ProfileProps> = ({ user, userAllPostsLength }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [avatarShape, setAvatarShape] = useState<AvatarShapeType>("circle");
@@ -25,14 +26,6 @@ const UserProfile: React.FC<ProfileProps> = ({ user }) => {
 
     return () => clearTimeout(timer);
   }, []);
-
-  // if (isLoading)
-  //   return (
-  //     <StSkeleton>
-  //       <Skeleton.Avatar active shape={avatarShape} size={120} />
-  //       <Skeleton active paragraph={{ rows: 2 }} />
-  //     </StSkeleton>
-  //   );
 
   return (
     <StProfileContainer>
@@ -50,7 +43,8 @@ const UserProfile: React.FC<ProfileProps> = ({ user }) => {
           <StInfoBox>
             <h3>{user?.nickname || "new user"}</h3>
             <p>
-              <span>가입일: {createAt}</span> <span>작성글 수: 00</span>
+              <span>가입일: {createAt}</span>{" "}
+              <span>작성글 수: {userAllPostsLength}</span>
             </p>
           </StInfoBox>
         </Skeleton>
