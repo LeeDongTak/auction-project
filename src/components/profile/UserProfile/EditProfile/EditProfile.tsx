@@ -1,8 +1,9 @@
 import { UserOutlined } from "@ant-design/icons";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { Avatar } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
+import { getUserInfo } from "../../../../api/auth";
 import { useCustomModal } from "../../../../hooks/useCustomModal";
 import { QUERY_KEYS } from "../../../../query/keys.constant";
 import { useUserUpdateMutation } from "../../../../query/useUsersQuery";
@@ -27,7 +28,18 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
 
   const queryClient = new QueryClient();
 
-  const { mutate: updateMutate } = useUserUpdateMutation();
+  const { mutate: updateMutate, data: updateData } = useUserUpdateMutation();
+
+  const { data, refetch } = useQuery({
+    queryKey: [QUERY_KEYS.USER, userId],
+    queryFn: () => getUserInfo(userId),
+  });
+
+  const handleRefetch = async () => {
+    await refetch();
+  };
+
+  console.log("updateData", updateData);
 
   // 수정사항 저장
   const submitHandler = async () => {
@@ -49,10 +61,14 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
     };
 
     updateMutate(updateProfile, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        console.log("onSuccess", data);
+
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.USER, userId],
         });
+
+        handleRefetch();
       },
     });
 

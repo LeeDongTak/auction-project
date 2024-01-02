@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { getUserInfo, getUsersInfo } from "../../api/auth";
+import { getUserInfo } from "../../api/auth";
 import { useCustomModal } from "../../hooks/useCustomModal";
 import useGetAuthInfo from "../../hooks/useGetAuthInfo";
 import { QUERY_KEYS } from "../../query/keys.constant";
@@ -42,11 +42,6 @@ function Header() {
   const socialData = user?.user?.user_metadata;
 
   const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
-
-  const { data: allUser } = useQuery({
-    queryKey: [QUERY_KEYS.USERS],
-    queryFn: getUsersInfo,
-  });
 
   const { data: currentUser, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER, userId],
