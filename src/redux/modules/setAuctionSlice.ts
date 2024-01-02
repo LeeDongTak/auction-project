@@ -59,11 +59,6 @@ const setAuctionSlice = createSlice({
       state.isAlert = action.payload.isAlert;
       state.alertMsg = action.payload.ErrorMsg;
     },
-    // 수정전에 이미지state초기화
-    resetImageList: (state) => {
-      state.imgFileList = [];
-      state.imgUrlList = [];
-    },
     // 이미지 file을 저장하는 reducer
     setImageFileList: (state, action: PayloadAction<File>) => {
       state.imgFileList?.push(action.payload);
@@ -165,12 +160,30 @@ const setAuctionSlice = createSlice({
     setAuctionExistingCategory: (state, action: PayloadAction<Category>) => {
       state.existingCategory = action.payload;
     },
+    // 수정전에 이미지state초기화
+    resetState: (state) => {
+      state.imgFileList = [];
+      state.imgUrlList = [];
+      state.auctionTitle = "";
+      state.auctionContent = "";
+      state.auctionLowerPrice = 0;
+      state.auctionUpperPrice = 0;
+      state.auctionShippingType = "";
+      state.auctionProductStatus = "";
+      state.endDate = moment(moment().format("YYYY-MM-DD"))
+        .add(7, "days")
+        .format("YYYY-MM-DD");
+      state.startDate = moment().format("YYYY-MM-DD");
+      state.startTime = "00:00";
+      state.endTime = "00:00";
+      state.categoryList = "";
+    },
   },
 });
 
 export const {
   setIsAlert,
-  resetImageList,
+  resetState,
   setImageFileList,
   setImageUrlList,
   setCloseImageFileList,

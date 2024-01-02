@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AddAuctionPost } from "../api/setAuction";
 import { useAppDispatch } from "../redux/config/configStore";
-import { setIsAlert } from "../redux/modules/setAuctionSlice";
+import { resetState, setIsAlert } from "../redux/modules/setAuctionSlice";
 import useDidMountEffect from "./useDidMountEffect";
 
 export const useAddAuctionMutation = () => {
@@ -20,6 +20,7 @@ export const useAddAuctionMutation = () => {
     dispatch(setIsAlert({ isAlert: isPending, ErrorMsg: "로딩중..." }));
     if (isPending === false) {
       navigate("/");
+      dispatch(resetState());
     }
   }, [isPending]);
 
