@@ -19,6 +19,7 @@ function SetAuctionPrice({ auction_status }: { auction_status?: string }) {
   // const upperPriceOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   dispatch(setAuctionUpperPrice(+e.target.value))
   // }
+  console.log(auction_status)
   return (
     <StPriceWrapper>
       {auction_status === "1" && auctionId && <PriceAndDateAlert alertType="price" />}
