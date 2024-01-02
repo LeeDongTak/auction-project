@@ -139,7 +139,7 @@ function Header() {
           </div>
         )}
       </StHeaderWrapper>
-      <Search />
+      {viewSearchModal && <Search />}
     </StHeaderContainer>
   );
 }
