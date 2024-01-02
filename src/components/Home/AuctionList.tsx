@@ -84,8 +84,6 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
     enabled: !!userId,
   });
 
-  console.log(likeQuery);
-
   // // 좋아요 데이터가 로드되었을 때 상태를 업데이트하는 useEffect
   // useEffect(() => {
   //   if (likeQuery.isSuccess && likeQuery.data) {

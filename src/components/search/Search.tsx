@@ -31,11 +31,6 @@ const Search = () => {
   const debounceSearchInput = useDebounce({ value: inputText, delay: 500 });
 
   useEffect(() => {
-    console.log(selectedCategory);
-    console.log(debounceSearchInput);
-  }, [selectedCategory, debounceSearchInput]);
-
-  useEffect(() => {
     if (viewSearchModal) {
       document.body.style.cssText = `
         position: fixed; 
