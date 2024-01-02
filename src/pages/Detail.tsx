@@ -5,10 +5,9 @@ import DetailContent from "../components/detail/DetailContent";
 import DetailInfo from "../components/detail/DetailInfo";
 import DetailTimeStamp from "../components/detail/DetailTimeStamp";
 import { Spacer } from "../components/ui/Spacer";
-import useAuctionStatus from "../hooks/useAuctionStatus";
 import placeholder from "../images/placeholder.svg";
 import { Skeleton } from "antd";
-import useDetailAuctionPost from "../hooks/useDetailAuctionPost";
+import useAuctionPostData from "../hooks/useAuctionPostData";
 import useSubscribeBidTable from "../hooks/useSubscribeBidTable";
 import BidPopUpLayout from "../components/detail/bidPopup/BidPopUpLayout";
 import useCloseButtonState from "../hooks/useCloseButtonState";
@@ -20,11 +19,10 @@ import Title from "../components/detail/bidPopup/Title";
 
 const Detail = () => {
   const { auctionId } = useParams();
-  const [data, isLoading] = useDetailAuctionPost(auctionId!);
-
+  const [data, isLoading] = useAuctionPostData(auctionId!);
   const [isPopupState, onClickHandler] = useCloseButtonState();
+  // auction 가격 갱신 구독
   useSubscribeBidTable(auctionId!);
-  useAuctionStatus(data);
 
   return (
     <StDetailWrapper>
@@ -49,7 +47,7 @@ const Detail = () => {
           paragraph={{ rows: 8 }}
           style={{ maxWidth: "300px", width: "100%", height: "100%" }}
         >
-          <DetailInfo auctionData={data} />
+          <DetailInfo />
         </Skeleton>
       </StDetailInfo>
       <Spacer y={40} />

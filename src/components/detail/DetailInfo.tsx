@@ -5,22 +5,19 @@ import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import { Auction_post } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
 import { useSelector } from "react-redux";
 import { selectorBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
-
-type Props = {
-  auctionData: Auction_post | undefined;
-};
+import { selectorAuctionSingleData } from "../../redux/modules/auctionSingleDataSlice";
 
 const SPACER_HEIGHT = 10;
 const SPACER_LITERARY = 20;
-const DetailInfo = ({ auctionData }: Props) => {
+const DetailInfo = () => {
+  const { auctionData } = useSelector(selectorAuctionSingleData);
   const { maxBid } = useSelector(selectorBidCustomModal);
-
+  // git commit -m '[refectoring] detail에서 상태관리 커스텀훅 분리 auction single data 전역상태관리';
   return (
     <StDetailInfoWrapper>
       <div>
