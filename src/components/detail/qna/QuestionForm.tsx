@@ -17,8 +17,10 @@ const QuestionForm = () => {
   } = useSelector(selectorAuctionSingleData);
 
   const queryClient = useQueryClient();
+
   const [questionText, questionTextRef, questionTextHandler, questionSetText] =
     useFormInput<HTMLTextAreaElement>();
+
   const { handleOpenCustomModal } = useCustomModal();
   const user = useGetAuthInfo();
 
