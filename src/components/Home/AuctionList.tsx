@@ -181,13 +181,13 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
 
             switch (auctionStatus) {
               case AuctionStatus.READY:
-                auctionStatusText = "경매 전";
+                auctionStatusText = "[ 경매 전 ]";
                 break;
               case AuctionStatus.START:
-                auctionStatusText = "진행중";
+                auctionStatusText = "[ 진행중 ]";
                 break;
               case AuctionStatus.END:
-                auctionStatusText = "종료";
+                auctionStatusText = "[ 종료 ]";
                 break;
               default:
                 auctionStatusText = "경매 상태 알수없음";
@@ -197,29 +197,31 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                 key={auction.auction_id}
                 onClick={() => navigate(`/detail/${auction.auction_id}`)}
               >
-                <span>
-                  <img
-                    src={
-                      auction.auction_images &&
-                      auction.auction_images.length > 0
-                        ? auction.auction_images[0].image_path
-                        : placeholder
-                    }
-                    alt="Auction"
-                  />{" "}
-                  <LikeButton
-                    isLiked={likes[auction.auction_id]}
-                    onLike={(e) =>
-                      LikeButtonClickHandler(e, auction.auction_id)
-                    }
-                  />
-                </span>
+                <StStatusImageWrapper>
+                  <h3>{auctionStatusText}</h3>
+                  <span>
+                    <img
+                      src={
+                        auction.auction_images &&
+                        auction.auction_images.length > 0
+                          ? auction.auction_images[0].image_path
+                          : placeholder
+                      }
+                      alt="Auction"
+                    />
+                    <LikeButton
+                      isLiked={likes[auction.auction_id]}
+                      onLike={(e) =>
+                        LikeButtonClickHandler(e, auction.auction_id)
+                      }
+                    />
+                  </span>
+                </StStatusImageWrapper>
                 <StInfoContainer>
                   <h6>
                     <img src={clock} alt="Clock" />
                     {transDate(auction.created_at)}
                   </h6>
-
                   <h1>{auction.title}</h1>
                   <p>{auction.content}</p>
                   <div>
@@ -240,8 +242,8 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                       <img src={heart} />
                       &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
                     </h3>
-                    <h3>&nbsp; | &nbsp; {auctionStatusText}</h3>
                   </div>
+
                   <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
                   {auction.category && (
                     <h5>{auction.category.category_name}</h5>
@@ -331,22 +333,6 @@ const StListwrapper = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      span {
-        overflow: hidden;
-        width: 150px;
-        height: 150px;
-        position: relative;
-        border: 2px solid #eee;
-
-        border-radius: 10px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: scale-down;
-          vertical-align: middle;
-          margin: auto;
-        }
-      }
     }
   }
 `;
@@ -370,4 +356,36 @@ const StInfoContainer = styled.div`
       vertical-align: middle;
     }
   }
+`;
+
+const StStatusImageWrapper = styled.div`
+  h3 {
+    text-align: center;
+    color: #023e7d;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  span {
+    overflow: hidden;
+    width: 150px;
+    display: block;
+    height: 150px;
+
+    position: relative;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      vertical-align: middle;
+      margin: auto;
+    }
+  }
+`;
+
+const StStatus = styled.h3`
+  text-align: right;
+  color: #023e7d;
+  font-weight: 600;
 `;
