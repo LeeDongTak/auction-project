@@ -97,7 +97,7 @@ export async function fetchGetInfinityAuctions({
   const query = connectSupabase
     .from("auction_post")
     .select(
-      "*, category(category_name), user_info(user_email),auction_images(image_id, image_path)"
+      "*, category(category_name), user_info(user_email), auction_images(image_id, image_path), auction_like ( like_id, user_id, auction_id, created_at )"
     )
     .order(`${orderBy}`, { ascending: order })
     .range(pageParam!, pageParam! + limit);
