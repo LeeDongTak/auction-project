@@ -17,8 +17,6 @@ import { Auction_post, Category } from "../../types/databaseRetrunTypes";
 import PostItem from "../profile/PostList/PostItem/PostItem";
 import { StModalBox, StModalContainer } from "./Search.styles";
 
-// TODO: 스타일 수정
-
 const Search = () => {
   const modalRef = useRef<HTMLInputElement>(null);
 
