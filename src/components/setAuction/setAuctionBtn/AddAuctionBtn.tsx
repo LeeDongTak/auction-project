@@ -76,20 +76,22 @@ function AddAuctionBtn({ isParams }: { isParams: string }) {
         })
       );
       return false;
-    } else if (auctionUpperPrice === 0) {
-      dispatch(
-        setIsAlert({ isAlert: true, ErrorMsg: "최대금액을 입력해 주세요" })
-      );
-      return false;
-    } else if (auctionLowerPrice > auctionUpperPrice) {
-      dispatch(
-        setIsAlert({
-          isAlert: true,
-          ErrorMsg: "최소금액은 최대금액보다 작아야 합니다",
-        })
-      );
-      return false;
-    } else if (isNaN(auctionLowerPrice) || isNaN(auctionUpperPrice)) {
+    }
+    //  else if (auctionUpperPrice === 0) {
+    //   dispatch(
+    //     setIsAlert({ isAlert: true, ErrorMsg: "최대금액을 입력해 주세요" })
+    //   );
+    //   return false;
+    // } else if (auctionLowerPrice > auctionUpperPrice) {
+    //   dispatch(
+    //     setIsAlert({
+    //       isAlert: true,
+    //       ErrorMsg: "최소금액은 최대금액보다 작아야 합니다",
+    //     })
+    //   );
+    //   return false;
+    // }
+    else if (isNaN(auctionLowerPrice) || isNaN(auctionUpperPrice)) {
       dispatch(setIsAlert({ isAlert: true, ErrorMsg: "숫자만 입력해 주세요" }));
       return false;
     } else if (auctionShippingType === "") {

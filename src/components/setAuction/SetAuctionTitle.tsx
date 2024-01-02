@@ -32,7 +32,7 @@ const StAuctionTitleTitle = styled.div`
 `
 
 const StActionTitleInput = styled.input`
-  width: 97.1%;
+  width: 100%;
   font-size: 2.2em;
   padding: 0.8em;
   border: 0;

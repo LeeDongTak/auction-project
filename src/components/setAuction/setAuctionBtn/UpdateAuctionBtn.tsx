@@ -1,28 +1,18 @@
 import _ from "lodash";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { fetchGetAuctionById } from "../../../api/auction";
-import { useCustomQuery } from "../../../hooks/useCustomQuery";
 import { useUpdateAuctionMutation } from "../../../hooks/useUpdateAuctionMutation";
 import { useAppDispatch, useAppSelector } from "../../../redux/config/configStore";
 import { setIsAlert } from "../../../redux/modules/setAuctionSlice";
-import { Auction_images, Auction_post, Update_auction_post } from "../../../types/databaseRetrunTypes";
+import { Auction_images, Auction_post, Bids, Update_auction_post } from "../../../types/databaseRetrunTypes";
 
-function UpdateAuctionBtn({ isParams }: { isParams: string }) {
+function UpdateAuctionBtn({ isParams, data, bidsData }: { isParams: string, data?: Auction_post, bidsData?: Bids }) {
   const id = useParams();
   const [auctionId, setAuctionId] = useState(id.auctionId)
   if (auctionId) {
-    const queryOptions = {
-      queryKey: ["getAuctionDataInUpdate"],
-      queryFn: () => fetchGetAuctionById(auctionId),
-      queryOptions: { staleTime: Infinity },
-    };
-    const [data, isLoading] = useCustomQuery<Auction_post>(queryOptions);
-
-    const [imageData, setImageData] = useState([])
     const {
       imgFileList,
       imgUrlList,
@@ -41,6 +31,14 @@ function UpdateAuctionBtn({ isParams }: { isParams: string }) {
     } = useAppSelector((state) => state.setAuction);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [bidPrice, setBidPrice] = useState(0)
+
+    useEffect(() => {
+      if (bidsData) {
+        setBidPrice(bidsData?.bid_price)
+      }
+    }, [bidsData])
+
     const accessTokenJson: string | null = localStorage.getItem("sb-fzdzmgqtadcebrhlgljh-auth-token")
     const accessToken = accessTokenJson && JSON.parse(accessTokenJson)
     const existImgImgPath: string[] = [];
@@ -79,7 +77,7 @@ function UpdateAuctionBtn({ isParams }: { isParams: string }) {
         && data?.content === auctionContent
         && moment(data?.auction_start_date).format("YYYY-MM-DD-HH:mm") === startDate + "-" + startTime
         && moment(data?.auction_end_date).format("YYYY-MM-DD-HH:mm") === endDate + "-" + endTime
-        && data?.upper_limit === +auctionUpperPrice
+        // && data?.upper_limit === +auctionUpperPrice
         && data?.lower_limit === +auctionLowerPrice
         && data?.shipping_type === auctionShippingType
         && data?.product_status === auctionProductStatus
@@ -117,20 +115,39 @@ function UpdateAuctionBtn({ isParams }: { isParams: string }) {
           })
         );
         return false;
-      } else if (auctionUpperPrice === 0) {
+      } else if (data?.lower_limit !== +auctionLowerPrice) {
         dispatch(
-          setIsAlert({ isAlert: true, ErrorMsg: "최대금액을 입력해 주세요" })
+          setIsAlert({ isAlert: true, ErrorMsg: "경매진행 중 가격을 변경할 수 없습니다" })
         );
         return false;
-      } else if (auctionLowerPrice > auctionUpperPrice) {
+      } else if (
+        moment(data?.auction_start_date).format("YYYY-MM-DD-HH:mm") !== startDate + "-" + startTime) {
         dispatch(
-          setIsAlert({
-            isAlert: true,
-            ErrorMsg: "최소금액은 최대금액보다 작아야 합니다",
-          })
+          setIsAlert({ isAlert: true, ErrorMsg: "경매진행 중 시작날짜를 변경할 수 없습니다" })
         );
         return false;
-      } else if (isNaN(auctionLowerPrice) || isNaN(auctionUpperPrice)) {
+      }
+      //  else if (bidPrice < auctionLowerPrice) {
+      //   dispatch(
+      //     setIsAlert({ isAlert: true, ErrorMsg: "최소 입찰가격은 현재 입찰금액보다 낮을 수 없습니다 " })
+      //   );
+      //   return false;
+      // }
+      // else if (auctionUpperPrice === 0) {
+      //   dispatch(
+      //     setIsAlert({ isAlert: true, ErrorMsg: "최대금액을 입력해 주세요" })
+      //   );
+      //   return false;
+      // } else if (auctionLowerPrice > auctionUpperPrice) {
+      //   dispatch(
+      //     setIsAlert({
+      //       isAlert: true,
+      //       ErrorMsg: "최소금액은 최대금액보다 작아야 합니다",
+      //     })
+      //   );
+      //   return false;
+      // }
+      else if (isNaN(auctionLowerPrice) || isNaN(auctionUpperPrice)) {
         dispatch(setIsAlert({ isAlert: true, ErrorMsg: "숫자만 입력해 주세요" }));
         return false;
       } else if (auctionShippingType === "") {

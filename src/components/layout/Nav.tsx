@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Dropdown, MenuProps, Spin } from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../api/auth";
 import { QUERY_KEYS } from "../../query/keys.constant";
+import { resetState } from "../../redux/modules/setAuctionSlice";
 import ProfileAvatar from "../common/Avatar";
 
 interface Props {
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const Nav: React.FC<Props> = ({ signOut, userId }) => {
+  const dispatch = useDispatch();
   const { data: user, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId as string),
@@ -24,7 +27,11 @@ const Nav: React.FC<Props> = ({ signOut, userId }) => {
       key: "0",
     },
     {
-      label: <StLink to="/setAuction">글 작성하기</StLink>,
+      label: <StLink to="/setAuction"
+        onClick={() => {
+          dispatch(resetState())
+        }}
+      >글 작성하기</StLink>,
       key: "1",
     },
     {
