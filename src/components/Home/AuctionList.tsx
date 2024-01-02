@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
 import { fetchLikes, fetchLikesCount, updateLike } from "../../api/likes";
-import { transDate } from "../../common/dayjs";
+import { calculateAuctionStatusAndTime, transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
 import end from "../../images/end.svg";
@@ -18,7 +18,9 @@ import placeholder from "../../images/placeholder.svg";
 import heart from "../../images/thin_heart.svg";
 import { supabase } from "../../supabase";
 import { Auction_post } from "../../types/databaseRetrunTypes";
+import { AuctionStatus } from "../../types/detailTyps";
 import LikeButton from "./LikeButton";
+// 경매 리스트 컴포넌트에 대한 props 타입 정의
 interface AuctionListProps {
   auctions: Auction_post[] | null;
 }
@@ -26,6 +28,8 @@ interface AuctionListProps {
 const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const navigate = useNavigate();
   const [likesCount, setLikesCount] = useState<{ [key: string]: number }>({});
+
+  // 각 경매에 대한 최대 입찰가를 가져오기 위한 쿼리
   const bidsQueries = useQueries({
     queries:
       auctions?.map((auction) => ({
@@ -37,42 +41,57 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
       })) || [],
   });
 
-  // 좋아요 상태 관리
+  //  좋아요 상태를 관리하는 state
   const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
-  // 현재 로그인한 사용자의 정보를 가져오는 로직
+  // 현재 로그인한 사용자의 ID를 저장하는 state
   const [userId, setUserId] = useState<string | null>(null);
-  // 좋아요를 했는지 안했는지 확인할수 있는 상태 관리
-  const [likedAuctions, setLikedAuctions] = useState<{
-    [key: string]: boolean;
-  }>({});
+
+  // 각 경매의 상태(경매 전, 진행중, 종료)를 관리하는 state
+  const [auctionStatuses, setAuctionStatuses] = useState<
+    Record<string, AuctionStatus>
+  >({});
+
+  // 경매 상태를 계산하고 상태를 업데이트하는 useEffect
+  useEffect(() => {
+    const newStatuses: Record<string, AuctionStatus> = {};
+    auctions?.forEach((auction) => {
+      const { auctionOver } = calculateAuctionStatusAndTime(
+        auction.auction_start_date,
+        auction.auction_end_date
+      );
+      newStatuses[auction.auction_id] = auctionOver;
+    });
+    setAuctionStatuses(newStatuses);
+  }, [auctions]);
+
+  // 사용자 로그인 상태 변경 시 userId 업데이트
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUserId(session?.user?.id || null);
       }
     );
-
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
 
-  // 좋아요 상태를 불러오는 쿼리
+  // 사용자의 좋아요 상태를 불러오는 쿼리
   const likeQuery = useQuery({
     queryKey: ["likes", userId],
     queryFn: () => fetchLikes(userId!),
     enabled: !!userId,
   });
 
-  // 좋아요 상태 업데이트 useEffect
+  // 좋아요 데이터가 로드되었을 때 상태를 업데이트하는 useEffect
   useEffect(() => {
     if (likeQuery.isSuccess && likeQuery.data) {
-      // 타입 체크 또는 타입 캐스팅을 통해 오류 해결
       setLikes(likeQuery.data as { [key: string]: boolean });
     }
   }, [likeQuery.isSuccess, likeQuery.data]);
 
-  // 좋아요 업데이트를 위한 뮤테이션
+  // 좋아요 업데이트를 위한 뮤테이션 정의
   const queryClient = useQueryClient();
   const likeMutation = useMutation({
     mutationFn: (data: {
@@ -89,7 +108,9 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
       }
     },
   });
-  const handleLike = (
+
+  //좋아요 버튼 클릭 핸들러
+  const LikeButtonClickHandler = (
     event: React.MouseEvent<HTMLButtonElement>,
     auctionId: string
   ) => {
@@ -153,7 +174,24 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
           {auctions.map((auction, index) => {
             const bidData = bidsQueries[index]?.data ?? { bid_price: 0 };
             const formattedBidPrice = bidData.bid_price.toLocaleString();
+            // 경매 상태 텍스트 가져오기
 
+            let auctionStatusText;
+            const auctionStatus = auctionStatuses[auction.auction_id];
+
+            switch (auctionStatus) {
+              case AuctionStatus.READY:
+                auctionStatusText = "경매 전";
+                break;
+              case AuctionStatus.START:
+                auctionStatusText = "진행중";
+                break;
+              case AuctionStatus.END:
+                auctionStatusText = "종료";
+                break;
+              default:
+                auctionStatusText = "경매 상태 알수없음";
+            }
             return (
               <li
                 key={auction.auction_id}
@@ -171,7 +209,9 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                   />{" "}
                   <LikeButton
                     isLiked={likes[auction.auction_id]}
-                    onLike={(e) => handleLike(e, auction.auction_id)}
+                    onLike={(e) =>
+                      LikeButtonClickHandler(e, auction.auction_id)
+                    }
                   />
                 </span>
                 <StInfoContainer>
@@ -200,6 +240,7 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                       <img src={heart} />
                       &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
                     </h3>
+                    <h3>&nbsp; | &nbsp; {auctionStatusText}</h3>
                   </div>
                   <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
                   {auction.category && (

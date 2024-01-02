@@ -6,7 +6,7 @@ import AuctionList from "../components/Home/AuctionList";
 import CategorySelector from "../components/Home/CategorySelector";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";
 const Home = () => {
-  // // 경매 데이터 State
+  // 경매 데이터 State
   // const [auctionData, setAuctionData] = useState<Auction_post[] | null>(null);
   // 선택된 카테고리 State
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
@@ -51,9 +51,9 @@ const Home = () => {
       ? [...auctionData].sort(sortAuctions)
       : [];
 
-  // // 경매 데이터를 가져오는 useEffect 훅
+  //  경매 데이터를 가져오는 useEffect 훅 → React Query로 리팩토링했고 아래는 예전코드
   // useEffect(() => {
-  //   // 경매 데이터를 비동기적으로 가져오는 함수
+  // 경매 데이터를 비동기적으로 가져오는 함수
   //   const fetchData = async () => {
   //     const result = await fetchGetAuctions(
   //       queryOption.searchKeyword,
@@ -64,11 +64,11 @@ const Home = () => {
   //       queryOption.order
   //     );
   //     console.log(result);
-  //     // 가져온 데이터로 State 업데이트
+  //    가져온 데이터로 State 업데이트
   //     setAuctionData(result || null);
   //   };
 
-  //   // 함수 호출
+  //   함수 호출
   //   fetchData();
   // }, [selectedCategories]);
 
