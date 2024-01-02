@@ -195,6 +195,7 @@ const StSearchButton = styled.button`
   border-radius: 50%;
   background-color: transparent;
   border: none;
+  color: #fff;
   transition: background-color 0.2s ease-in-out;
 
   &:hover {

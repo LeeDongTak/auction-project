@@ -1,6 +1,4 @@
-import { VerticalAlignTopOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { FloatButton } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../api/auction";
@@ -81,12 +79,6 @@ const Profile = () => {
           </StListWrapper>
         </StPostsWrapper>
       </StPostContainer>
-      <FloatButton
-        shape="circle"
-        type="primary"
-        style={{ right: 24 }}
-        icon={<VerticalAlignTopOutlined />}
-      />
     </StProfileContainer>
   );
 };
