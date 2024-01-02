@@ -1,38 +1,87 @@
-import { useEffect, useState } from "react";
+import { VerticalAlignTopOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { FloatButton } from "antd";
+import { useState } from "react";
 import { styled } from "styled-components";
-import MyPagePosts from "../components/MyPagePosts/MyPagePosts";
-import UserProfile from "../components/UserProfile/UserProfile";
-import { supabase } from "../supabase";
-
-interface UserInfo {
-  id: string;
-  email: string;
-  nickname: string;
-}
+import { fetchGetAuctions } from "../api/auction";
+import { getUserInfo } from "../api/auth";
+import { StListWrapper } from "../components/profile/MyPagePosts.styles";
+import PostList from "../components/profile/PostList/PostList";
+import ProfileMenu from "../components/profile/ProfileMenu/ProfileMenu";
+import EditProfile from "../components/profile/UserProfile/EditProfile/EditProfile";
+import UserProfile from "../components/profile/UserProfile/UserProfile";
+import WishList from "../components/profile/WishList/WishList";
+import useGetAuthInfo from "../hooks/useGetAuthInfo";
+import { QUERY_KEYS } from "../query/keys.constant";
+import { User_info } from "../types/databaseRetrunTypes";
 
 const Profile = () => {
-  const [userId, setUserId] = useState<string>("");
-  const [user, setUser] = useState<UserInfo>();
+  const [activeTitle, setActiveTitle] = useState("내 게시물");
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUserId(data.user?.id as string);
-    };
-    fetchUser();
-  }, []);
+  const user = useGetAuthInfo();
 
-  // TODO: userInfo 가져와서 id 값과 같은 것 필터링 - 프로필
-  // TODO: userId로 게시물 필터링
-  // TODO: 내가 올린 목록, 내가 참여한? 목록, 찜한 목록
-  // TODO: 프로필 수정
+  const userId = user?.user.id as string;
 
-  console.log(userId);
+  const {
+    data: currentUser,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.USER, userId],
+    queryFn: () => getUserInfo(userId),
+    enabled: !!userId,
+    staleTime: 0,
+    select: (user) => user[0],
+  });
+
+  const { data: allUserPosts } = useQuery({
+    queryKey: [QUERY_KEYS.POSTS, userId],
+    queryFn: () => fetchGetAuctions({ user_id: userId }),
+    enabled: !!userId,
+  });
+
+  const userAllPostsLength = allUserPosts?.length as number;
 
   return (
     <StProfileContainer>
-      <UserProfile />
-      <MyPagePosts userId={userId} />
+      <UserProfile
+        user={currentUser as User_info}
+        userAllPostsLength={userAllPostsLength}
+      />
+      <StPostContainer>
+        <StPostsWrapper>
+          <ProfileMenu
+            activeTitle={activeTitle}
+            setActiveTitle={setActiveTitle}
+          />
+          <StListWrapper>
+            {activeTitle === "내 게시물" && (
+              <PostList
+                title={activeTitle}
+                userId={userId}
+                userAllPostsLength={userAllPostsLength}
+              />
+            )}
+            {activeTitle === "찜한 목록" && (
+              <WishList title={activeTitle} userId={userId} />
+            )}
+            {activeTitle === "프로필 수정" && (
+              <EditProfile
+                title={activeTitle}
+                user={currentUser as User_info}
+                userId={userId}
+              />
+            )}
+          </StListWrapper>
+        </StPostsWrapper>
+      </StPostContainer>
+      <FloatButton
+        shape="circle"
+        type="primary"
+        style={{ right: 24 }}
+        icon={<VerticalAlignTopOutlined />}
+      />
     </StProfileContainer>
   );
 };
@@ -40,6 +89,35 @@ const Profile = () => {
 const StProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100vh;
+`;
+const StUserProfile = styled.div`
+  display: flex;
+  width: 100%;
+  background-color: #333;
+  height: 200px;
+  min-height: 200px;
+  align-items: center;
+`;
+
+const StPostContainer = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 4rem;
+  padding: 2rem;
+  color: #222;
+`;
+
+const StPostsWrapper = styled.div`
+  display: flex;
+  width: 1200px;
+  margin: 0 auto;
+  transition: all 0.5s ease-in-out;
+
+  @media (max-width: 650px) {
+    flex-direction: column;
+  }
 `;
 
 export default Profile;

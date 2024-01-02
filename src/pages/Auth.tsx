@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { styled } from "styled-components";
-import LoginForm from "../components/LoginForm/LoginForm";
+import LoginForm from "../components/login/LoginForm";
 
 const Auth = () => {
   const [mode, setMode] = useState("로그인");
@@ -15,7 +15,7 @@ const Auth = () => {
 const StAuthContainer = styled.div`
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 `;
 
 export default Auth;

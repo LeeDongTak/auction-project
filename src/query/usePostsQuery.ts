@@ -1,2 +1,2 @@
-// export const usePostAddMutation = () => useMutation(addPost)
+// export const usePostAddMutation = () => useMutation(addPost);
 export {};
