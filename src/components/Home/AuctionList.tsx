@@ -1,14 +1,9 @@
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
-import { fetchLikes, fetchLikesCount, updateLike } from "../../api/likes";
+import { updateLike } from "../../api/likes";
 import { calculateAuctionStatusAndTime, transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
@@ -30,7 +25,7 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const [likesCount, setLikesCount] = useState<{ [key: string]: number }>({});
 
   // 각 경매에 대한 최대 입찰가를 가져오기 위한 쿼리
-  const bidsQueries = useQueries({
+  const bidsQueries: any[] = useQueries({
     queries:
       auctions?.map((auction) => ({
         queryKey: ["auctionBid", auction.auction_id],
@@ -78,18 +73,18 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   }, []);
 
   // 사용자의 좋아요 상태를 불러오는 쿼리
-  const likeQuery = useQuery({
-    queryKey: ["likes", userId],
-    queryFn: () => fetchLikes(userId!),
-    enabled: !!userId,
-  });
+  // const likeQuery = useQuery({
+  //   queryKey: ["likes", userId],
+  //   queryFn: () => fetchLikes(userId!),
+  //   enabled: !!userId,
+  // });
 
-  // 좋아요 데이터가 로드되었을 때 상태를 업데이트하는 useEffect
-  useEffect(() => {
-    if (likeQuery.isSuccess && likeQuery.data) {
-      setLikes(likeQuery.data as { [key: string]: boolean });
-    }
-  }, [likeQuery.isSuccess, likeQuery.data]);
+  // // 좋아요 데이터가 로드되었을 때 상태를 업데이트하는 useEffect
+  // useEffect(() => {
+  //   if (likeQuery.isSuccess && likeQuery.data) {
+  //     setLikes(likeQuery.data as { [key: string]: boolean });
+  //   }
+  // }, [likeQuery.isSuccess, likeQuery.data]);
 
   // 좋아요 업데이트를 위한 뮤테이션 정의
   const queryClient = useQueryClient();
@@ -158,14 +153,6 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   //     setLikes(likeQuery.data as { [key: string]: boolean });
   //   }
   // }, [likeQuery.data]);
-
-  useEffect(() => {
-    auctions?.forEach((auction) => {
-      fetchLikesCount(auction.auction_id).then((count) => {
-        setLikesCount((prev) => ({ ...prev, [auction.auction_id]: count }));
-      });
-    });
-  }, [auctions]);
 
   return (
     <StListwrapper>
@@ -240,7 +227,7 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                     </h3>
                     <h3>
                       <img src={heart} />
-                      &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
+                      &nbsp; 좋아요 {auction.auction_like.length}
                     </h3>
                   </div>
 

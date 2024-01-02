@@ -8,8 +8,11 @@ import useCustomInfinityQuery from "../hooks/useCustomInfinityQuery";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";
 
 const Home = () => {
+  // 선택된 카테고리와 정렬 타입을 관리하는 State
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [sortType, setSortType] = useState<"createdAt" | "title">("createdAt");
+
+  // 경매 목록을 정렬하는 함수
   const compareAuctions = (a: Auction_post, b: Auction_post) => {
     if (sortType === "createdAt") {
       return (
@@ -21,6 +24,7 @@ const Home = () => {
   };
   const client = useQueryClient();
 
+  // 사용자 정의 무한 스크롤 쿼리 훅
   const {
     data: auctionData,
     error,
@@ -42,23 +46,26 @@ const Home = () => {
   }, [status]);
 
   useEffect(() => {
-    client.resetQueries({ queryKey: ["projects", selectedCategories] });
+    // 선택된 카테고리가 바뀔 때마다 쿼리를 리셋
+    client.invalidateQueries({ queryKey: ["projects", selectedCategories] });
   }, [selectedCategories]);
 
+  // 뷰포트 내의 요소 감지를 위한 Intersection Observer 훅
   const { ref } = useInView({
     threshold: 0,
     onChange: (inView) => {
-      console.log(!inView, !hasNextPage, isFetchingNextPage);
       if (!inView || !hasNextPage || isFetchingNextPage) return;
       fetchNextPage();
-      console.log("refetch");
     },
   });
 
+  // 정렬된 경매 목록
   const sortedAuctions =
     auctionData && Array.isArray(auctionData)
       ? [...auctionData].sort(compareAuctions)
       : [];
+
+  // 카테고리 선택 핸들러
   const categorySelectHandler = (category: Category) => {
     setSelectedCategories((prev) => {
       // 이미 선택된 카테고리를 다시 클릭하면 제거, 아니면 추가
@@ -101,6 +108,8 @@ const Home = () => {
         <AuctionList auctions={sortedAuctions} />
         <div ref={ref} style={{ height: "20px" }}></div>
       </div>
+      {/* 무한 스크롤을 위한 참조 요소 */}
+      <div ref={ref} style={{ height: "20px" }}></div>
     </>
   );
 };
