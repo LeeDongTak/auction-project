@@ -42,29 +42,9 @@ export async function fetchGetAuctions({
     )
     .order(`${orderBy}`, { ascending: order });
 
-  // if (searchKeyword?.trim() !== "") {
-  //   query
-  //     .ilike("title", `%${searchKeyword}%`)
-  //     .ilike("content", `%${searchKeyword}%`);
-  // }
-
-  // 타이틀 또는 컨텐츠에 포함되면
   if (searchKeyword?.trim() !== "") {
     query.or(`title.ilike.%${searchKeyword}%,content.ilike.%${searchKeyword}%`);
   }
-
-  // (2)
-  // if (searchKeyword?.trim() !== "") {
-  //   const keywords = searchKeyword.trim().split(/\s+/);
-
-  //   query.or((searchQuery) => {
-  //     keywords.forEach((keyword) => {
-  //       searchQuery
-  //         .ilike("title", `%${keyword}%`)
-  //         .ilike("content", `%${keyword}%`);
-  //     });
-  //   });
-  // }
 
   user_id?.trim() !== "" && query.eq("user_id", user_id);
 
@@ -97,7 +77,7 @@ export async function fetchGetInfinityAuctions({
   const query = connectSupabase
     .from("auction_post")
     .select(
-      "*, category(category_name), user_info(user_email), auction_images(image_id, image_path), auction_like ( like_id, user_id, auction_id, created_at )"
+      "*, category(category_name), user_info(user_email),auction_images(image_id, image_path), auction_like ( like_id, user_id, auction_id, created_at )"
     )
     .order(`${orderBy}`, { ascending: order })
     .range(pageParam!, pageParam! + limit);
