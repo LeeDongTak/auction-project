@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctions } from "../../../api/auction";
 import { QUERY_KEYS } from "../../../query/keys.constant";
@@ -18,18 +18,19 @@ interface PostListProps {
 
 const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(5);
-  const [limit, setLimit] = useState<number>(5);
+  const [pageSize, setPageSize] = useState<number>(4);
 
-  console.log(userAllPostsLength);
+  useEffect(() => {
+    console.log("limit", pageSize);
+    console.log("offset", (page - 1) * pageSize);
+    console.log("page", page);
+    console.log(pageSize - (page - 1) * pageSize);
+  }, [page, pageSize]);
 
   const queryOption: Auction_option = {
     user_id: userId,
-    limit: pageSize + (page - 1) * pageSize,
-    offset:
-      (page - 1) * pageSize === 0
-        ? (page - 1) * pageSize
-        : (page - 1) * pageSize + 1,
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
   };
 
   // 내 게시물
