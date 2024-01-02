@@ -51,7 +51,7 @@ const addUser = async (payload: User_info) => {
 
 // 소셜 로그인 유저 추가
 const addSocialUser = async (payload: User_info): Promise<void> => {
-  const { data, error } = await supabase.from("user_info").upsert(payload);
+  const { data, error } = await supabase.from("user_info").insert(payload);
 
   if (error) {
     console.error("사용자 등록 중 오류 발생!", error.message);

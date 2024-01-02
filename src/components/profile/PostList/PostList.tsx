@@ -29,8 +29,11 @@ const PostList = ({ title, userId, userAllPostsLength }: PostListProps) => {
 
   const queryOption: Auction_option = {
     user_id: userId,
-    limit: pageSize,
-    offset: (page - 1) * pageSize,
+    limit:
+      page === 1
+        ? pageSize + (page - 1) * pageSize
+        : pageSize + (page - 1) * pageSize + 1,
+    offset: page === 1 ? 0 : (page - 1) * pageSize + 1,
   };
 
   // 내 게시물

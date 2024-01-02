@@ -2,6 +2,15 @@
 import { Auction_option, Auction_post } from "../types/databaseRetrunTypes";
 import connectSupabase from "./connectSupabase";
 
+type QueryType = {
+  or: (callback: (orQuery: OrQueryType) => void) => QueryType;
+  ilike: (field: string, value: string) => QueryType;
+};
+
+type OrQueryType = {
+  ilike: (field: string, value: string) => OrQueryType;
+};
+
 /**
  *
  * @param searchKeyword // 검색 키워드
@@ -33,11 +42,29 @@ export async function fetchGetAuctions({
     )
     .order(`${orderBy}`, { ascending: order });
 
+  // if (searchKeyword?.trim() !== "") {
+  //   query
+  //     .ilike("title", `%${searchKeyword}%`)
+  //     .ilike("content", `%${searchKeyword}%`);
+  // }
+
+  // 타이틀 또는 컨텐츠에 포함되면
   if (searchKeyword?.trim() !== "") {
-    query
-      .ilike("title", `%${searchKeyword}%`)
-      .ilike("content", `%${searchKeyword}%`);
+    query.or(`title.ilike.%${searchKeyword}%,content.ilike.%${searchKeyword}%`);
   }
+
+  // (2)
+  // if (searchKeyword?.trim() !== "") {
+  //   const keywords = searchKeyword.trim().split(/\s+/);
+
+  //   query.or((searchQuery) => {
+  //     keywords.forEach((keyword) => {
+  //       searchQuery
+  //         .ilike("title", `%${keyword}%`)
+  //         .ilike("content", `%${keyword}%`);
+  //     });
+  //   });
+  // }
 
   user_id?.trim() !== "" && query.eq("user_id", user_id);
 

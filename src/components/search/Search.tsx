@@ -66,7 +66,7 @@ const Search = () => {
   // 검색 결과 포스트 가져오기
   const queryOptions = {
     queryKey: [
-      "search",
+      QUERY_KEYS.POSTS,
       { searchKeyword: debounceSearchInput, categories: category },
     ],
     queryFn: () =>
