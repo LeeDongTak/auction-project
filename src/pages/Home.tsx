@@ -128,6 +128,9 @@ const StSortButton = styled.div`
   background-color: #eee;
   padding: 15px 10px;
   border-radius: 5px;
+  @media (max-width: 1200px) {
+    width: 98%;
+  }
   button {
     border: none;
     font-size: 1.2rem;
