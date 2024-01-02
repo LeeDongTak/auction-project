@@ -8,12 +8,14 @@ import useFormInput from "../../../hooks/useFormInput";
 import useGetAuthInfo from "../../../hooks/useGetAuthInfo";
 import { Auction_question } from "../../../types/databaseRetrunTypes";
 import QnaTextArea from "./QnaTextArea";
+import { selectorAuctionSingleData } from "../../../redux/modules/auctionSingleDataSlice";
+import { useSelector } from "react-redux";
 
-interface Props {
-  auctionId: string;
-}
+const QuestionForm = () => {
+  const {
+    auctionData: { auction_id },
+  } = useSelector(selectorAuctionSingleData);
 
-const QuestionForm = ({ auctionId }: Props) => {
   const queryClient = useQueryClient();
   const [questionText, questionTextRef, questionTextHandler, questionSetText] =
     useFormInput<HTMLTextAreaElement>();
@@ -24,7 +26,7 @@ const QuestionForm = ({ auctionId }: Props) => {
     mutationFn: fetchPostQuestion,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["questions", auctionId],
+        queryKey: ["questions", auction_id],
       });
       await handleOpenCustomModal("질문이 등록되었습니다.", "alert");
       questionSetText("");
@@ -46,7 +48,7 @@ const QuestionForm = ({ auctionId }: Props) => {
       "user_id" | "auction_id" | "question"
     > = {
       user_id: user?.user.id as string,
-      auction_id: auctionId,
+      auction_id: auction_id,
       question: questionText,
     };
     mutation(newQuestion);
