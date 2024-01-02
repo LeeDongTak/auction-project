@@ -33,6 +33,7 @@ const Home = () => {
     isFetching,
     isFetchingNextPage,
     status,
+    refetch,
   } = useCustomInfinityQuery(selectedCategories);
 
   useEffect(() => {

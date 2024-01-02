@@ -1,9 +1,14 @@
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
-import { updateLike } from "../../api/likes";
+import { fetchLikes, updateLike } from "../../api/likes";
 import { calculateAuctionStatusAndTime, transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
@@ -73,11 +78,11 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   }, []);
 
   // 사용자의 좋아요 상태를 불러오는 쿼리
-  // const likeQuery = useQuery({
-  //   queryKey: ["likes", userId],
-  //   queryFn: () => fetchLikes(userId!),
-  //   enabled: !!userId,
-  // });
+  const { data: likeQuery, refetch: refetchLike } = useQuery({
+    queryKey: ["likes", userId],
+    queryFn: () => fetchLikes(userId!),
+    enabled: !!userId,
+  });
 
   // // 좋아요 데이터가 로드되었을 때 상태를 업데이트하는 useEffect
   // useEffect(() => {
@@ -100,6 +105,8 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
         queryClient.invalidateQueries({
           queryKey: ["likes", userId],
         });
+
+        refetchLike();
       }
     },
   });
@@ -227,7 +234,7 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                     </h3>
                     <h3>
                       <img src={heart} />
-                      &nbsp; 좋아요 {auction.auction_like.length}
+                      &nbsp; 좋아요 {auction?.auction_like.length}
                     </h3>
                   </div>
 

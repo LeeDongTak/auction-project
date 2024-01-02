@@ -2,6 +2,7 @@
 import moment from "moment";
 import {
   Auction_images,
+  Auction_post,
   Insert_auction_post,
   Update_auction_post,
 } from "../types/databaseRetrunTypes";
@@ -139,4 +140,34 @@ export const deleteAuctionPost = async (deleteAuctionData: {
       }
     }
   }
+};
+
+// auction_id로 auction_post 불러오기
+export const fetchGetAuctionById = async (auction_id?: string) => {
+  if (auction_id) {
+    const { data, error } = await connectSupabase
+      .from("auction_post")
+      .select(
+        `
+      *, auction_images(image_id, image_path),
+      category(category_name)`
+      )
+      .eq("auction_id", auction_id)
+      .returns<Auction_post>()
+      .single();
+    if (error) throw new Error(error.message);
+
+    return data;
+  }
+};
+
+export const fetchAuctionMaxBid = async (inputAuctionId: string) => {
+  const { data, error } = await connectSupabase.rpc(
+    "fetch_max_bid_for_auction",
+    { input_auction_id: inputAuctionId }
+  );
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("data is null");
+  console.log(data[0]);
+  return data[0];
 };

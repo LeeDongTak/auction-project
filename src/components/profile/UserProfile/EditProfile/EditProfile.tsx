@@ -1,6 +1,6 @@
 import { UserOutlined } from "@ant-design/icons";
 import { QueryClient, useQuery } from "@tanstack/react-query";
-import { Avatar } from "antd";
+import { Avatar, Input } from "antd";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { getUserInfo } from "../../../../api/auth";
@@ -43,11 +43,6 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
 
   // 수정사항 저장
   const submitHandler = async () => {
-    // if (!inputNickname && !inputAddress1 && !inputAddress2) {
-    //   alert("정보가 변경되지 않았습니다.");
-    //   return;
-    // }
-
     if (!(await handleOpenCustomModal("저장하시겠습니까?", "confirm"))) return;
 
     const profileURL = await getFileUrl(fileImage as File);
@@ -141,28 +136,47 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
                   onChange={(e) => setFileImage(e.target.files?.[0])}
                 />
               </div>
-              <input
-                type="text"
-                placeholder="nickname"
-                defaultValue={user?.nickname}
-                onChange={(e) => setInputNickname(e.target.value)}
-              />
             </StTopSection>
             <p>{fileImage?.name}</p>
 
             <StInfoSection>
-              <div>
+              <StInfoTitle>
+                <span>닉네임</span>
                 <span>주소</span>
                 <span>상세 주소</span>
-              </div>
+              </StInfoTitle>
               <div>
-                <input
+                <Input
+                  count={{
+                    show: true,
+                    max: 15,
+                    strategy: (txt) => txt.length,
+                    exceedFormatter: (txt, { max }) => txt.slice(0, max),
+                  }}
+                  type="text"
+                  placeholder="nickname"
+                  defaultValue={user?.nickname}
+                  onChange={(e) => setInputNickname(e.target.value)}
+                />
+                <Input
+                  count={{
+                    show: true,
+                    max: 20,
+                    strategy: (txt) => txt.length,
+                    exceedFormatter: (txt, { max }) => txt.slice(0, max),
+                  }}
                   type="text"
                   placeholder="주소1"
                   defaultValue={user?.address1}
                   onChange={(e) => setInputAddress1(e.target.value)}
                 />
-                <input
+                <Input
+                  count={{
+                    show: true,
+                    max: 20,
+                    strategy: (txt) => txt.length,
+                    exceedFormatter: (txt, { max }) => txt.slice(0, max),
+                  }}
                   type="text"
                   placeholder="주소2"
                   defaultValue={user?.address2}
@@ -183,14 +197,16 @@ const EditProfile = ({ user, title, userId }: EditProfileProps) => {
               ) : (
                 <Avatar shape="circle" size={64} icon={<UserOutlined />} />
               )}
-              <p>{user?.nickname || "new user"}</p>
+              {/* <p>{user?.nickname || "new user"}</p> */}
             </StTopSection>
             <StInfoSection>
-              <div>
+              <StInfoTitle>
+                <span>닉네임</span>
                 <span>주소</span>
                 <span>상세 주소</span>
-              </div>
+              </StInfoTitle>
               <div>
+                <p>{user?.nickname || "new user"}</p>
                 <p>{user?.address1 || "현재 주소가 없습니다."}</p>
                 <p>{user?.address2 || "현재 상세주소가 없습니다."}</p>
               </div>
@@ -278,25 +294,35 @@ const StImgBox = styled.div`
 
 const StInfoSection = styled.section`
   display: flex;
-  align-items: center;
   gap: 2rem;
   margin-top: 1.5rem;
   padding-left: 1rem;
 
-  span,
-  p {
+  span {
     font-size: medium;
+  }
+
+  p {
+    background-color: #eee;
+    font-size: medium;
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
   }
 
   > div {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
 
     input {
       font-size: small;
     }
   }
+`;
+
+const StInfoTitle = styled.div`
+  display: flex;
+  justify-content: space-around;
 `;
 
 const ButtonSection = styled.section`
@@ -308,10 +334,6 @@ const ButtonSection = styled.section`
     display: flex;
     gap: 1rem;
   }
-`;
-
-const StInputLabel = styled.label`
-  background-color: var(--main-color);
 `;
 
 const StInputFile = styled.input`

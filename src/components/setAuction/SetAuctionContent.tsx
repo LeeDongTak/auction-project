@@ -35,7 +35,7 @@ const StAuctionContentTitle = styled.div`
 `
 
 const StActionContentInput = styled.textarea<{ type: string, cols: string, rows: string }>`
-  width: 97.1%;
+  width: 100%;
   font-size: 2.2em;
   padding: 0.8em;
   border: 0;

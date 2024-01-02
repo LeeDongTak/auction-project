@@ -21,6 +21,7 @@ const useCustomInfinityQuery = (selectedCategories: Category[]) => {
     isFetching, // 데이터를 불러오는 중인지 여부
     isFetchingNextPage, // 다음 페이지 데이터를 불러오는 중인지 여부
     status, // 쿼리 상태
+    refetch, // refetch 위한 함수
   } = useInfiniteQuery({
     queryKey: ["projects", selectedCategories], // 쿼리 키
     queryFn: ({ pageParam }) =>
@@ -46,6 +47,7 @@ const useCustomInfinityQuery = (selectedCategories: Category[]) => {
     isFetching,
     isFetchingNextPage,
     status,
+    refetch,
   };
 };
 

@@ -3,6 +3,7 @@ import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../../api/auth";
+import { useCustomModal } from "../../hooks/useCustomModal";
 import { QUERY_KEYS } from "../../query/keys.constant";
 import { useAppDispatch } from "../../redux/config/configStore";
 import { supabase } from "../../supabase";
@@ -11,11 +12,18 @@ import {
   FormWrapper,
   StButton,
   StButtonSection,
+  StError,
   StFormContainer,
   StInputSection,
 } from "./LoginForm.styles";
 import SocialLogin from "./SocialLogin/SocialLogin";
-import { useCustomModal } from "../../hooks/useCustomModal";
+
+import {
+  userAddress,
+  userEmail,
+  userNickname,
+  userPassword,
+} from "./AuthFormValue";
 
 interface SignFormProps {
   mode: string;
@@ -51,8 +59,6 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     reset,
   } = useForm<FormValues>({ mode: "onChange" });
 
-  console.log("errors", errors);
-
   const onSubmit: SubmitHandler<FieldValues> = ({ email, password }) => {
     if (mode === "로그인") {
       signInHandler({ email, password });
@@ -61,66 +67,6 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
     }
 
     reset();
-  };
-
-  const userEmail = {
-    required: "필수 입력란입니다.",
-    minLength: {
-      value: 4,
-      message: "최소 4자를 입력해주세요.",
-    },
-    maxLength: {
-      value: 20,
-      message: "최대 20자까지 입력하실 수 있습니다..",
-    },
-  };
-
-  const userPassword = {
-    required: "필수 입력란입니다.",
-    minLength: {
-      value: 8,
-      message: "최소 8자를 입력해주세요.",
-    },
-    maxLength: {
-      value: 15,
-      message: "최대 15자까지 입력하실 수 있습니다.",
-    },
-  };
-
-  const confirmPassword = {
-    required: "필수 입력란입니다.",
-    minLength: {
-      value: 4,
-      message: "최소 4자를 입력해주세요.",
-    },
-    maxLength: {
-      value: 15,
-      message: "최대 15자까지 입력하실 수 있습니다.",
-    },
-  };
-
-  const userAddress = {
-    required: "필수 입력란입니다.",
-    minLength: {
-      value: 3,
-      message: "주소의 길이가 너무 짧습니다.",
-    },
-    maxLength: {
-      value: 20,
-      message: "최대 20자까지 입력하실 수 있습니다.",
-    },
-  };
-
-  const userNickname = {
-    required: "필수 입력란입니다.",
-    minLength: {
-      value: 1,
-      message: "최소 1자를 입력해주세요.",
-    },
-    maxLength: {
-      value: 10,
-      message: "최대 10자까지 입력하실 수 있습니다.",
-    },
   };
 
   const signInHandler = async ({ email, password }: FormValues) => {
@@ -132,11 +78,11 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
 
       if (error) {
         await handleOpenCustomModal(
-          "아이디와 비밀번호를 확인해주세요",
+          `일치하는 계정을 찾을 수 없습니다. 다시 시도해주세요`,
           "alert"
         );
       } else {
-        await handleOpenCustomModal("성공적으로 로그인 되었습니다!", "alert");
+        await handleOpenCustomModal("성공적으로 로그인 되었습니다.", "alert");
         navigate("/");
       }
 
@@ -163,10 +109,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
       });
 
       if (error) {
-        await handleOpenCustomModal(
-          "아이디와 비밀번호를 확인해주세요.",
-          "alert"
-        );
+        await handleOpenCustomModal("이미 존재하는 계정입니다.", "alert");
       } else {
         const newUserInfo: User_info = {
           user_id: user?.id as string,
@@ -215,7 +158,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
               {...register("email", userEmail)}
             />
             {errors?.email && ( // 에러 메시지
-              <div>{errors?.email?.message as string}</div>
+              <StError>{errors?.email?.message as string}</StError>
             )}
           </div>
           <div>
@@ -225,7 +168,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
               {...register("password", userPassword)}
             />
             {errors?.password && ( // 에러 메시지
-              <div>{errors?.password?.message as string}</div>
+              <StError>{errors?.password?.message as string}</StError>
             )}
           </div>
           {mode === "회원가입" && (
@@ -237,7 +180,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
                   {...register("nickname", userNickname)}
                 />
                 {errors?.nickname && ( // 에러 메시지
-                  <div>{errors?.nickname?.message as string}</div>
+                  <StError>{errors?.nickname?.message as string}</StError>
                 )}
               </div>
               <div>
@@ -247,7 +190,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
                   {...register("address1", userAddress)}
                 />
                 {errors?.address1 && ( // 에러 메시지
-                  <div>{errors?.address1?.message as string}</div>
+                  <StError>{errors?.address1?.message as string}</StError>
                 )}
               </div>
 
@@ -258,7 +201,7 @@ const LoginForm: React.FC<SignFormProps> = ({ mode, setMode }) => {
                   {...register("address2", userAddress)}
                 />
                 {errors?.address2 && ( // 에러 메시지
-                  <div>{errors?.address2?.message as string}</div>
+                  <StError>{errors?.address2?.message as string}</StError>
                 )}
               </div>
             </>

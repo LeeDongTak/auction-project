@@ -31,11 +31,6 @@ const Search = () => {
   const debounceSearchInput = useDebounce({ value: inputText, delay: 500 });
 
   useEffect(() => {
-    console.log(selectedCategory);
-    console.log(debounceSearchInput);
-  }, [selectedCategory, debounceSearchInput]);
-
-  useEffect(() => {
     if (viewSearchModal) {
       document.body.style.cssText = `
         position: fixed; 
@@ -66,7 +61,7 @@ const Search = () => {
   // 검색 결과 포스트 가져오기
   const queryOptions = {
     queryKey: [
-      "search",
+      QUERY_KEYS.POSTS,
       { searchKeyword: debounceSearchInput, categories: category },
     ],
     queryFn: () =>

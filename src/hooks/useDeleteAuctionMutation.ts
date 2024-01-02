@@ -18,6 +18,7 @@ export const useDeleteAuctionMutation = () => {
   //   dispatch(setIsAlert({ isAlert: isPending, ErrorMsg: "로딩중..." }));
   //   if (isPending === false) {
   //     navigate("/");
+  //     dispatch(resetState());
   //   }
   // }, [isPending]);
 
