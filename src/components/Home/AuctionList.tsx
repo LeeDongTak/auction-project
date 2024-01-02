@@ -181,13 +181,13 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
 
             switch (auctionStatus) {
               case AuctionStatus.READY:
-                auctionStatusText = "경매 전";
+                auctionStatusText = "[ 경매 전 ]";
                 break;
               case AuctionStatus.START:
-                auctionStatusText = "진행중";
+                auctionStatusText = "[ 진행중 ]";
                 break;
               case AuctionStatus.END:
-                auctionStatusText = "종료";
+                auctionStatusText = "[ 종료 ]";
                 break;
               default:
                 auctionStatusText = "경매 상태 알수없음";
@@ -197,29 +197,31 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                 key={auction.auction_id}
                 onClick={() => navigate(`/detail/${auction.auction_id}`)}
               >
-                <span>
-                  <img
-                    src={
-                      auction.auction_images &&
-                      auction.auction_images.length > 0
-                        ? auction.auction_images[0].image_path
-                        : placeholder
-                    }
-                    alt="Auction"
-                  />{" "}
-                  <LikeButton
-                    isLiked={likes[auction.auction_id]}
-                    onLike={(e) =>
-                      LikeButtonClickHandler(e, auction.auction_id)
-                    }
-                  />
-                </span>
+                <StStatusImageWrapper>
+                  <h3>{auctionStatusText}</h3>
+                  <span>
+                    <img
+                      src={
+                        auction.auction_images &&
+                        auction.auction_images.length > 0
+                          ? auction.auction_images[0].image_path
+                          : placeholder
+                      }
+                      alt="Auction"
+                    />
+                    <LikeButton
+                      isLiked={likes[auction.auction_id]}
+                      onLike={(e) =>
+                        LikeButtonClickHandler(e, auction.auction_id)
+                      }
+                    />
+                  </span>
+                </StStatusImageWrapper>
                 <StInfoContainer>
                   <h6>
                     <img src={clock} alt="Clock" />
                     {transDate(auction.created_at)}
                   </h6>
-
                   <h1>{auction.title}</h1>
                   <p>{auction.content}</p>
                   <div>
@@ -240,9 +242,9 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                       <img src={heart} />
                       &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
                     </h3>
-                    <h3>&nbsp; | &nbsp; {auctionStatusText}</h3>
                   </div>
-                  <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
+
+                  <StNowPrice>현재 입찰 가격 ₩{formattedBidPrice}</StNowPrice>
                   {auction.category && (
                     <h5>{auction.category.category_name}</h5>
                   )}
@@ -287,18 +289,21 @@ const StListwrapper = styled.div`
       margin: 20px 0;
       position: relative;
       width: 1200px;
+      overflow-x: hidden;
       box-shadow: 2px 3px 4px #ccc;
+      @media (max-width: 1230px) {
+        width: 95%;
+      }
+      @media (max-width: 430px) {
+        flex-wrap: wrap;
+      }
+
       h1 {
         font-size: 1.8rem;
         font-weight: bold;
         margin-bottom: 10px;
       }
-      h2 {
-        font-size: 1.6rem;
-        text-align: right;
-        font-weight: bold;
-        color: #023e7d;
-      }
+
       h6 {
         text-align: right;
         img {
@@ -306,6 +311,9 @@ const StListwrapper = styled.div`
           width: 20px;
           vertical-align: middle;
           margin-right: 5px;
+        }
+        @media (max-width: 590px) {
+          margin-bottom: 15px;
         }
       }
       h5 {
@@ -331,22 +339,6 @@ const StListwrapper = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      span {
-        overflow: hidden;
-        width: 150px;
-        height: 150px;
-        position: relative;
-        border: 2px solid #eee;
-
-        border-radius: 10px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: scale-down;
-          vertical-align: middle;
-          margin: auto;
-        }
-      }
     }
   }
 `;
@@ -365,9 +357,93 @@ const StInfoContainer = styled.div`
     margin-top: 20px;
     gap: 20px;
     align-items: center;
+    @media (max-width: 935px) {
+      flex-wrap: wrap;
+    }
+
     img {
       height: 25px;
       vertical-align: middle;
     }
+    @media (max-width: 430px) {
+      gap: 0;
+    }
+  }
+
+  @media (max-width: 430px) {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  h3 {
+    @media (max-width: 430px) {
+      width: 100%;
+
+      line-height: 3rem;
+    }
+  }
+`;
+
+const StStatusImageWrapper = styled.div`
+  @media (max-width: 430px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  h3 {
+    text-align: center;
+    color: #023e7d;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  span {
+    overflow: hidden;
+    width: 150px;
+    display: block;
+    height: 150px;
+
+    position: relative;
+    border: 2px solid #eee;
+    border-radius: 10px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      vertical-align: middle;
+      margin: auto;
+    }
+  }
+
+  @media (max-width: 430px) {
+    width: 100%;
+  }
+`;
+
+const StStatus = styled.h3`
+  text-align: right;
+  color: #023e7d;
+  font-weight: 600;
+`;
+
+const StNowPrice = styled.h2`
+  font-size: 1.6rem;
+  text-align: right;
+
+  font-weight: bold;
+  color: #023e7d;
+  justify-content: flex-end;
+
+  display: flex;
+  p {
+    background-color: yellow;
+
+    &:first-of-type {
+      background-color: green;
+    }
+  }
+  @media (max-width: 590px) {
+    margin-top: 20px;
   }
 `;
