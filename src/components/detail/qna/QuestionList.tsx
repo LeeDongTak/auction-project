@@ -6,17 +6,17 @@ import { Skeleton } from "antd";
 import QuestionCard from "./QuestionCard";
 import { Spacer } from "../../ui/Spacer";
 import { QuestionAnswerProvider } from "../../../context/AnswerContext";
+import { useSelector } from "react-redux";
+import { selectorAuctionSingleData } from "../../../redux/modules/auctionSingleDataSlice";
 
-interface Props {
-  auctionId: string;
-  auctionUserId: string;
-}
+const QuestionList = () => {
+  const {
+    auctionData: { auction_id, user_id },
+  } = useSelector(selectorAuctionSingleData);
 
-const QuestionList = ({ auctionId, auctionUserId }: Props) => {
-  // data fetch
   const questionsQueryOptions = {
-    queryKey: ["questions", auctionId],
-    queryFn: () => fetchGetQuestions(auctionId),
+    queryKey: ["questions", auction_id],
+    queryFn: () => fetchGetQuestions(auction_id),
     queryOptions: { stableTime: Infinity },
   };
 
@@ -30,7 +30,7 @@ const QuestionList = ({ auctionId, auctionUserId }: Props) => {
         <div key={question.auction_question_id}>
           <Skeleton loading={isLoading} active>
             <QuestionAnswerProvider>
-              <QuestionCard question={question} auctionUserId={auctionUserId} />
+              <QuestionCard question={question} auctionUserId={user_id} />
             </QuestionAnswerProvider>
           </Skeleton>
           <Spacer y={30} />

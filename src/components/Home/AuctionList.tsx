@@ -1,15 +1,10 @@
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetchAuctionMaxBid } from "../../api/bid";
-import { fetchLikes, fetchLikesCount, updateLike } from "../../api/likes";
-import { transDate } from "../../common/dayjs";
+import { updateLike } from "../../api/likes";
+import { calculateAuctionStatusAndTime, transDate } from "../../common/dayjs";
 import clock from "../../images/clock.svg";
 import coin from "../../images/coin.svg";
 import end from "../../images/end.svg";
@@ -18,7 +13,9 @@ import placeholder from "../../images/placeholder.svg";
 import heart from "../../images/thin_heart.svg";
 import { supabase } from "../../supabase";
 import { Auction_post } from "../../types/databaseRetrunTypes";
+import { AuctionStatus } from "../../types/detailTyps";
 import LikeButton from "./LikeButton";
+// 경매 리스트 컴포넌트에 대한 props 타입 정의
 interface AuctionListProps {
   auctions: Auction_post[] | null;
 }
@@ -26,7 +23,9 @@ interface AuctionListProps {
 const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   const navigate = useNavigate();
   const [likesCount, setLikesCount] = useState<{ [key: string]: number }>({});
-  const bidsQueries = useQueries({
+
+  // 각 경매에 대한 최대 입찰가를 가져오기 위한 쿼리
+  const bidsQueries: any[] = useQueries({
     queries:
       auctions?.map((auction) => ({
         queryKey: ["auctionBid", auction.auction_id],
@@ -37,42 +36,57 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
       })) || [],
   });
 
-  // 좋아요 상태 관리
+  //  좋아요 상태를 관리하는 state
   const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
-  // 현재 로그인한 사용자의 정보를 가져오는 로직
+  // 현재 로그인한 사용자의 ID를 저장하는 state
   const [userId, setUserId] = useState<string | null>(null);
-  // 좋아요를 했는지 안했는지 확인할수 있는 상태 관리
-  const [likedAuctions, setLikedAuctions] = useState<{
-    [key: string]: boolean;
-  }>({});
+
+  // 각 경매의 상태(경매 전, 진행중, 종료)를 관리하는 state
+  const [auctionStatuses, setAuctionStatuses] = useState<
+    Record<string, AuctionStatus>
+  >({});
+
+  // 경매 상태를 계산하고 상태를 업데이트하는 useEffect
+  useEffect(() => {
+    const newStatuses: Record<string, AuctionStatus> = {};
+    auctions?.forEach((auction) => {
+      const { auctionOver } = calculateAuctionStatusAndTime(
+        auction.auction_start_date,
+        auction.auction_end_date
+      );
+      newStatuses[auction.auction_id] = auctionOver;
+    });
+    setAuctionStatuses(newStatuses);
+  }, [auctions]);
+
+  // 사용자 로그인 상태 변경 시 userId 업데이트
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUserId(session?.user?.id || null);
       }
     );
-
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
 
-  // 좋아요 상태를 불러오는 쿼리
-  const likeQuery = useQuery({
-    queryKey: ["likes", userId],
-    queryFn: () => fetchLikes(userId!),
-    enabled: !!userId,
-  });
+  // 사용자의 좋아요 상태를 불러오는 쿼리
+  // const likeQuery = useQuery({
+  //   queryKey: ["likes", userId],
+  //   queryFn: () => fetchLikes(userId!),
+  //   enabled: !!userId,
+  // });
 
-  // 좋아요 상태 업데이트 useEffect
-  useEffect(() => {
-    if (likeQuery.isSuccess && likeQuery.data) {
-      // 타입 체크 또는 타입 캐스팅을 통해 오류 해결
-      setLikes(likeQuery.data as { [key: string]: boolean });
-    }
-  }, [likeQuery.isSuccess, likeQuery.data]);
+  // // 좋아요 데이터가 로드되었을 때 상태를 업데이트하는 useEffect
+  // useEffect(() => {
+  //   if (likeQuery.isSuccess && likeQuery.data) {
+  //     setLikes(likeQuery.data as { [key: string]: boolean });
+  //   }
+  // }, [likeQuery.isSuccess, likeQuery.data]);
 
-  // 좋아요 업데이트를 위한 뮤테이션
+  // 좋아요 업데이트를 위한 뮤테이션 정의
   const queryClient = useQueryClient();
   const likeMutation = useMutation({
     mutationFn: (data: {
@@ -89,7 +103,9 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
       }
     },
   });
-  const handleLike = (
+
+  //좋아요 버튼 클릭 핸들러
+  const LikeButtonClickHandler = (
     event: React.MouseEvent<HTMLButtonElement>,
     auctionId: string
   ) => {
@@ -138,14 +154,6 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
   //   }
   // }, [likeQuery.data]);
 
-  useEffect(() => {
-    auctions?.forEach((auction) => {
-      fetchLikesCount(auction.auction_id).then((count) => {
-        setLikesCount((prev) => ({ ...prev, [auction.auction_id]: count }));
-      });
-    });
-  }, [auctions]);
-
   return (
     <StListwrapper>
       {auctions && auctions.length > 0 ? (
@@ -153,33 +161,54 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
           {auctions.map((auction, index) => {
             const bidData = bidsQueries[index]?.data ?? { bid_price: 0 };
             const formattedBidPrice = bidData.bid_price.toLocaleString();
+            // 경매 상태 텍스트 가져오기
 
+            let auctionStatusText;
+            const auctionStatus = auctionStatuses[auction.auction_id];
+
+            switch (auctionStatus) {
+              case AuctionStatus.READY:
+                auctionStatusText = "[ 경매 전 ]";
+                break;
+              case AuctionStatus.START:
+                auctionStatusText = "[ 진행중 ]";
+                break;
+              case AuctionStatus.END:
+                auctionStatusText = "[ 종료 ]";
+                break;
+              default:
+                auctionStatusText = "경매 상태 알수없음";
+            }
             return (
               <li
                 key={auction.auction_id}
                 onClick={() => navigate(`/detail/${auction.auction_id}`)}
               >
-                <span>
-                  <img
-                    src={
-                      auction.auction_images &&
-                      auction.auction_images.length > 0
-                        ? auction.auction_images[0].image_path
-                        : placeholder
-                    }
-                    alt="Auction"
-                  />{" "}
-                  <LikeButton
-                    isLiked={likes[auction.auction_id]}
-                    onLike={(e) => handleLike(e, auction.auction_id)}
-                  />
-                </span>
+                <StStatusImageWrapper>
+                  <h3>{auctionStatusText}</h3>
+                  <span>
+                    <img
+                      src={
+                        auction.auction_images &&
+                        auction.auction_images.length > 0
+                          ? auction.auction_images[0].image_path
+                          : placeholder
+                      }
+                      alt="Auction"
+                    />
+                    <LikeButton
+                      isLiked={likes[auction.auction_id]}
+                      onLike={(e) =>
+                        LikeButtonClickHandler(e, auction.auction_id)
+                      }
+                    />
+                  </span>
+                </StStatusImageWrapper>
                 <StInfoContainer>
                   <h6>
                     <img src={clock} alt="Clock" />
                     {transDate(auction.created_at)}
                   </h6>
-
                   <h1>{auction.title}</h1>
                   <p>{auction.content}</p>
                   <div>
@@ -198,10 +227,11 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
                     </h3>
                     <h3>
                       <img src={heart} />
-                      &nbsp; 좋아요 {likesCount[auction.auction_id] || 0}
+                      &nbsp; 좋아요 {auction.auction_like.length}
                     </h3>
                   </div>
-                  <h2>현재 입찰 가격 ₩ {formattedBidPrice}</h2>
+
+                  <StNowPrice>현재 입찰 가격 ₩{formattedBidPrice}</StNowPrice>
                   {auction.category && (
                     <h5>{auction.category.category_name}</h5>
                   )}
@@ -246,18 +276,21 @@ const StListwrapper = styled.div`
       margin: 20px 0;
       position: relative;
       width: 1200px;
+      overflow-x: hidden;
       box-shadow: 2px 3px 4px #ccc;
+      @media (max-width: 1230px) {
+        width: 95%;
+      }
+      @media (max-width: 430px) {
+        flex-wrap: wrap;
+      }
+
       h1 {
         font-size: 1.8rem;
         font-weight: bold;
         margin-bottom: 10px;
       }
-      h2 {
-        font-size: 1.6rem;
-        text-align: right;
-        font-weight: bold;
-        color: #023e7d;
-      }
+
       h6 {
         text-align: right;
         img {
@@ -265,6 +298,9 @@ const StListwrapper = styled.div`
           width: 20px;
           vertical-align: middle;
           margin-right: 5px;
+        }
+        @media (max-width: 590px) {
+          margin-bottom: 15px;
         }
       }
       h5 {
@@ -290,22 +326,6 @@ const StListwrapper = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      span {
-        overflow: hidden;
-        width: 150px;
-        height: 150px;
-        position: relative;
-        border: 2px solid #eee;
-
-        border-radius: 10px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: scale-down;
-          vertical-align: middle;
-          margin: auto;
-        }
-      }
     }
   }
 `;
@@ -324,9 +344,93 @@ const StInfoContainer = styled.div`
     margin-top: 20px;
     gap: 20px;
     align-items: center;
+    @media (max-width: 935px) {
+      flex-wrap: wrap;
+    }
+
     img {
       height: 25px;
       vertical-align: middle;
     }
+    @media (max-width: 430px) {
+      gap: 0;
+    }
+  }
+
+  @media (max-width: 430px) {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  h3 {
+    @media (max-width: 430px) {
+      width: 100%;
+
+      line-height: 3rem;
+    }
+  }
+`;
+
+const StStatusImageWrapper = styled.div`
+  @media (max-width: 430px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  h3 {
+    text-align: center;
+    color: #023e7d;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  span {
+    overflow: hidden;
+    width: 150px;
+    display: block;
+    height: 150px;
+
+    position: relative;
+    border: 2px solid #eee;
+    border-radius: 10px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      vertical-align: middle;
+      margin: auto;
+    }
+  }
+
+  @media (max-width: 430px) {
+    width: 100%;
+  }
+`;
+
+const StStatus = styled.h3`
+  text-align: right;
+  color: #023e7d;
+  font-weight: 600;
+`;
+
+const StNowPrice = styled.h2`
+  font-size: 1.6rem;
+  text-align: right;
+
+  font-weight: bold;
+  color: #023e7d;
+  justify-content: flex-end;
+
+  display: flex;
+  p {
+    background-color: yellow;
+
+    &:first-of-type {
+      background-color: green;
+    }
+  }
+  @media (max-width: 590px) {
+    margin-top: 20px;
   }
 `;

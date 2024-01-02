@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -5,20 +6,30 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { useDeleteAuctionMutation } from "../../../../hooks/useDeleteAuctionMutation";
 import { useAppDispatch } from "../../../../redux/config/configStore";
+import { toggleViewSearchModal } from "../../../../redux/modules/searchSlice";
 import { Auction_images, Auction_post } from "../../../../types/databaseRetrunTypes";
 import Button from "../../../common/Button";
 
 interface PostItemProps {
   post: Auction_post;
   type?: string;
+  likeDeleteHandler?: () => void;
 }
 
-const PostItem = ({ post, type }: PostItemProps) => {
+const PostItem = ({ post, type, likeDeleteHandler }: PostItemProps) => {
   const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
+
+  const queryClient = new QueryClient();
+
   const [isLoading, setIsLoading] = useState(true);
 
+  //  좋아요 상태를 관리하는 state
+  const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
+
   const {
+    user_id,
     auction_id,
     title,
     content,
@@ -31,9 +42,12 @@ const PostItem = ({ post, type }: PostItemProps) => {
   } = post;
 
   const createAt = dayjs(created_at).format("YYYY-MM-DD");
+
   const startDate = dayjs(auction_start_date).format("YYYY년 MM월 DD일");
+
   const endDate = dayjs(auction_end_date).format("YYYY년 MM월 DD일");
-  const { mutate } = useDeleteAuctionMutation()
+
+  const { mutate } = useDeleteAuctionMutation();
   const upperLimit = upper_limit
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -51,40 +65,43 @@ const PostItem = ({ post, type }: PostItemProps) => {
 
   const goToDetailHandler = () => {
     navigate(`/detail/${auction_id}`);
+    dispatch(toggleViewSearchModal(false));
   };
 
   const editHandler = () => {
+    // 수정전 redux초기화
     navigate(`/setAuction/${auction_id}`);
   };
 
   const deleteHandler = () => {
     if (window.confirm("정말로 삭제하시겠습니까?")) {
       interface deleteDataType {
-        auction_id?: string
-        auction_images?: Auction_images[]
+        auction_id?: string;
+        auction_images?: Auction_images[];
       }
       const deleteAuctionData: deleteDataType = {
         auction_id,
-        auction_images
-      }
-      mutate(deleteAuctionData)
+        auction_images,
+      };
+      mutate(deleteAuctionData);
     } else {
-      return
+      return;
     }
   };
+
   return (
     <StPostItemWrapper>
       {isLoading ? (
         <StImageSkeleton active></StImageSkeleton>
       ) : (
-        <StImage>
+        <StImage onClick={goToDetailHandler}>
           <img src={auction_images?.[0]?.image_path} alt="" />
         </StImage>
       )}
 
       <Skeleton loading={isLoading} active title paragraph={{ rows: 5 }}>
         <div>
-          <StPostInfoSection>
+          <StPostInfoSection onClick={goToDetailHandler}>
             <div>
               <h3>{title}</h3>
               <span>{createAt}</span>
@@ -102,6 +119,14 @@ const PostItem = ({ post, type }: PostItemProps) => {
               <Button text="수정" onClickHandler={editHandler} />
               <Button text="삭제" onClickHandler={deleteHandler} />
             </StButtonSection>
+          )}
+          {type === "찜한 목록" && (
+            <StPostInfoSection>
+              <Button
+                text="찜한 목록 삭제"
+                onClickHandler={likeDeleteHandler}
+              />
+            </StPostInfoSection>
           )}
         </div>
       </Skeleton>

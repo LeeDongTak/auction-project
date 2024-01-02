@@ -5,13 +5,18 @@ import { useEffect } from "react";
 import { useAppDispatch } from "../redux/config/configStore";
 import { fetchAuctionMaxBid } from "../api/bid";
 import { setBidData } from "../redux/modules/bidCustomModalSlice";
+import { isEmpty } from "../common/util";
+import {
+  resetAuctionData,
+  setAuctionData,
+} from "../redux/modules/auctionSingleDataSlice";
 
-const useDetailAuctionPost = (auctionId: string): [Auction_post, boolean] => {
+const useAuctionPostData = (auctionId: string): [Auction_post, boolean] => {
   const dispatch = useAppDispatch();
   const queryAuctionOptions = {
-    queryKey: ["getAuction"],
+    queryKey: ["getAuction", auctionId],
     queryFn: () => fetchGetAuctionById(auctionId),
-    queryOptions: { staleTime: Infinity },
+    queryOptions: { staleTime: Infinity, enabled: !!auctionId },
   };
 
   const [data, isLoading] = useCustomQuery<Auction_post, Error>(
@@ -21,7 +26,7 @@ const useDetailAuctionPost = (auctionId: string): [Auction_post, boolean] => {
   const queryBidOptions = {
     queryKey: ["getBidMaxPrice", auctionId],
     queryFn: () => fetchAuctionMaxBid(auctionId),
-    queryOptions: { staleTime: 0, enabled: !!auctionId },
+    queryOptions: { staleTime: Infinity, enabled: !!auctionId },
   };
 
   const [bidData] = useCustomQuery<MaxBids, Error>(queryBidOptions);
@@ -42,7 +47,18 @@ const useDetailAuctionPost = (auctionId: string): [Auction_post, boolean] => {
     }
   }, [isLoading, data, bidData, auctionId, dispatch]);
 
+  // detail data set
+  useEffect(() => {
+    if (data) if (!isEmpty<Auction_post>(data)) dispatch(setAuctionData(data));
+  }, [data]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetAuctionData());
+    };
+  }, []);
+
   return [data || ({} as Auction_post), isLoading];
 };
 
-export default useDetailAuctionPost;
+export default useAuctionPostData;

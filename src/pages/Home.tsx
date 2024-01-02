@@ -1,42 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import { styled } from "styled-components";
-import { fetchGetAuctions } from "../api/auction";
 import AuctionList from "../components/Home/AuctionList";
 import CategorySelector from "../components/Home/CategorySelector";
+import useCustomInfinityQuery from "../hooks/useCustomInfinityQuery";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";
 const Home = () => {
-  // // 경매 데이터 State
-  // const [auctionData, setAuctionData] = useState<Auction_post[] | null>(null);
-  // 선택된 카테고리 State
+  // 선택된 카테고리와 정렬 타입을 관리하는 State
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [sortType, setSortType] = useState<"createdAt" | "title">("createdAt");
-  console.log(selectedCategories);
-  // 쿼리 옵션
-  const queryOption = {
-    searchKeyword: "",
-    categories: selectedCategories,
-    limit: 20,
-    offset: 0,
-    orderBy: "created_at",
-    order: false,
-  };
-  // useQuery를 사용하여 데이터 가져오기
-  const {
-    data: auctionData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["auctionData", selectedCategories],
-    queryFn: () => fetchGetAuctions(queryOption),
-    refetchOnWindowFocus: false,
-  });
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>오류: {error.message}</div>;
-
-  const sortAuctions = (a: Auction_post, b: Auction_post) => {
+  // 경매 목록을 정렬하는 함수
+  const compareAuctions = (a: Auction_post, b: Auction_post) => {
     if (sortType === "createdAt") {
       return (
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -45,38 +21,55 @@ const Home = () => {
       return a.title.localeCompare(b.title);
     }
   };
+  const client = useQueryClient();
 
+  // 사용자 정의 무한 스크롤 쿼리 훅
+  const {
+    data: auctionData,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useCustomInfinityQuery(selectedCategories);
+
+  useEffect(() => {
+    if (status === "pending") {
+      console.log("pending");
+    }
+
+    if (status === "error") {
+      console.log(error?.message);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    // 선택된 카테고리가 바뀔 때마다 쿼리를 리셋
+    client.invalidateQueries({ queryKey: ["projects", selectedCategories] });
+  }, [selectedCategories]);
+
+  // 뷰포트 내의 요소 감지를 위한 Intersection Observer 훅
+  const { ref } = useInView({
+    threshold: 1,
+    onChange: (inView) => {
+      // 화면에 보이지 않거나 다음 페이지가 없거나 이미 다음 페이지를 불러오는 중이라면 반환
+      if (!inView || !hasNextPage || isFetchingNextPage) return;
+      fetchNextPage();
+    },
+  });
+
+  // 정렬된 경매 목록
   const sortedAuctions =
     auctionData && Array.isArray(auctionData)
-      ? [...auctionData].sort(sortAuctions)
+      ? [...auctionData].sort(compareAuctions)
       : [];
-
-  // // 경매 데이터를 가져오는 useEffect 훅
-  // useEffect(() => {
-  //   // 경매 데이터를 비동기적으로 가져오는 함수
-  //   const fetchData = async () => {
-  //     const result = await fetchGetAuctions(
-  //       queryOption.searchKeyword,
-  //       queryOption.categories,
-  //       queryOption.limit,
-  //       queryOption.offset,
-  //       queryOption.orderBy,
-  //       queryOption.order
-  //     );
-  //     console.log(result);
-  //     // 가져온 데이터로 State 업데이트
-  //     setAuctionData(result || null);
-  //   };
-
-  //   // 함수 호출
-  //   fetchData();
-  // }, [selectedCategories]);
 
   // 카테고리 선택 핸들러
   const categorySelectHandler = (category: Category) => {
-    console.log(category);
     setSelectedCategories((prev) => {
       // 이미 선택된 카테고리를 다시 클릭하면 제거, 아니면 추가
+      // client.invalidateQueries();
       if (prev.find((c) => c.category_id === category.category_id)) {
         return prev.filter((c) => c.category_id !== category.category_id);
       } else {
@@ -85,35 +78,38 @@ const Home = () => {
     });
   };
 
-  console.log(selectedCategories);
   return (
-    <div>
-      {/* 카테고리 선택 컴포넌트 */}
-      <CategorySelector
-        onCategorySelect={categorySelectHandler}
-        selectedCategories={selectedCategories}
-      />
-      {/* 경매 목록 컴포넌트 */}
-      <StSortButton>
-        <button
-          onClick={() => setSortType("title")}
-          style={{
-            color: sortType === "title" ? "#023e7d" : "inherit",
-          }}
-        >
-          이름순
-        </button>
-        <button
-          onClick={() => setSortType("createdAt")}
-          style={{
-            color: sortType === "createdAt" ? "#023e7d" : "inherit",
-          }}
-        >
-          최신순
-        </button>
-      </StSortButton>
-      <AuctionList auctions={sortedAuctions} />
-    </div>
+    <>
+      <div>
+        {/* 카테고리 선택 컴포넌트 */}
+        <CategorySelector
+          onCategorySelect={categorySelectHandler}
+          selectedCategories={selectedCategories}
+        />
+        {/* 경매 목록 컴포넌트 */}
+        <StSortButton>
+          <button
+            onClick={() => setSortType("title")}
+            style={{
+              color: sortType === "title" ? "#023e7d" : "inherit",
+            }}
+          >
+            이름순
+          </button>
+          <button
+            onClick={() => setSortType("createdAt")}
+            style={{
+              color: sortType === "createdAt" ? "#023e7d" : "inherit",
+            }}
+          >
+            최신순
+          </button>
+        </StSortButton>
+        <AuctionList auctions={sortedAuctions} />
+      </div>
+      {/* 무한 스크롤을 위한 참조 요소 */}
+      <div ref={ref} style={{ height: "20px" }}></div>
+    </>
   );
 };
 
@@ -128,6 +124,9 @@ const StSortButton = styled.div`
   background-color: #eee;
   padding: 15px 10px;
   border-radius: 5px;
+  @media (max-width: 1200px) {
+    width: 98%;
+  }
   button {
     border: none;
     font-size: 1.2rem;

@@ -5,22 +5,18 @@ import {
   formatNumberWithCommas,
   formatProductStatus,
 } from "../../common/formatUtil";
-import { Auction_post } from "../../types/databaseRetrunTypes";
 import { ShippingType } from "../../types/detailTyps";
 import { Spacer } from "../ui/Spacer";
 import BidButton from "./BidButton";
 import { useSelector } from "react-redux";
 import { selectorBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
-
-type Props = {
-  auctionData: Auction_post | undefined;
-};
+import { selectorAuctionSingleData } from "../../redux/modules/auctionSingleDataSlice";
 
 const SPACER_HEIGHT = 10;
 const SPACER_LITERARY = 20;
-const DetailInfo = ({ auctionData }: Props) => {
+const DetailInfo = () => {
+  const { auctionData } = useSelector(selectorAuctionSingleData);
   const { maxBid } = useSelector(selectorBidCustomModal);
-
   return (
     <StDetailInfoWrapper>
       <div>

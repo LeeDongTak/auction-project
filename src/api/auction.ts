@@ -2,6 +2,15 @@
 import { Auction_option, Auction_post } from "../types/databaseRetrunTypes";
 import connectSupabase from "./connectSupabase";
 
+type QueryType = {
+  or: (callback: (orQuery: OrQueryType) => void) => QueryType;
+  ilike: (field: string, value: string) => QueryType;
+};
+
+type OrQueryType = {
+  ilike: (field: string, value: string) => OrQueryType;
+};
+
 /**
  *
  * @param searchKeyword // 검색 키워드
@@ -12,7 +21,6 @@ import connectSupabase from "./connectSupabase";
  * @param order // 정렬 방식
  * @param user_id // 유저 아이디 (내가 쓴 글만 가져오기)
  */
-
 export async function fetchGetAuctions({
   searchKeyword = "",
   categories = [],
@@ -34,6 +42,66 @@ export async function fetchGetAuctions({
     )
     .order(`${orderBy}`, { ascending: order });
 
+  // if (searchKeyword?.trim() !== "") {
+  //   query
+  //     .ilike("title", `%${searchKeyword}%`)
+  //     .ilike("content", `%${searchKeyword}%`);
+  // }
+
+  // 타이틀 또는 컨텐츠에 포함되면
+  if (searchKeyword?.trim() !== "") {
+    query.or(`title.ilike.%${searchKeyword}%,content.ilike.%${searchKeyword}%`);
+  }
+
+  // (2)
+  // if (searchKeyword?.trim() !== "") {
+  //   const keywords = searchKeyword.trim().split(/\s+/);
+
+  //   query.or((searchQuery) => {
+  //     keywords.forEach((keyword) => {
+  //       searchQuery
+  //         .ilike("title", `%${keyword}%`)
+  //         .ilike("content", `%${keyword}%`);
+  //     });
+  //   });
+  // }
+
+  user_id?.trim() !== "" && query.eq("user_id", user_id);
+
+  limit !== 0 && query.range(offset, limit);
+
+  if ((categories?.length as number) > 0) {
+    query.in("category_id", categoryIds);
+  }
+
+  const { data, error } = await query.returns<Promise<Auction_post[]>>();
+  if (error) throw new Error(error.message);
+
+  return data;
+}
+
+export async function fetchGetInfinityAuctions({
+  searchKeyword = "",
+  categories = [],
+  limit = 0,
+  offset = 0,
+  orderBy = "created_at",
+  order = false,
+  user_id = "",
+  pageParam,
+}: Auction_option) {
+  const categoryIds = categories?.map((category) => {
+    return category.category_id;
+  });
+
+  const query = connectSupabase
+    .from("auction_post")
+    .select(
+      "*, category(category_name), user_info(user_email), auction_images(image_id, image_path), auction_like ( like_id, user_id, auction_id, created_at )"
+    )
+    .order(`${orderBy}`, { ascending: order })
+    .range(pageParam!, pageParam! + limit);
+
   searchKeyword?.trim() !== "" &&
     query
       .like("title", `%${searchKeyword}%`)
@@ -41,7 +109,7 @@ export async function fetchGetAuctions({
 
   user_id?.trim() !== "" && query.eq("user_id", user_id);
 
-  limit !== 0 && query.range(offset, limit);
+  console.log(pageParam, pageParam! + limit);
 
   if ((categories?.length as number) > 0) {
     query.in("category_id", categoryIds);
