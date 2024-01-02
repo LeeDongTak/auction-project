@@ -1,12 +1,14 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { selectorAuctionSingleData } from "../../redux/modules/auctionSingleDataSlice";
 
-type Props = {
-  auctionContent: string | undefined;
-};
-const DetailContent = ({ auctionContent }: Props) => {
+const DetailContent = () => {
+  const {
+    auctionData: { content },
+  } = useSelector(selectorAuctionSingleData);
   return (
     <>
-      <p>{auctionContent}</p>
+      <p>{content}</p>
     </>
   );
 };

@@ -7,10 +7,12 @@ import { formatNumberWithCommas } from "../../common/formatUtil";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { selectorBidCustomModal } from "../../redux/modules/bidCustomModalSlice";
+import useAuctionStatus from "../../hooks/useAuctionStatus";
 
 const DetailTimeStamp = () => {
+  // 경매 상태 관리 커스텀 훅
+  useAuctionStatus();
   const queryClient = useQueryClient();
-
   const { maxBid } = useSelector(selectorBidCustomModal);
 
   const { auctionOver, auctionTimeStamp } = useSelector(

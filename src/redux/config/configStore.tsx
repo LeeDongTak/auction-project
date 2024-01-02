@@ -7,6 +7,7 @@ import customModal from "../modules/customModalSlice";
 import profile from "../modules/profileSlice";
 import search from "../modules/searchSlice";
 import setAuction from "../modules/setAuctionSlice";
+import auctionSingleData from "../modules/auctionSingleDataSlice";
 
 const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
     customModal,
     search,
     bidList,
+    auctionSingleData,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

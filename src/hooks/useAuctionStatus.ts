@@ -11,10 +11,10 @@ import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { fetchPatchAuctionPost } from "../api/auction";
 import { useCustomMutation } from "./useCustomMutation";
+import { selectorAuctionSingleData } from "../redux/modules/auctionSingleDataSlice";
 
-type Parameter = Auction_post | undefined;
-
-const useAuctionStatus = (data: Parameter) => {
+const useAuctionStatus = () => {
+  const { auctionData } = useSelector(selectorAuctionSingleData);
   const queryClient = useQueryClient();
 
   // bid 상태 update
@@ -36,24 +36,24 @@ const useAuctionStatus = (data: Parameter) => {
   useEffect(() => {
     const updateStatus = () => {
       const result = calculateAuctionStatusAndTime(
-        data?.auction_start_date,
-        data?.auction_end_date
+        auctionData?.auction_start_date,
+        auctionData?.auction_end_date
       );
 
       // auction db의 status값이 변경되는 상태값과 다르다면 patch 진행
-      if (data?.auction_id) {
-        if (data?.auction_status !== String(result.auctionOver)) {
+      if (auctionData?.auction_id) {
+        if (auctionData?.auction_status !== String(result.auctionOver)) {
           const updateAuctionPost: Pick<
             Auction_post,
             "auction_id" | "auction_status"
           > = {
-            auction_id: data?.auction_id,
-            auction_status: data?.auction_status,
+            auction_id: auctionData?.auction_id,
+            auction_status: auctionData?.auction_status,
           };
 
           updateAuctionPost.auction_status = String(result.auctionOver);
           // auction db의 status값이 변경되는 상태값과 다르다면 patch 진행
-          if (data.auction_status !== updateAuctionPost.auction_status) {
+          if (auctionData.auction_status !== updateAuctionPost.auction_status) {
             mutation(updateAuctionPost);
           }
         }
@@ -72,7 +72,7 @@ const useAuctionStatus = (data: Parameter) => {
     };
 
     // 경매가 종료 되지않았다면
-    if (data?.auction_status !== String(AuctionStatus.END)) {
+    if (auctionData?.auction_status !== String(AuctionStatus.END)) {
       // 상태 업데이트 함수 호출
       updateStatus();
 
@@ -93,7 +93,7 @@ const useAuctionStatus = (data: Parameter) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [data, auctionOver, auctionTimeStamp]);
+  }, [auctionData, auctionOver, auctionTimeStamp]);
 
   return { auctionTimeStamp, auctionOver };
 };
