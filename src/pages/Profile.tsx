@@ -41,11 +41,14 @@ const Profile = () => {
     enabled: !!userId,
   });
 
-  const userAllPostsLength = allUserPosts?.length;
+  const userAllPostsLength = allUserPosts?.length as number;
 
   return (
     <StProfileContainer>
-      <UserProfile user={currentUser as User_info} />
+      <UserProfile
+        user={currentUser as User_info}
+        userAllPostsLength={userAllPostsLength}
+      />
       <StPostContainer>
         <StPostsWrapper>
           <ProfileMenu

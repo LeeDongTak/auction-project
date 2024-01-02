@@ -15,8 +15,7 @@ interface PostListProps {
 
 const WishList = ({ title, userId }: PostListProps) => {
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(5);
-  const [limit, setLimit] = useState<number>(5);
+  const [pageSize, setPageSize] = useState<number>(4);
 
   // 좋아요한 auction id 배열 가져오기
   const { data: auctionIds } = useQuery({
@@ -27,11 +26,11 @@ const WishList = ({ title, userId }: PostListProps) => {
 
   const queryOption = {
     auction_Ids: auctionIds as string[],
-    limit: pageSize + (page - 1) * pageSize,
-    offset:
-      (page - 1) * pageSize === 0
-        ? (page - 1) * pageSize
-        : (page - 1) * pageSize + 1,
+    limit:
+      page === 1
+        ? pageSize + (page - 1) * pageSize
+        : pageSize + (page - 1) * pageSize + 1,
+    offset: page === 1 ? 0 : (page - 1) * pageSize + 1,
   };
 
   // 전체 post 중 auction id에 해당되는 데이터 가져오기
@@ -41,7 +40,7 @@ const WishList = ({ title, userId }: PostListProps) => {
     enabled: !!auctionIds,
   });
 
-  // TODO: 찜한 목록에서 삭제 버튼 구현 (좋아요 취소 시 목록에서 사라짐)
+  // TODO: 찜한 목록에서 삭제 버튼 구현 (삭제 시 좋아요 취소)
 
   const onClickPage = (selected: number) => {
     console.log(selected);
