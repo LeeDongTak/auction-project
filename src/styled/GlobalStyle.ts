@@ -3,6 +3,13 @@ import { createGlobalStyle } from "styled-components";
 const styled = { createGlobalStyle };
 
 const GlobalStyle = styled.createGlobalStyle`
+  @font-face {
+    font-family: "Pretendard-Regular";
+    src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+      format("woff");
+    font-weight: 400;
+    font-style: normal;
+  }
   html,
   body,
   div,
@@ -111,6 +118,7 @@ const GlobalStyle = styled.createGlobalStyle`
   }
   body {
     line-height: 1;
+    font-family: "Pretendard-Regular";
   }
   ol,
   ul {
