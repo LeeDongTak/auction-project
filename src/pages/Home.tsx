@@ -36,6 +36,8 @@ const Home = () => {
     refetch,
   } = useCustomInfinityQuery(selectedCategories);
 
+  console.log(auctionData);
+
   useEffect(() => {
     if (status === "pending") {
       console.log("pending");

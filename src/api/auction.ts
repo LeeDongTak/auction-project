@@ -73,6 +73,7 @@ export async function fetchGetInfinityAuctions({
   const categoryIds = categories?.map((category) => {
     return category.category_id;
   });
+  const queryLimit = limit - 1;
 
   const query = connectSupabase
     .from("auction_post")
@@ -80,7 +81,7 @@ export async function fetchGetInfinityAuctions({
       "*, category(category_name), user_info(user_email),auction_images(image_id, image_path), auction_like ( like_id, user_id, auction_id, created_at )"
     )
     .order(`${orderBy}`, { ascending: order })
-    .range(pageParam!, pageParam! + limit);
+    .range(pageParam!, pageParam! + queryLimit);
 
   searchKeyword?.trim() !== "" &&
     query
@@ -89,7 +90,7 @@ export async function fetchGetInfinityAuctions({
 
   user_id?.trim() !== "" && query.eq("user_id", user_id);
 
-  console.log(pageParam, pageParam! + limit);
+  console.log(pageParam, pageParam! + queryLimit);
 
   if ((categories?.length as number) > 0) {
     query.in("category_id", categoryIds);
