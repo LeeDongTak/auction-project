@@ -152,27 +152,80 @@ https://www.figma.com/file/8EulxNUZx6EYdiQcVrxRtQ/Untitled?type=design&node-id=0
  ┃ ┗ 📜util.ts
  ┣ 📂components
  ┃ ┣ 📂Home
+ ┃ ┃ ┣ 📜AuctionList.tsx
+ ┃ ┃ ┣ 📜CategorySelector.tsx
+ ┃ ┃ ┗ 📜LikeButton.tsx
  ┃ ┣ 📂common
+ ┃ ┃ ┣ 📜Avatar.tsx
+ ┃ ┃ ┗ 📜Button.tsx
  ┃ ┣ 📂detail
  ┃ ┃ ┣ 📂bidPopup
+ ┃ ┃ ┃ ┣ 📜BidCard.tsx
+ ┃ ┃ ┃ ┣ 📜BidList.tsx
+ ┃ ┃ ┃ ┣ 📜BidPopUpLayout.tsx
+ ┃ ┃ ┃ ┣ 📜PopupToggleButton.tsx
+ ┃ ┃ ┃ ┗ 📜Title.tsx
  ┃ ┃ ┣ 📂qna
+ ┃ ┃ ┃ ┣ 📜QnaButtonGroup.tsx
+ ┃ ┃ ┃ ┣ 📜QnaTextArea.tsx
+ ┃ ┃ ┃ ┣ 📜QnaWrapper.tsx
+ ┃ ┃ ┃ ┣ 📜Question.tsx
+ ┃ ┃ ┃ ┣ 📜QuestionAnswerCard.tsx
+ ┃ ┃ ┃ ┣ 📜QuestionAnswerWrapper.tsx
+ ┃ ┃ ┃ ┣ 📜QuestionCard.tsx
+ ┃ ┃ ┃ ┣ 📜QuestionForm.tsx
+ ┃ ┃ ┃ ┗ 📜QuestionList.tsx
+ ┃ ┃ ┣ 📜BidButton.tsx
+ ┃ ┃ ┣ 📜DetailCarousel.tsx
+ ┃ ┃ ┣ 📜DetailContent.tsx
+ ┃ ┃ ┣ 📜DetailInfo.tsx
+ ┃ ┃ ┗ 📜DetailTimeStamp.tsx
  ┃ ┣ 📂layout
  ┃ ┃ ┣ 📜Header.tsx
  ┃ ┃ ┗ 📜Nav.tsx
  ┃ ┣ 📂login
  ┃ ┃ ┣ 📂SocialLogin
+ ┃ ┃ ┃ ┗ 📜SocialLogin.tsx
+ ┃ ┃ ┣ 📜AuthFormValue.ts
+ ┃ ┃ ┣ 📜LoginForm.styles.ts
+ ┃ ┃ ┗ 📜LoginForm.tsx
  ┃ ┣ 📂modalCloseButton
+ ┃ ┃ ┗ 📜CloseButton.tsx
  ┃ ┣ 📂profile
  ┃ ┃ ┣ 📂PostList
  ┃ ┃ ┃ ┣ 📂PostItem
+ ┃ ┃ ┃ ┃ ┣ 📜PostItem.styles.ts
+ ┃ ┃ ┃ ┃ ┗ 📜PostItem.tsx
+ ┃ ┃ ┃ ┗ 📜PostList.tsx
  ┃ ┃ ┣ 📂ProfileMenu
+ ┃ ┃ ┃ ┗ 📜ProfileMenu.tsx
  ┃ ┃ ┣ 📂UserProfile
  ┃ ┃ ┃ ┣ 📂EditProfile
+ ┃ ┃ ┃ ┃ ┗ 📜EditProfile.tsx
+ ┃ ┃ ┃ ┗ 📜UserProfile.tsx
  ┃ ┃ ┣ 📂WishList
+ ┃ ┃ ┃ ┗ 📜WishList.tsx
+ ┃ ┃ ┗ 📜MyPagePosts.styles.ts
  ┃ ┣ 📂search
  ┃ ┃ ┣ 📂SearchItem
+ ┃ ┃ ┃ ┗ 📜SearchItem.tsx
+ ┃ ┃ ┣ 📜Search.styles.ts
+ ┃ ┃ ┗ 📜Search.tsx
  ┃ ┣ 📂setAuction
  ┃ ┃ ┣ 📂setAuctionBtn
+ ┃ ┃ ┃ ┣ 📜AddAuctionBtn.tsx
+ ┃ ┃ ┃ ┗ 📜UpdateAuctionBtn.tsx
+ ┃ ┃ ┣ 📜PriceAndDateAlert.tsx
+ ┃ ┃ ┣ 📜SetAuctionAlert.tsx
+ ┃ ┃ ┣ 📜SetAuctionBtn.tsx
+ ┃ ┃ ┣ 📜SetAuctionCategory.tsx
+ ┃ ┃ ┣ 📜SetAuctionContent.tsx
+ ┃ ┃ ┣ 📜SetAuctionDate.tsx
+ ┃ ┃ ┣ 📜SetAuctionImage.tsx
+ ┃ ┃ ┣ 📜SetAuctionPrice.tsx
+ ┃ ┃ ┣ 📜SetAuctionProductStatus.tsx
+ ┃ ┃ ┣ 📜SetAuctionShippingType.tsx
+ ┃ ┃ ┗ 📜SetAuctionTitle.tsx
  ┃ ┗ 📂ui
  ┃ ┃ ┣ 📂bidCustomModal
  ┃ ┃ ┃ ┣ 📂bidForm
@@ -210,6 +263,18 @@ https://www.figma.com/file/8EulxNUZx6EYdiQcVrxRtQ/Untitled?type=design&node-id=0
  ┃ ┣ 📜useUpdateAuctionMutation.ts
  ┃ ┗ 📜useValidAddAuction.ts
  ┣ 📂images
+ ┃ ┣ 📜clock.svg
+ ┃ ┣ 📜coin.svg
+ ┃ ┣ 📜end.svg
+ ┃ ┣ 📜flag.svg
+ ┃ ┣ 📜heart.svg
+ ┃ ┣ 📜heart2.svg
+ ┃ ┣ 📜logo.png
+ ┃ ┣ 📜logo2.png
+ ┃ ┣ 📜logo3.png
+ ┃ ┣ 📜placeholder.svg
+ ┃ ┣ 📜search.svg
+ ┃ ┗ 📜thin_heart.svg
  ┣ 📂layout
  ┃ ┗ 📜Layout.tsx
  ┣ 📂pages
@@ -241,6 +306,10 @@ https://www.figma.com/file/8EulxNUZx6EYdiQcVrxRtQ/Untitled?type=design&node-id=0
  ┣ 📂styled
  ┃ ┗ 📜GlobalStyle.ts
  ┣ 📂types
+ ┃ ┣ 📜databaseRetrunTypes.ts
+ ┃ ┣ 📜detailTyps.ts
+ ┃ ┣ 📜supabase.ts
+ ┃ ┗ 📜userType.ts
  ┣ 📜App.tsx
  ┣ 📜index.tsx
  ┣ 📜logo.svg
