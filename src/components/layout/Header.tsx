@@ -43,7 +43,11 @@ function Header() {
 
   const { mutate: addSocialUserMutate } = useSocialUserAddMutation();
 
-  const { data: currentUser, isLoading } = useQuery({
+  const {
+    data: currentUser,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: [QUERY_KEYS.USER, userId],
     queryFn: () => getUserInfo(userId as string),
     enabled: !!userId,
@@ -51,27 +55,22 @@ function Header() {
 
   useEffect(() => {
     if (user?.access_token) {
+      socialSignUp();
       setIsLogin(true);
     } else {
       setIsLogin(false);
     }
   }, [currentUser]);
 
-  useEffect(() => {
-    if (!currentUser) {
-      socialSignUp();
-    }
-  }, []);
-
-  // 최초 소셜 로그인시 회원가입
   const socialSignUp = async () => {
     try {
       if (user && user.user && socialData) {
         const newUser: User_info = {
           user_id: user.user.id,
-          nickname: socialData.name,
+          nickname:
+            socialData.name || `경매자 ${Math.floor(Math.random() * 100)}`,
           created_at: user.user.created_at,
-          profile_image: socialData.avatar_url,
+          profile_image: socialData.avatar_url || defaultProfileImg,
           user_email: socialData.email,
         };
 
