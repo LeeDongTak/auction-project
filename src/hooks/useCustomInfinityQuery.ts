@@ -7,7 +7,7 @@ const useCustomInfinityQuery = (selectedCategories: Category[]) => {
   const queryOption: Auction_option = {
     searchKeyword: "",
     categories: selectedCategories,
-    limit: 20, // 한 페이지당 아이템 수
+    limit: 5, // 한 페이지당 아이템 수
     offset: 0, // 시작 위치
     orderBy: "created_at", // 정렬 기준
     order: false, // 오름차순 또는 내림차순
