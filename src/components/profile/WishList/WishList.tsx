@@ -118,7 +118,7 @@ const WishList = ({ title, userId }: PostListProps) => {
           <Pagination
             current={page}
             pageSize={pageSize}
-            total={posts?.length}
+            total={likesData?.length}
             onChange={onClickPage}
           />
         </StPaginationSection>
