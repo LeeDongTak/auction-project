@@ -65,7 +65,9 @@ const WishList = ({ title, userId }: PostListProps) => {
   const { mutate: deleteLikeMutate } = useMutation({
     mutationFn: deleteLikesById,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.LIKES, userId] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.LIKES, userId, page],
+      });
       refetchLikes();
     },
   });
