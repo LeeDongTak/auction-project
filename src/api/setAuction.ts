@@ -29,7 +29,9 @@ export const AddAuctionPost = async (addAuctionData: {
           )}/${imgFileList[i].name}`,
           imgFileList[i]
         );
-      if (insertImgFile.error) throw new Error(insertImgFile.error.message);
+      if (insertImgFile.error) {
+        throw new Error(insertImgFile.error.message);
+      }
       const insertAuctionImg = await connectSupabase
         .from("auction_images")
         .insert([
@@ -38,8 +40,9 @@ export const AddAuctionPost = async (addAuctionData: {
             auction_id: insertData?.data?.[0]?.auction_id,
           } as any,
         ]);
-      if (insertAuctionImg.error)
-        throw new Error(insertAuctionImg.error.message);
+      if (insertAuctionImg.error) {
+      }
+      // throw new Error(insertAuctionImg.error.message);
     }
   } catch (error) {
     console.log(error);

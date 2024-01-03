@@ -23,9 +23,8 @@ export function useCustomQuery<T, TError extends Error = Error>(
 
   useEffect(() => {
     if (isError && !error?.message.includes("getBidMaxPrice")) {
-      (async () => {
-        await handleOpenCustomModal(`오류 발생\n ${error?.message}`, "alert");
-      })();
+      console.log(error?.message);
+      // await handleOpenCustomModal(`오류 발생\n ${error?.message}`, "alert");
     }
   }, [isError, error]);
 
