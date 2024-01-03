@@ -6,12 +6,12 @@
 📆 프로젝트 기간: 2023. 12. 26 ~ 2024. 01. 03
 
 ## 팀 소개
-이동탁 : https://tak-web-front.tistory.com/
-김은비 : https://velog.io/@eunbi/posts
-이다원 : https://velog.io/@dawnrose
-권경열 : https://velog.io/@yeol10
+이동탁 : https://tak-web-front.tistory.com/ <br/>
+김은비 : https://velog.io/@eunbi/posts <br/>
+이다원 : https://velog.io/@dawnrose <br/>
+권경열 : https://velog.io/@yeol10 <br/>
 
-## 프로젝트 소개
+## 프로젝트 소개 <br/>
 ```
 판매자는 경매하고 싶은 물건을 등록하고 등록 시 내용, 경매 기간, 입찰 하한가를 설정할 수 있습니다.
 구매자는 경매 게시클에 입찰가를 입력할 수 있으며 이는 하한가보다 높을 떄 입력할 수 있습니다. 경매 기간 시작 전과 끝난 후에는 입찰을 할 수 없으며 남은 시간으로 표시됩니다.
@@ -20,7 +20,7 @@
 
 ```
 
-## Stack
+## Stack <br/>
 
 ### Enviroment
 
@@ -73,13 +73,14 @@
 ## 와이어프레임
 
 
-## ERD
+## ERD <br/>
 
 [
 ](https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2)https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2
 
 
 ## 파일 구조
+```
 📦src
  ┣ 📂api
  ┃ ┣ 📜auction.ts
@@ -258,3 +259,4 @@
  ┣ 📜logo.svg
  ┣ 📜react-app-env.d.ts
  ┗ 📜supabase.ts
+```
