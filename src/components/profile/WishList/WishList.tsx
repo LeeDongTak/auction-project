@@ -4,6 +4,7 @@ import { useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctionsByIds } from "../../../api/auction";
 import { deleteLikesById, fetchLikesByUserId } from "../../../api/likes";
+import { useCustomModal } from "../../../hooks/useCustomModal";
 import { QUERY_KEYS } from "../../../query/keys.constant";
 import { Auction_post } from "../../../types/databaseRetrunTypes";
 import PostItem from "../PostList/PostItem/PostItem";
@@ -19,6 +20,8 @@ const WishList = ({ title, userId }: PostListProps) => {
   const [page, setPage] = useState<number>(1);
 
   const [pageSize, setPageSize] = useState<number>(4);
+
+  const { handleOpenCustomModal } = useCustomModal();
 
   // 좋아요한 auction id 배열 가져오기
   const { data: likesData, refetch: refetchLikes } = useQuery({
@@ -57,10 +60,17 @@ const WishList = ({ title, userId }: PostListProps) => {
   });
 
   // 삭제 로직 구현
-  const deleteWishPostHandler = (auctionId: string) => {
+  const deleteWishPostHandler = async (auctionId: string) => {
+    if (
+      !(await handleOpenCustomModal(
+        "찜한 목록에서 삭제하시겠습니까?",
+        "confirm"
+      ))
+    )
+      return;
+
     likesData?.map((like) => {
       if (like.auction_id === auctionId) {
-        console.log("click!!!!");
         deleteLikeMutate(like.like_id);
       }
     });
@@ -95,7 +105,7 @@ const WishList = ({ title, userId }: PostListProps) => {
           <Pagination
             current={page}
             pageSize={pageSize}
-            total={auctionIds?.length}
+            total={likesData?.length}
             onChange={onClickPage}
           />
         </StPaginationSection>

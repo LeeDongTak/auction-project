@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FaHourglassEnd, FaHourglassStart } from "react-icons/fa";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { useCustomModal } from "../../../../hooks/useCustomModal";
 import { useDeleteAuctionMutation } from "../../../../hooks/useDeleteAuctionMutation";
 import { useAppDispatch } from "../../../../redux/config/configStore";
 import { toggleViewSearchModal } from "../../../../redux/modules/searchSlice";
@@ -32,6 +33,8 @@ const PostItem = ({ post, type, likeDeleteHandler }: PostItemProps) => {
   const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const { handleOpenCustomModal } = useCustomModal();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,20 +82,18 @@ const PostItem = ({ post, type, likeDeleteHandler }: PostItemProps) => {
     navigate(`/setAuction/${auction_id}`);
   };
 
-  const deleteHandler = () => {
-    if (window.confirm("정말로 삭제하시겠습니까?")) {
-      interface deleteDataType {
-        auction_id?: string;
-        auction_images?: Auction_images[];
-      }
-      const deleteAuctionData: deleteDataType = {
-        auction_id,
-        auction_images,
-      };
-      deleteAuctionMutate(deleteAuctionData);
-    } else {
-      return;
+  const deleteHandler = async () => {
+    if (!(await handleOpenCustomModal("삭제하시겠습니까?", "confirm"))) return;
+
+    interface deleteDataType {
+      auction_id?: string;
+      auction_images?: Auction_images[];
     }
+    const deleteAuctionData: deleteDataType = {
+      auction_id,
+      auction_images,
+    };
+    deleteAuctionMutate(deleteAuctionData);
   };
 
   return (

@@ -37,7 +37,7 @@ const StPostItemWrapper = styled.div`
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    height: 260px;
+    height: 300px;
   }
 
   ${StButtonSection} {
@@ -47,8 +47,8 @@ const StPostItemWrapper = styled.div`
 `;
 
 const StImage = styled.div`
-  width: 260px;
-  height: 260px;
+  width: 300px;
+  height: 300px;
   background-color: transparent;
   transition: all 0.3s ease-in-out;
 
@@ -107,7 +107,7 @@ const StPostInfoSection = styled.section`
 
 const StImageSkeleton = styled(Skeleton.Image)`
   width: 400px !important;
-  height: 260px !important;
+  height: 300px !important;
 
   svg {
     width: inherit;
