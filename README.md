@@ -1,15 +1,24 @@
 ## Overview
 
+ <br/>
+
 > **엘리트 옥션**
+<br/>
 > 자신의 중고 물품을 경매형식으로 판매하는 사이트
 
-📆 프로젝트 기간: 2023. 12. 26 ~ 2024. 01. 03
+ <br/>
+
+📆 프로젝트 기간: 2023. 12. 26 ~ 2024. 01. 03 
+
+ <br/>
 
 ## 팀 소개
 이동탁 : https://tak-web-front.tistory.com/ <br/>
 김은비 : https://velog.io/@eunbi/posts <br/>
 이다원 : https://velog.io/@dawnrose <br/>
 권경열 : https://velog.io/@yeol10 <br/>
+
+ <br/>
 
 ## 프로젝트 소개 <br/>
 ```
@@ -22,17 +31,20 @@
 
 ## Stack <br/>
 
-### Enviroment
+### Enviroment   <br/>
 
 <img src="https://img.shields.io/badge/GIT-F05032?style=for-the-badge&logo=Git&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/GITHUB-181717?style=for-the-badge&logo=GitHub&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/VISUAL STUDIO CODE-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white"/></a>
 
-### Config
+ <br/>
+
+### Config  <br/>
 
 <img src="https://img.shields.io/badge/NPM-CB3837?style=for-the-badge&logo=NPM&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/YARN-2C8EBB?style=for-the-badge&logo=Yarn&logoColor=white"/></a>
 
+ <br/>
 
 ### Development
 <img src="https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=HTML5&logoColor=white"/></a>
@@ -40,9 +52,13 @@
 <img src="https://img.shields.io/badge/JAVASCRIPT-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black"/></a> 
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=black"/></a>
 
+ <br/>
+
 ### Database
 
 <img src="https://img.shields.io/badge/FIREBASE-FFCA28?style=for-the-badge&logo=Firebase&logoColor=black"/></a>  
+
+ <br/>
 
 ### Communication
 
@@ -50,10 +66,12 @@
 <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/FIGMA-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/></a>
 
-
+ <br/>
 
 
 ## 화면 구성
+
+ <br/>
 
 - 로그인 / 회원가입 페이지
 
@@ -78,6 +96,7 @@
 [
 ](https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2)https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2
 
+ <br/>
 
 ## 파일 구조
 ```
