@@ -1,6 +1,6 @@
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Pagination } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { fetchGetAuctionsByIds } from "../../../api/auction";
 import { deleteLikesById, fetchLikesByUserId } from "../../../api/likes";
@@ -22,6 +22,17 @@ const WishList = ({ title, userId }: PostListProps) => {
   const [pageSize, setPageSize] = useState<number>(4);
 
   const { handleOpenCustomModal } = useCustomModal();
+
+  useEffect(() => {
+    console.log(
+      "limit",
+      page === 1
+        ? pageSize + (page - 1) * pageSize
+        : pageSize + (page - 1) * pageSize + 1
+    );
+
+    console.log("offset", page === 1 ? 0 : (page - 1) * pageSize + 1);
+  }, []);
 
   // 좋아요한 auction id 배열 가져오기
   const { data: likesData, refetch: refetchLikes } = useQuery({
@@ -45,9 +56,9 @@ const WishList = ({ title, userId }: PostListProps) => {
 
   // 전체 post 중 auction id에 해당되는 데이터 가져오기
   const { data: posts } = useQuery<Auction_post[]>({
-    queryKey: [QUERY_KEYS.POSTS, userId, auctionIds?.[0], page, likeIds],
+    queryKey: [QUERY_KEYS.POSTS, userId, page, likeIds],
     queryFn: () => fetchGetAuctionsByIds(queryOption),
-    enabled: !!auctionIds,
+    enabled: !!auctionIds && !!likesData,
   });
 
   // 찜한 목록에서 삭제
@@ -105,7 +116,7 @@ const WishList = ({ title, userId }: PostListProps) => {
           <Pagination
             current={page}
             pageSize={pageSize}
-            total={likesData?.length}
+            total={posts?.length}
             onChange={onClickPage}
           />
         </StPaginationSection>

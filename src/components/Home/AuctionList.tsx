@@ -105,8 +105,6 @@ const AuctionList: React.FC<AuctionListProps> = ({ auctions }) => {
         queryClient.invalidateQueries({
           queryKey: ["likes", userId],
         });
-
-        refetchLike();
       }
     },
   });
