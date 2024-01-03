@@ -2,15 +2,15 @@
 
  <br/>
 
-> **엘리트 옥션**
+# **엘리트 옥션**
 <br/>
-자신의 중고 물품을 경매형식으로 판매하는 사이트
+⭐️ 자신의 중고 물품을 경매형식으로 판매하는 사이트
 
  <br/>  <br/>
 
 📆 프로젝트 기간: 2023. 12. 26 ~ 2024. 01. 03 
 
- <br/>
+<br/>
 
 ## 팀 소개
 이동탁 : https://tak-web-front.tistory.com/ <br/>
@@ -56,13 +56,11 @@
 
 #### 전역 상태관리
 
-##### 서버 상태 관리
+- 서버 상태 관리
 <img src="https://img.shields.io/badge/React Query-61DAFB?style=for-the-badge&logo=reactquery&logoColor=white"/></a>
 
-##### 클라이언트 상태 관리
+- 클라이언트 상태 관리
 <img src="https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=redux&logoColor=white"/></a>
-
-
 
 
  <br/>
@@ -91,7 +89,9 @@
     - 카테고리별 필터링 및 정렬 기능
     - 좋아요 기능 
     - useInfinityQuery를 통한 무한 스크롤 구현
+  
  <br/>
+ 
 - 로그인 / 회원가입 페이지
     - supabase Auth를 통한 로그인과 회원가입 구현
     - supabase 소셜 로그인 기능을 사용한 소셜로그인 구현과 쿼리를 통한 회원정보 저장
@@ -118,20 +118,20 @@
 
  <br/>
  
-
 ---
 ## 아키텍처
 
 
 ### 와이어프레임 <br/>
 
-https://www.figma.com/file/8EulxNUZx6EYdiQcVrxRtQ/Untitled?type=design&node-id=0-1&mode=design&t=M3zOyCeokyddmHGc-0
+[프로젝트 와이어프레임](https://www.figma.com/file/8EulxNUZx6EYdiQcVrxRtQ/Untitled?type=design&node-id=0-1&mode=design&t=M3zOyCeokyddmHGc-0)
 
+<br/>
 
 ### ERD <br/>
 
-[
-](https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2)https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2
+[프로젝트 ERD
+](https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F7375634c-2a28-470b-853a-075187172f76%2FScreen_Shot_2023-12-27_at_10.54.06_AM.png?table=block&id=10c593ca-8a16-4f0b-9b6f-ad24222b5612&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1310&userId=&cache=v2)
 
  <br/>
 
