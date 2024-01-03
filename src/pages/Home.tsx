@@ -6,6 +6,7 @@ import AuctionList from "../components/Home/AuctionList";
 import CategorySelector from "../components/Home/CategorySelector";
 import useCustomInfinityQuery from "../hooks/useCustomInfinityQuery";
 import { Auction_post, Category } from "../types/databaseRetrunTypes";
+
 const Home = () => {
   // 선택된 카테고리와 정렬 타입을 관리하는 State
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
@@ -52,9 +53,8 @@ const Home = () => {
 
   // 뷰포트 내의 요소 감지를 위한 Intersection Observer 훅
   const { ref } = useInView({
-    threshold: 1,
+    threshold: 0,
     onChange: (inView) => {
-      // 화면에 보이지 않거나 다음 페이지가 없거나 이미 다음 페이지를 불러오는 중이라면 반환
       if (!inView || !hasNextPage || isFetchingNextPage) return;
       fetchNextPage();
     },
@@ -107,6 +107,7 @@ const Home = () => {
           </button>
         </StSortButton>
         <AuctionList auctions={sortedAuctions} />
+        <div ref={ref} style={{ height: "20px" }}></div>
       </div>
       {/* 무한 스크롤을 위한 참조 요소 */}
       <div ref={ref} style={{ height: "20px" }}></div>

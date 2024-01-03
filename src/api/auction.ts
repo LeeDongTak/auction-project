@@ -114,8 +114,6 @@ export const fetchGetCategoryById = async (category_id: string) => {
     .select("*")
     .eq("category_id", category_id);
 
-  console.log(data);
-
   return data;
 };
 
